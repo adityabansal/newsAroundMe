@@ -6,7 +6,9 @@ import boto.dynamodb2
 from boto.dynamodb2.table import Table
 from boto.dynamodb2.fields import HashKey, RangeKey
 import os
+
 from newsApp.feed import Feed
+from newsApp.dbhelper import *
 
 class FeedManager:
     """
@@ -15,38 +17,29 @@ class FeedManager:
     Contains functions for CRUD operations on the feeds stored
 
     Following environment variables need to be set -
-    'FEEDTABLES_REGION' : aws region in which the databases are present.
-    'FEEDTABLE_NAME' : name of feed table database.
-    'FEEDTAGSTABLE_NAME' : name of feed tags table database.
-    'FEEDTABLES_ACCESS_KEY_ID' : aws access key id for the databases
-    'FEEDTABLES_SECRET_ACCESS_KEY' : aws secret access key the databases
+    'FEEDTABLE_CONNECTIONSTRING' : connection string of feed table.
+    'FEEDTAGSTABLE_CONNECTIONSTRING' : connection string of feed tags table.
     """
-    def __getConnection(self):
-        """
-        Get a dynamo db connection object using credentials from environment variables
-        """
-
-        connection = boto.dynamodb2.connect_to_region(
-            os.environ['FEEDTABLES_REGION'],
-            aws_access_key_id = os.environ['FEEDTABLES_ACCESS_KEY_ID'],
-            aws_secret_access_key= os.environ['FEEDTABLES_SECRET_ACCESS_KEY'])
-    
-        return connection
 
     def __getTables(self):
         """
         Get the tables in which feed data is stored.
         """
 
+        feedTableConnectionParams = parseConnectionString(
+            os.environ['FEEDTABLE_CONNECTIONSTRING']);
+        feedTagsTableConnectionParams = parseConnectionString(
+            os.environ['FEEDTAGSTABLE_CONNECTIONSTRING']);
+
         feedTable = Table(
-            os.environ['FEEDTABLE_NAME'],
+            feedTableConnectionParams['name'],
             schema = [HashKey('id')],
-            connection = self.__getConnection())
+            connection = getDbConnection(feedTableConnectionParams))
 
         feedTagsTable = Table(
-            os.environ['FEEDTAGSTABLE_NAME'],
+            feedTagsTableConnectionParams['name'],
             schema = [HashKey('feedId'), RangeKey('tagName')],
-            connection = self.__getConnection())
+            connection = getDbConnection(feedTagsTableConnectionParams))
 
         return feedTable, feedTagsTable
 
