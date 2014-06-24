@@ -1,3 +1,7 @@
 *.pyc
+
 *.env
+*.py~
+*.env~
+
 /venv
