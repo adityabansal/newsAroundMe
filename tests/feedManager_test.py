@@ -16,6 +16,7 @@ class FeedManagerTests(unittest.TestCase):
         # get the feed and validate it's same as one you put
         retrievedFeed = testFeedManager.getFeed(testFeed.id)
         self.failUnless(retrievedFeed.tags == testFeed.tags)
+        self.failUnless(retrievedFeed.id == testFeed.id)
 
         # delete feed. trying to get feed should raise an exception
         testFeedManager.deleteFeed(testFeed.id)
