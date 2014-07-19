@@ -11,13 +11,13 @@ class FeedManagerTests(unittest.TestCase):
             { 'tag1' : 'value1', 'tag2' : 'value2' })
 
         # put the feed
-        testFeedManager.putFeed(testFeed)
+        testFeedManager.put(testFeed)
 
         # get the feed and validate it's same as one you put
-        retrievedFeed = testFeedManager.getFeed(testFeed.id)
+        retrievedFeed = testFeedManager.get(testFeed.id)
         self.failUnless(retrievedFeed.tags == testFeed.tags)
         self.failUnless(retrievedFeed.id == testFeed.id)
 
         # delete feed. trying to get feed should raise an exception
-        testFeedManager.deleteFeed(testFeed.id)
-        self.assertRaises(Exception, testFeedManager.getFeed, testFeed.id)
+        testFeedManager.delete(testFeed.id)
+        self.assertRaises(Exception, testFeedManager.get, testFeed.id)
