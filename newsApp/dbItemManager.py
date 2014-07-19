@@ -55,7 +55,7 @@ class DbItemManager:
         tagsTableRows = tagsTable.query(itemId__eq = itemId)
         return self.__getTagsFromTagsTableRows(tagsTableRows)
 
-    def putItem(self, item):
+    def put(self, item):
         """
         Put a new item.
         """
@@ -69,7 +69,7 @@ class DbItemManager:
                     'tagName' : tagName,
                     'tagValue' : item.tags[tagName]})
 
-    def getItem(self, itemId):
+    def get(self, itemId):
         """
         Get item with the specified Id.
         """
@@ -82,7 +82,7 @@ class DbItemManager:
 
         return DbItem(itemId, itemTags)
 
-    def deleteItem(self, itemId):
+    def delete(self, itemId):
         """
         Delete item with the specified Id from the databases.
         """
