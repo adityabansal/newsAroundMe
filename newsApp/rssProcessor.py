@@ -59,8 +59,6 @@ def processFeed(feedId, lastProcessedTime):
   parsedFeed = feedparser.parse(feed.tags['feedUrl'])
   newEntries = [entry for entry in parsedFeed.entries
                if time.mktime(entry.published_parsed) > lastProcessedTime]
-  print "No. of new entries "
-  print len(newEntries)
 
   # put the entries into links database
   linkManager = LinkManager()
