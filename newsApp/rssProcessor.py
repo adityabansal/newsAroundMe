@@ -3,9 +3,10 @@ import time
 import feedparser
 from newsApp.feed import Feed
 from newsApp.feedManager import FeedManager
+from newsApp.link import Link
 from newsApp.linkManager import LinkManager
 
-def _retrieveNewTagsFromFeedEntry(entry)
+def _retrieveNewTagsFromFeedEntry(entry):
   """
   Process the summary detail of rss feed entry.
   Computes tags for the link object being prepared from the feed entry.
@@ -22,13 +23,14 @@ def _retrieveNewTagsFromFeedEntry(entry)
 
   return newTags
 
-def _linkFromFeedEntry(entry, feed)
+def _linkFromFeedEntry(entry, feed):
   """
   Creates a link from a feed entry and feed objects.
   """
 
   # Propogate tags from feed to link object
   linkTags = feed.tags
+  linkTags['feedId'] = feed.id
 
   # Add new tags retrieved from the feed entry
   linkTags.update(_retrieveNewTagsFromFeedEntry(entry))
@@ -51,15 +53,17 @@ def processFeed(feedId, lastProcessedTime):
 
   # get the feed
   feedManager = FeedManager()
-  feed = feedManager.getFeed(feedId)
+  feed = feedManager.get(feedId)
 
   # get all feed entries since last retrieved time
-  parsedFeed = feedparser.parse(feed.tags['url'])
+  parsedFeed = feedparser.parse(feed.tags['feedUrl'])
   newEntries = [entry for entry in parsedFeed.entries
-               if time.mktime(entry.published_parsed) > lastProcessedTime)
+               if time.mktime(entry.published_parsed) > lastProcessedTime]
+  print "No. of new entries "
+  print len(newEntries)
 
   # put the entries into links database
   linkManager = LinkManager()
-  for entry in newEntries
+  for entry in newEntries:
     link = _linkFromFeedEntry(entry, feed)
     linkManager.put(link)
