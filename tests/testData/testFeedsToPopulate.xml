@@ -1,0 +1,10 @@
+<Feeds>
+    <Feed id="TOIWorld" feedUrl="http://timesofindia.feedsportal.com/c/33039/f/533917/index.rss" type="rss" publisher="Times of India" lang="en" category="world" country="India" />
+    <Feed id="TOICricket" feedUrl="http://timesofindia.feedsportal.com/c/33039/f/533920/index.rss" type="rss" publisher="Times of India" lang="en" category="cricket sports" country="India" />
+    <Feed id="TOINational" feedUrl="http://timesofindia.feedsportal.com/c/33039/f/533916/index.rss" type="rss" publisher="Times of India" lang="en" category="national" country="India" />
+    <Feed id="HTBusiness" feedUrl="http://feeds.hindustantimes.com/HT-Business" type="rss" publisher="Hindustan Times" lang="en" category="business" country="India" />
+    <Feed id="ZeeTech" feedUrl="http://zeenews.india.com/rss/science-technology-news.xml" type="rss" publisher="Zee news" lang="en" category="tech" country="India" />
+    <Feed id="FPBollywood" feedUrl="http://www.firstpost.com/bollywood/feed" type="rss" publisher="Firstpost" lang="en" category="entertainment bollywood" country="India" />
+    <Feed id="jagranNational" feedUrl="http://rss.jagran.com/rss/news/national.xml" type="rss" publisher="दैनिक जागरण" lang="hi" category="national" country="India" />
+    <Feed id="bhaskarMadhyaPradesh" feedUrl="http://www.bhaskar.com/rss-feed/1740" type="rss" publisher="दैनिक भास्कर" lang="hi" category="national madhya-pradesh" country="India" />
+</Feeds>
