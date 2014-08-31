@@ -1,8 +1,12 @@
 import os
+import time
 
+from newsApp.constants import *
 from newsApp.feed import Feed
 from newsApp.dbhelper import *
 from newsApp.dbItemManager import DbItemManager
+
+DEFAULT_FEED_POLLING_FREQUENCY = 10
 
 class FeedManager(DbItemManager):
     """
@@ -21,3 +25,13 @@ class FeedManager(DbItemManager):
 
         DbItemManager.__init__(self,
             os.environ['FEEDTAGSTABLE_CONNECTIONSTRING'])
+
+    def put(self, feed):
+        """
+        Put a new feed.
+        """
+
+        # add polling info tags and put into database
+        feed.tags[FEEDTAG_NEXTPOLLTIME] = int(time.time())
+        feed.tags[FEEDTAG_POLLFREQUENCY] = DEFAULT_FEED_POLLING_FREQUENCY
+        DbItemManager.put(self, feed)
