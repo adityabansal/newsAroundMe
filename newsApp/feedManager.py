@@ -3,7 +3,6 @@ import time
 
 from newsApp.constants import *
 from newsApp.feed import Feed
-from newsApp.dbhelper import *
 from newsApp.dbItemManager import DbItemManager
 
 DEFAULT_FEED_POLLING_FREQUENCY = 10
@@ -35,3 +34,14 @@ class FeedManager(DbItemManager):
         feed.tags[FEEDTAG_NEXTPOLLTIME] = int(time.time())
         feed.tags[FEEDTAG_POLLFREQUENCY] = DEFAULT_FEED_POLLING_FREQUENCY
         DbItemManager.put(self, feed)
+
+    def getStaleFeeds(self):
+        """
+        Returns a list of feedIds of stale feeds (i.e whose next poll time
+        is less than current time.
+        """
+
+        scanResults = DbItemManager.getEntriesWithTag(self,
+            FEEDTAG_NEXTPOLLTIME)
+        return [result['itemId'] for result in scanResults
+            if result['tagValue'] < int(time.time())]

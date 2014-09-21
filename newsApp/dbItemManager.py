@@ -52,7 +52,7 @@ class DbItemManager:
         Get tags as a dictionary given tagsTable and db item Id
         """
 
-        tagsTableRows = tagsTable.query(itemId__eq = itemId)
+        tagsTableRows = tagsTable.query_2(itemId__eq = itemId)
         return self.__getTagsFromTagsTableRows(tagsTableRows)
 
     def put(self, item):
@@ -81,6 +81,14 @@ class DbItemManager:
             raise Exception("dbItem not found")
 
         return DbItem(itemId, itemTags)
+
+    def getEntriesWithTag(self, tagName):
+        """
+        Get all entries with specified tagName.
+        """
+
+        tagsTable = self.__getTables()
+        return tagsTable.scan(tagName__eq = tagName)
 
     def delete(self, itemId):
         """
