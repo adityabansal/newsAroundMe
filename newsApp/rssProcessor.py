@@ -1,10 +1,22 @@
 import time
 
 import feedparser
+
+from newsApp.constants import *
 from newsApp.feed import Feed
 from newsApp.feedManager import FeedManager
 from newsApp.link import Link
 from newsApp.linkManager import LinkManager
+
+UNECESSARY_FEED_TAGS = [FEEDTAG_TYPE, FEEDTAG_NEXTPOLLTIME, FEEDTAG_POLLFREQUENCY, FEEDTAG_LASTPOLLTIME, FEEDTAG_URL]
+
+def _deleteUnecessaryFeedTags(feedTags):
+    """
+    Deletes tags which need not be proppogated from a feed to a link.
+    """
+
+    for tagName in UNECESSARY_FEED_TAGS:
+        feedTags.pop(tagName, None)
 
 def _retrieveNewTagsFromFeedEntry(entry):
   """
@@ -29,8 +41,8 @@ def _linkFromFeedEntry(entry, feed):
   """
 
   # Propogate tags from feed to link object
-  linkTags = feed.tags
-  linkTags['feedId'] = feed.id
+  linkTags = dict(feed.tags)
+  _deleteUnecessaryFeedTags(linkTags)
 
   # Add new tags retrieved from the feed entry
   linkTags.update(_retrieveNewTagsFromFeedEntry(entry))
@@ -38,14 +50,14 @@ def _linkFromFeedEntry(entry, feed):
   # Return the final link object
   return Link(entry.link, linkTags)
 
-def processFeed(feedId, lastProcessedTime):
+def processFeed(feedId):
   """
   Processes a feed (takes as input the feedId and the time feed was last
   processed successfully)
 
   Steps:
   1. get Feed from database
-  2. get all feed entries published since lastProcessedTime
+  2. get all feed entries published since lastPollTime
   3. put the entries into the links database
 
   Returns a new timestamp upto which entries in feed were correctly processed
@@ -55,13 +67,21 @@ def processFeed(feedId, lastProcessedTime):
   feedManager = FeedManager()
   feed = feedManager.get(feedId)
 
-  # get all feed entries since last retrieved time
-  parsedFeed = feedparser.parse(feed.tags['feedUrl'])
+  # compute the last poll time
+  lastPollTime = 0;
+  if FEEDTAG_LASTPOLLTIME in feed.tags:
+      lastPollTime = feed.tags[FEEDTAG_LASTPOLLTIME]
+
+  # get all feed entries since last poll time
+  parsedFeed = feedparser.parse(feed.tags[FEEDTAG_URL])
   newEntries = [entry for entry in parsedFeed.entries
-               if time.mktime(entry.published_parsed) > lastProcessedTime]
+               if entry.published_parsed > time.gmtime(lastPollTime)]
 
   # put the entries into links database
   linkManager = LinkManager()
   for entry in newEntries:
     link = _linkFromFeedEntry(entry, feed)
     linkManager.put(link)
+
+  # last step update the feed on successful completion of poll
+  feedManager.updateFeedOnSuccessfullPoll(feed)

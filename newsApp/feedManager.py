@@ -45,3 +45,13 @@ class FeedManager(DbItemManager):
             FEEDTAG_NEXTPOLLTIME)
         return [result['itemId'] for result in scanResults
             if result['tagValue'] < int(time.time())]
+
+    def updateFeedOnSuccessfullPoll(self, feed):
+        """
+        Updates the polling related tags of specified feed and puts in db.
+        """
+
+        feed.tags[FEEDTAG_LASTPOLLTIME] = int(time.time())
+        feed.tags[FEEDTAG_NEXTPOLLTIME] = (feed.tags[FEEDTAG_LASTPOLLTIME] +
+            feed.tags[FEEDTAG_POLLFREQUENCY]*60)
+        DbItemManager.put(self, feed)

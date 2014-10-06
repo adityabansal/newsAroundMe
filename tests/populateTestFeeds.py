@@ -11,7 +11,7 @@ def populateFeeds():
     for child in root:
         feedTags = child.attrib
         feedId = feedTags['id'];
-        feedTags.pop('key', None);
+        feedTags.pop('id', None);
 
         feed = Feed(feedId, feedTags);
         feedManager = FeedManager()
