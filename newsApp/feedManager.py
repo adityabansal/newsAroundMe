@@ -1,9 +1,9 @@
 import os
 import time
 
-from newsApp.constants import *
-from newsApp.feed import Feed
-from newsApp.dbItemManager import DbItemManager
+from constants import *
+from feed import Feed
+from dbItemManager import DbItemManager
 
 DEFAULT_FEED_POLLING_FREQUENCY = 10
 

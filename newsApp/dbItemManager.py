@@ -3,8 +3,8 @@
 from boto.dynamodb2.table import Table
 from boto.dynamodb2.fields import HashKey, RangeKey
 
-from newsApp.dbItem import DbItem
-from newsApp.dbhelper import *
+from dbItem import DbItem
+from dbhelper import *
 
 class DbItemManager:
     """
