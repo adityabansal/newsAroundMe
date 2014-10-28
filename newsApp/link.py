@@ -1,4 +1,4 @@
-from newsApp.dbItem import DbItem
+from dbItem import DbItem
 import urllib2
 
 def getIdentifierUrl(url):

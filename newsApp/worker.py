@@ -6,6 +6,16 @@ from constants import *
 from loggingHelper import *
 from jobManager import JobManager
 from workerJob import WorkerJob
+from rssProcessor import *
+
+def RunJob(job):
+    "Run a job taking care of error handling."
+
+    try:
+        if job.jobName == JOB_PROCESSFEED:
+            processFeed(job.jobParams[JOBARG_PROCESSFEED_FEEDID])
+    except:
+        logging.exception('')
 
 def DequeueAndExecuteJob():
     """
@@ -17,15 +27,15 @@ def DequeueAndExecuteJob():
     job = jobManager.dequeueJob()
 
     if job is None:
-        logging.info("No job found. Sleeping for 10 seconds")
-        time.sleep(10)
+        logging.info("No job found. Sleeping for 30 seconds")
+        time.sleep(30)
         return
 
     logging.info(
-        "Job found. Job Name: %s. Job Params: %s.",
+        "Job found. Starting it now. Job Name: %s. Job Params: %s.",
         job.jobName,
         str(job.jobParams))
-    #code to execute job to be written here.
+    RunJob(job)
 
 # keep looping over jobs and executing them
 if __name__ == '__main__':

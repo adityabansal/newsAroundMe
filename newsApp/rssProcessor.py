@@ -1,14 +1,17 @@
 import time
+import logging
 
 import feedparser
 
-from newsApp.constants import *
-from newsApp.feed import Feed
-from newsApp.feedManager import FeedManager
-from newsApp.link import Link
-from newsApp.linkManager import LinkManager
+from constants import *
+from feed import Feed
+from feedManager import FeedManager
+from link import Link
+from linkManager import LinkManager
 
 UNECESSARY_FEED_TAGS = [FEEDTAG_TYPE, FEEDTAG_NEXTPOLLTIME, FEEDTAG_POLLFREQUENCY, FEEDTAG_LASTPOLLTIME, FEEDTAG_URL]
+
+logger = logging.getLogger('rssProcessor')
 
 def _deleteUnecessaryFeedTags(feedTags):
     """
@@ -63,6 +66,8 @@ def processFeed(feedId):
   Returns a new timestamp upto which entries in feed were correctly processed
   """
 
+  logger.info("Started processing rss feed. Feed id: %s.", feedId)
+  
   # get the feed
   feedManager = FeedManager()
   feed = feedManager.get(feedId)
@@ -76,12 +81,16 @@ def processFeed(feedId):
   parsedFeed = feedparser.parse(feed.tags[FEEDTAG_URL])
   newEntries = [entry for entry in parsedFeed.entries
                if entry.published_parsed > time.gmtime(lastPollTime)]
+  logger.info("Got %i new entries.", len(newEntries))
 
   # put the entries into links database
   linkManager = LinkManager()
   for entry in newEntries:
     link = _linkFromFeedEntry(entry, feed)
     linkManager.put(link)
+    logger.info("Put link with id '%s' in links database", link.id)
 
   # last step update the feed on successful completion of poll
   feedManager.updateFeedOnSuccessfullPoll(feed)
+
+  logger.info("Completed processing rss feed. Feed id: %s.", feedId)

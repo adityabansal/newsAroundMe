@@ -8,4 +8,4 @@ def InitLogging():
     Initizalize the logging.
     """
 
-    logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
+    logging.basicConfig(format='%(module)s:%(levelname)s:%(message)s', level=logging.INFO)

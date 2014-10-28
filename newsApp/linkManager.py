@@ -1,7 +1,7 @@
 import os
 
-from newsApp.dbhelper import *
-from newsApp.dbItemManager import DbItemManager
+from dbhelper import *
+from dbItemManager import DbItemManager
 
 class LinkManager(DbItemManager):
     """
