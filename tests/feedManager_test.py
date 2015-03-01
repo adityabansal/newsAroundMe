@@ -18,9 +18,6 @@ class FeedManagerTests(unittest.TestCase):
         self.failUnless(retrievedFeed.tags == testFeed.tags)
         self.failUnless(retrievedFeed.id == testFeed.id)
 
-        staleFeeds = testFeedManager.getStaleFeeds()
-        self.failUnless(testFeed.id in staleFeeds)
-
         # delete feed. trying to get feed should raise an exception
         testFeedManager.delete(testFeed.id)
         self.assertRaises(Exception, testFeedManager.get, testFeed.id)
