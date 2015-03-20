@@ -55,15 +55,12 @@ def _linkFromFeedEntry(entry, feed):
 
 def processFeed(feedId):
   """
-  Processes a feed (takes as input the feedId and the time feed was last
-  processed successfully)
+  Processes a feed (takes as input the feedId)
 
   Steps:
   1. get Feed from database
   2. get all feed entries published since lastPollTime
   3. put the entries into the links database
-
-  Returns a new timestamp upto which entries in feed were correctly processed
   """
 
   logger.info("Started processing rss feed. Feed id: %s.", feedId)

@@ -8,6 +8,7 @@ class HtmlProcessorTests(unittest.TestCase):
         # get html
         sock = urllib.urlopen("http://timesofindia.indiatimes.com/india/Tweets-on-beef-land-actor-Rishi-Kapoor-in-controversy/articleshow/46628197.cms");
         html = sock.read();
+        sock.close();
 
         # process it
         result = hp.processHtml(

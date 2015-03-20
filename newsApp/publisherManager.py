@@ -1,3 +1,5 @@
+import os
+
 from publisher import Publisher
 from dbItemManager import DbItemManager
 
