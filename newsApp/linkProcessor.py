@@ -8,7 +8,7 @@ from doc import Doc
 from docManager import DocManager
 from link import Link
 from linkManager import LinkManager
-import newsApp.htmlProcessor as hp
+import htmlProcessor as hp
 from publisher import Publisher
 from publisherManager import PublisherManager
 

@@ -14,6 +14,10 @@ FEEDTAG_URL = 'feedUrl'
 # link tags
 LINKTAG_ISPROCESSED = 'isProcessed'
 LINKTAG_DOCKEY = 'docKey'
+LINKTAG_SUMMARY = 'summary'
+LINKTAG_SUMMARYTEXT = 'summaryText'
+LINKTAG_SUMMARYIMAGES = 'summaryImages'
+LINKTAG_PUBTIME = 'pubtime'
 
 # publisher tags
 PUBLISHERTAG_TEXTSELECTOR = 'textSelector'

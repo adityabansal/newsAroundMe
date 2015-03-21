@@ -1,3 +1,5 @@
+import calendar
+import json
 import time
 import logging
 
@@ -8,6 +10,7 @@ from feed import Feed
 from feedManager import FeedManager
 from link import Link
 from linkManager import LinkManager
+import htmlProcessor as hp
 
 UNECESSARY_FEED_TAGS = [FEEDTAG_TYPE, FEEDTAG_NEXTPOLLTIME, FEEDTAG_POLLFREQUENCY, FEEDTAG_LASTPOLLTIME, FEEDTAG_URL]
 
@@ -32,9 +35,13 @@ def _retrieveNewTagsFromFeedEntry(entry):
   # add title
   newTags['title'] = entry.title
 
-  # plan is to do some html processing here to extract relevant text from
-  # summary before putting it.
-  newTags['summary'] = entry.summary
+  # add summary and image tags
+  processingResult = hp.processHtml(entry.summary, ":not(script)", ["img"]);
+  newTags[LINKTAG_SUMMARY] = entry.summary;
+  newTags[LINKTAG_SUMMARYTEXT] = processingResult[0];
+  newTags[LINKTAG_SUMMARYIMAGES] = json.dumps(processingResult[1]);
+
+  newTags[LINKTAG_PUBTIME] = calendar.timegm(entry.published_parsed);
 
   return newTags
 
