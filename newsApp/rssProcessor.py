@@ -8,9 +8,11 @@ import feedparser
 from constants import *
 from feed import Feed
 from feedManager import FeedManager
+import htmlProcessor as hp
+from jobManager import JobManager
 from link import Link
 from linkManager import LinkManager
-import htmlProcessor as hp
+from workerJob import WorkerJob
 
 UNECESSARY_FEED_TAGS = [FEEDTAG_TYPE, FEEDTAG_NEXTPOLLTIME, FEEDTAG_POLLFREQUENCY, FEEDTAG_LASTPOLLTIME, FEEDTAG_URL]
 
@@ -87,12 +89,19 @@ def processFeed(feedId):
                if entry.published_parsed > time.gmtime(lastPollTime)]
   logger.info("Got %i new entries.", len(newEntries))
 
-  # put the entries into links database
+  # for each entry add link in link database and a process link job
   linkManager = LinkManager()
+  jobManager = JobManager()
   for entry in newEntries:
     link = _linkFromFeedEntry(entry, feed)
     linkManager.put(link)
     logger.info("Put link with id '%s' in links database", link.id)
+
+    processLinkJob = WorkerJob(
+        JOB_PROCESSLINK,
+        { JOBARG_PROCESSLINK_LINKID : link.id})
+    jobManager.enqueueJob(processLinkJob)
+    logging.info("Process link job put for linkId: %s", link.id)
 
   # last step update the feed on successful completion of poll
   feedManager.updateFeedOnSuccessfullPoll(feed)

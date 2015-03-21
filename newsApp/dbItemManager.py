@@ -1,4 +1,5 @@
 #TODO: make separate class for exceptions and raise them instead of generic
+import decimal
 
 from boto.dynamodb2.table import Table
 from boto.dynamodb2.fields import HashKey, RangeKey
@@ -44,6 +45,11 @@ class DbItemManager:
 
         for tag in tagsTableRows:
             tags[tag['tagName']] = tag['tagValue']
+
+            # boto retrieves numbers as decimals. Convert them to float
+            # else we'll have json serialization issues down the pipeline
+            if type(tag['tagValue']) is decimal.Decimal:
+                tags[tag['tagName']] = float(tag['tagValue'])
 
         return tags
 

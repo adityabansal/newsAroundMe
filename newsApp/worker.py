@@ -7,6 +7,7 @@ from loggingHelper import *
 from jobManager import JobManager
 from workerJob import WorkerJob
 from rssProcessor import *
+from linkProcessor import *
 
 def RunJob(job):
     "Run a job taking care of error handling."
@@ -14,6 +15,8 @@ def RunJob(job):
     try:
         if job.jobName == JOB_PROCESSFEED:
             processFeed(job.jobParams[JOBARG_PROCESSFEED_FEEDID])
+        if job.jobName == JOB_PROCESSLINK:
+            processLink(job.jobParams[JOBARG_PROCESSLINK_LINKID])
     except:
         logging.exception('')
 

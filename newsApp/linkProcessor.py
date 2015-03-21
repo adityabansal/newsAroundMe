@@ -42,13 +42,19 @@ def processLink(linkId):
   # get the link
   linkManager = LinkManager();
   link = linkManager.get(linkId);
+  logger.info("Got link from database. Link id: %s.", linkId)
 
   # get the publisher
   publisherManager = PublisherManager();
   publisher = publisherManager.get(link.tags[TAG_PUBLISHER]);
+  logger.info(
+    "Got publisher from database. Publisher id: %s. Link id: %s",
+    link.tags[TAG_PUBLISHER],
+    linkId)
 
   # get html for the link
   pageHtml = _getHtmlForUrl(link.id);
+  logger.info("Got html for the link. Link id: %s.", linkId)
 
   # process that html
   linkManager = LinkManager()
@@ -64,10 +70,14 @@ def processLink(linkId):
   # save the doc
   docManager = DocManager();
   docManager.put(doc);
+  logger.info("Document generated and saved for link. Link id: %s.", linkId)
 
   # update the link
   link.tags[LINKTAG_ISPROCESSED] = 'true';
   link.tags[LINKTAG_DOCKEY] = doc.key;
   linkManager.put(link);
+  logger.info(
+    "Link updated after being successfully processed. Link id: %s.",
+    linkId)
 
   logger.info("Completed processing link. Link id: %s.", linkId)

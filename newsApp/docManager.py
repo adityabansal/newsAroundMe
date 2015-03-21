@@ -1,4 +1,5 @@
 import os
+import json
 
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
@@ -35,14 +36,19 @@ class DocManager:
     def put(self, doc):
         k = Key(self.__getBucket());
         k.key = doc.key;
-        k.metadata = doc.tags;
-        k.set_contents_from_string(doc.content)
+
+        # not storing tags directly in blob's metadata as the maximum size
+        # allowed there is only 2kb.
+        tags = dict(doc.tags);
+        tags['content'] = doc.content;
+        k.set_contents_from_string(json.dumps(tags))
 
     def get(self, docKey):
         k = Key(self.__getBucket());
         k.key = docKey;
-        content = k.get_contents_as_string();
-        tags = k.metadata;
+        storedTags = json.loads(k.get_contents_as_string());
+        content = storedTags.pop('content', None);
+        tags = storedTags;
 
         return Doc(k.key, content, tags);
 
