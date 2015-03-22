@@ -1,7 +1,3 @@
-# The clock process to generate jobs
-
-from apscheduler.schedulers.blocking import BlockingScheduler
-
 from constants import *
 from loggingHelper import *
 from feedManager import FeedManager
@@ -9,9 +5,7 @@ from workerJob import WorkerJob
 from jobManager import JobManager
 
 InitLogging()
-sched = BlockingScheduler()
 
-@sched.scheduled_job('interval', minutes=3)
 def pushFeedJobs():
     """
     Push feed processing jobs to job queue.
@@ -31,6 +25,5 @@ def pushFeedJobs():
         jobManager.enqueueJob(processFeedJob)
         logging.info("Process feed job put for feedId: %s", feed)
 
-#schedurer will schedule job for later. Calling it manually once.
-pushFeedJobs()
-sched.start()
+if __name__ == '__main__':
+    pushFeedJobs()
