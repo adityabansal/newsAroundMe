@@ -4,6 +4,9 @@
 TAG_PUBLISHER = 'publisher'
 TAG_IMAGES = 'images'
 
+#doc tags
+DOCTAG_URL = 'url'
+
 # feed tags
 FEEDTAG_TYPE = 'type'
 FEEDTAG_NEXTPOLLTIME = 'nextPollTime'

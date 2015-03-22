@@ -66,6 +66,7 @@ def processLink(linkId):
   # generate corresponding doc
   doc = Doc(_generateRandomDocKey(), processingResult[0], link.tags);
   doc.tags[TAG_IMAGES] = json.dumps(processingResult[1]);
+  doc.tags[DOCTAG_URL] = linkId;
 
   # save the doc
   docManager = DocManager();
