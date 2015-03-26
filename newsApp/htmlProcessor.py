@@ -32,7 +32,7 @@ def processHtml(rawHtml, textSelector, imageSelectors):
     # Extract out text
     text = _extractText(parsedHtml, textSelector)
     if (text == ""):
-        logger.wrn(
+        logger.warning(
             "Did not find text element corresponding to selector: %s",
             textDiv);
         logger.info("Extracting text from the entire html provided");
