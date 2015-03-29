@@ -6,6 +6,7 @@ from newsApp.jobManager import JobManager
 class JobManagerTests(unittest.TestCase):
 
     def __compareJobs(self, job1, job2):
+        self.failUnless(job1.jobId, job2.jobId)
         self.failUnless(job1.jobName, job2.jobName)
         self.failUnless(job1.jobParams, job2.jobParams)
 

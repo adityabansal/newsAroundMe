@@ -24,7 +24,7 @@ def _getHtmlForUrl(url):
 def _generateRandomDocKey():
     return ''.join(random.choice('0123456789ABCDEF') for i in range(16));
 
-def processLink(linkId):
+def processLink(jobId, linkId):
   """
   Processes a link(takes as input the linkId)
 
@@ -37,28 +37,30 @@ def processLink(linkId):
   6. update the link's is processed tag.
   """
 
-  logger.info("Started processing link. Link id: %s.", linkId)
+  linkAndJobId = "Link id: " + linkId + ". Job id: " + jobId;
+  logger.info("Started processing link. %s.", linkAndJobId)
   
   # get the link
   linkManager = LinkManager();
   link = linkManager.get(linkId);
-  logger.info("Got link from database. Link id: %s.", linkId)
+  logger.info("Got link from database. %s.", linkAndJobId)
 
   # get the publisher
   publisherManager = PublisherManager();
   publisher = publisherManager.get(link.tags[TAG_PUBLISHER]);
   logger.info(
-    "Got publisher from database. Publisher id: %s. Link id: %s",
+    "Got publisher from database. Publisher id: %s. %s.",
     link.tags[TAG_PUBLISHER],
-    linkId)
+    linkAndJobId)
 
   # get html for the link
   pageHtml = _getHtmlForUrl(link.id);
-  logger.info("Got html for the link. Link id: %s.", linkId)
+  logger.info("Got html for the link. %s.", linkAndJobId)
 
   # process that html
   linkManager = LinkManager()
   processingResult = hp.processHtml(
+      jobId,
       pageHtml,
       publisher.tags[PUBLISHERTAG_TEXTSELECTOR],
       json.loads(publisher.tags[PUBLISHERTAG_IMAGESELECTORS]));
@@ -71,14 +73,14 @@ def processLink(linkId):
   # save the doc
   docManager = DocManager();
   docManager.put(doc);
-  logger.info("Document generated and saved for link. Link id: %s.", linkId)
+  logger.info("Document generated and saved for link. %s.", linkAndJobId)
 
   # update the link
   link.tags[LINKTAG_ISPROCESSED] = 'true';
   link.tags[LINKTAG_DOCKEY] = doc.key;
   linkManager.put(link);
   logger.info(
-    "Link updated after being successfully processed. Link id: %s.",
-    linkId)
+    "Link updated after being successfully processed. %s.",
+    linkAndJobId)
 
-  logger.info("Completed processing link. Link id: %s.", linkId)
+  logger.info("Completed processing link. %s.", linkAndJobId)

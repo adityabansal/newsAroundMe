@@ -14,9 +14,9 @@ def RunJob(job):
 
     try:
         if job.jobName == JOB_PROCESSFEED:
-            processFeed(job.jobParams[JOBARG_PROCESSFEED_FEEDID])
+            processFeed(job.jobId, job.jobParams[JOBARG_PROCESSFEED_FEEDID])
         if job.jobName == JOB_PROCESSLINK:
-            processLink(job.jobParams[JOBARG_PROCESSLINK_LINKID])
+            processLink(job.jobId, job.jobParams[JOBARG_PROCESSLINK_LINKID])
     except:
         logging.exception('')
 
@@ -35,7 +35,9 @@ def DequeueAndExecuteJob():
         return
 
     logging.info(
-        "Job found. Starting it now. Job Name: %s. Job Params: %s.",
+        "Job found. Starting it now." + \
+        "Job id: %s. Job Name: %s. Job Params: %s.",
+        job.jobId,
         job.jobName,
         str(job.jobParams))
     RunJob(job)

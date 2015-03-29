@@ -23,7 +23,10 @@ def pushFeedJobs():
             JOB_PROCESSFEED,
             { JOBARG_PROCESSFEED_FEEDID : feed})
         jobManager.enqueueJob(processFeedJob)
-        logging.info("Process feed job put for feedId: %s", feed)
+        logging.info(
+            "Process feed job put for feedId: %s. Job id: %s",
+            feed,
+            processFeedJob.jobId)
 
 if __name__ == '__main__':
     pushFeedJobs()

@@ -16,11 +16,12 @@ def _extractImages(html, imageSelector):
     images = html.cssselect(imageSelector);
     return [img.attrib['src'] for img in images if 'src' in img.attrib];
 
-def processHtml(rawHtml, textSelector, imageSelectors):
+def processHtml(jobId, rawHtml, textSelector, imageSelectors):
     """
     Process given html to extract out some text and images from it.
 
     Parameters:
+        jobId: a job id to be used for tracing.
         rawHtml: the raw html to be processed.
         textSelector: css selector of element containing text to extract.
         imageSelectors: list of css selectors of elements containing images.
@@ -33,17 +34,22 @@ def processHtml(rawHtml, textSelector, imageSelectors):
     text = _extractText(parsedHtml, textSelector)
     if (text == ""):
         logger.warning(
-            "Did not find text element corresponding to selector: %s",
-            textDiv);
-        logger.info("Extracting text from the entire html provided");
+            "Did not find text element for selector: %s. JobId: %s",
+            textDiv,
+            jobId);
+        logger.info(
+            "Extracting text from the entire html provided. JobId: %s",
+            jobId);
         text = _extractText(parsedHTml, ":not(script)");
     else:
-        logger.info("Sucessfully extracted out text from html");
+        logger.info(
+            "Sucessfully extracted out text from html. JobId: %s",
+            jobId);
 
     # Extract out images
     images = [];
     for imageSelector in imageSelectors:
         images += _extractImages(parsedHtml, imageSelector);
-    logger.info("Extracted out %i images", len(images));
+    logger.info("Extracted out %i images. JobId: %s", len(images), jobId);
 
     return (text, images);
