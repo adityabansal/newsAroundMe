@@ -14,6 +14,7 @@ def getTokens(text):
     return tokens
 
 def getStemmedTokens(text):
+    safe_text = "".join([ch for ch in text if ord(ch)<= 128]);
     tokens = getTokens(text);
     stemmer = PorterStemmer();
     return [stemmer.stem(token) for token in tokens];    
@@ -26,10 +27,11 @@ def getStemmedShingles(text):
         [" ".join(tokens[i:i+3]) for i in range(len(tokens) - 2)]
     return twoTokenShingles + threeTokenShingles;
 
-def compareTexts(text1, text2):
+def compareTextsUsingShingles(text1, text2):
     text1ShinglesSet = set(getStemmedShingles(text1))
     text2ShinglesSet = set(getStemmedShingles(text2))
 
     intersection = text1ShinglesSet.intersection(text2ShinglesSet)
     union = text1ShinglesSet.union(text2ShinglesSet)
     return float(len(intersection))/len(union)
+
