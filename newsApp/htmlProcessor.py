@@ -35,7 +35,7 @@ def processHtml(jobId, rawHtml, textSelector, imageSelectors):
     if (text == ""):
         logger.warning(
             "Did not find text element for selector: %s. JobId: %s",
-            textDiv,
+            textSelector,
             jobId);
         logger.info(
             "Extracting text from the entire html provided. JobId: %s",
