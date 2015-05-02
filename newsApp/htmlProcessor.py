@@ -40,7 +40,7 @@ def processHtml(jobId, rawHtml, textSelector, imageSelectors):
         logger.info(
             "Extracting text from the entire html provided. JobId: %s",
             jobId);
-        text = _extractText(parsedHTml, ":not(script)");
+        text = _extractText(parsedHtml, ":not(script)");
     else:
         logger.info(
             "Sucessfully extracted out text from html. JobId: %s",
