@@ -35,7 +35,7 @@ def _retrieveNewTagsFromFeedEntry(jobId, entry):
   newTags = {};
 
   # add title
-  newTags['title'] = entry.title
+  newTags[LINKTAG_TITLE] = entry.title
 
   # add summary and image tags
   processingResult = hp.processHtml(

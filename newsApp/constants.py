@@ -21,6 +21,7 @@ LINKTAG_SUMMARY = 'summary'
 LINKTAG_SUMMARYTEXT = 'summaryText'
 LINKTAG_SUMMARYIMAGES = 'summaryImages'
 LINKTAG_PUBTIME = 'pubtime'
+LINKTAG_TITLE = 'title'
 
 # publisher tags
 PUBLISHERTAG_TEXTSELECTOR = 'textSelector'
