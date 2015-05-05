@@ -24,6 +24,13 @@ def _getHtmlForUrl(url):
 def _generateRandomDocKey():
     return ''.join(random.choice('0123456789ABCDEF') for i in range(16));
 
+def _getDocKey(link):
+    # overwrite the existing doc if this link has already been processed.
+    if LINKTAG_DOCKEY in link.tags:
+        return link.tags[LINKTAG_DOCKEY];
+    else:
+        return _generateRandomDocKey();
+
 def processLink(jobId, linkId):
   """
   Processes a link(takes as input the linkId)
@@ -66,7 +73,7 @@ def processLink(jobId, linkId):
       json.loads(publisher.tags[PUBLISHERTAG_IMAGESELECTORS]));
 
   # generate corresponding doc
-  doc = Doc(_generateRandomDocKey(), processingResult[0], link.tags);
+  doc = Doc(_getDocKey(link), processingResult[0], link.tags);
   doc.tags[TAG_IMAGES] = json.dumps(processingResult[1]);
   doc.tags[DOCTAG_URL] = linkId;
 
