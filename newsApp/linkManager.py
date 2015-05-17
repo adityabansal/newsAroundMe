@@ -40,6 +40,6 @@ class LinkManager(DbItemManager):
         """
 
         scanResults = DbItemManager.getEntriesWithTag(self, LINKTAG_PUBTIME)
-        return [result['itemId'] for result in scanResults
+        return (result['itemId'] for result in scanResults
             if result['tagValue'] + LINK_EXPIRY_TIME_IN_DAYS*24*60*60 \
-                < int(time.time())]
+                < int(time.time()))

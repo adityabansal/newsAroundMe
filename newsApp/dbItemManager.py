@@ -58,7 +58,9 @@ class DbItemManager:
         Get tags as a dictionary given tagsTable and db item Id
         """
 
-        tagsTableRows = tagsTable.query_2(itemId__eq = itemId)
+        tagsTableRows = tagsTable.query_2(
+            itemId__eq = itemId,
+            max_page_size=25);
         return self.__getTagsFromTagsTableRows(tagsTableRows)
 
     def put(self, item):
@@ -94,7 +96,7 @@ class DbItemManager:
         """
 
         tagsTable = self.__getTables()
-        return tagsTable.scan(tagName__eq = tagName)
+        return tagsTable.scan(tagName__eq = tagName, max_page_size=25);
 
     def delete(self, itemId):
         """

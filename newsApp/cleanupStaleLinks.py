@@ -13,11 +13,15 @@ def cleanupStaleLinks():
     
     logging.info("Getting stale  links.")
     staleLinks = linkManager.getStaleLinks()
-    logging.info("Number of stale links are: %i", len(staleLinks))
 
+    nStaleLinks = 0;
     for linkId in staleLinks:
+        logging.info("Deleting link with id: %s", linkId);
         linkManager.delete(linkId)
+        nStaleLinks = nStaleLinks + 1;
         logging.info("Deleted link with id: %s", linkId);
+
+    logging.info("Number of stale links deleted were: %i", nStaleLinks)
 
 if __name__ == '__main__':
     cleanupStaleLinks();

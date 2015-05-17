@@ -43,8 +43,8 @@ class FeedManager(DbItemManager):
 
         scanResults = DbItemManager.getEntriesWithTag(self,
             FEEDTAG_NEXTPOLLTIME)
-        return [result['itemId'] for result in scanResults
-            if result['tagValue'] < int(time.time())]
+        return (result['itemId'] for result in scanResults
+            if result['tagValue'] < int(time.time()))
 
     def updateFeedOnSuccessfullPoll(self, feed):
         """
