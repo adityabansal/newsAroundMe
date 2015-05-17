@@ -1,7 +1,6 @@
 import json
 import logging
 import random
-import urllib
 
 from constants import *
 from doc import Doc
@@ -13,13 +12,6 @@ from publisher import Publisher
 from publisherManager import PublisherManager
 
 logger = logging.getLogger('linkProcessor')
-
-def _getHtmlForUrl(url):
-    sock = urllib.urlopen(url);
-    html = sock.read();
-    sock.close();
-
-    return html;
 
 def _generateRandomDocKey():
     return ''.join(random.choice('0123456789ABCDEF') for i in range(16));
@@ -61,7 +53,7 @@ def processLink(jobId, linkId):
     linkAndJobId)
 
   # get html for the link
-  pageHtml = _getHtmlForUrl(link.id);
+  pageHtml = link.getHtml();
   logger.info("Got html for the link. %s.", linkAndJobId)
 
   # process that html

@@ -1,5 +1,19 @@
 from dbItem import DbItem
+import time
 import urllib2
+
+def _openUrlWithRetries(url, max_retries = 3):
+    nRetries = 0;
+    while (True):
+        try:
+            response = urllib2.urlopen(url, timeout = 10);
+            return response;
+        except Exception as e:
+            if (nRetries >= max_retries):
+                raise e;
+            else:
+                time.sleep(10);
+                nRetries = nRetries + 1;
 
 def getIdentifierUrl(url):
   """
@@ -8,8 +22,8 @@ def getIdentifierUrl(url):
   due to redirects etc.
   """
 
-  result = urllib2.urlopen(url)
-  return result.geturl()
+  result = _openUrlWithRetries(url);
+  return result.geturl();
 
 class Link(DbItem):
   """
@@ -25,3 +39,10 @@ class Link(DbItem):
     """
 
     DbItem.__init__(self, getIdentifierUrl(id), tags);
+
+  def getHtml(self):
+    response = _openUrlWithRetries(self.id);
+    html = response.read();
+    response.close();
+
+    return html;
