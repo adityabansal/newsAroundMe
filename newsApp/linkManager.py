@@ -4,6 +4,7 @@ import time
 from constants import *
 from dbhelper import *
 from dbItemManager import DbItemManager
+from link import Link
 
 LINK_EXPIRY_TIME_IN_DAYS = 30
 
