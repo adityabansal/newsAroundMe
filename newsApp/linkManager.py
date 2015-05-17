@@ -25,6 +25,14 @@ class LinkManager(DbItemManager):
         DbItemManager.__init__(self,
             os.environ['LINKTAGSTABLE_CONNECTIONSTRING'])
 
+    def get(self, linkId):
+        """
+        Put a new link.
+        """
+
+        dbItem = DbItemManager.get(self, linkId);
+        return Link(linkId, dbItem.tags)
+
     def getStaleLinks(self):
         """
         Returns a list of linkIds of stale links.
