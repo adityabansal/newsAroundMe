@@ -15,9 +15,9 @@ def pushFeedJobs():
     feedManager = FeedManager()
     
     logging.info("Getting stale  feeds.")
-    staleFeeds = feedManager.getStaleFeeds()
-    logging.info("Number of stale feeds are: %i", len(staleFeeds))
+    staleFeeds = feedManager.getStaleFeeds();
 
+    nStaleFeeds = 0;
     for feed in staleFeeds:
         processFeedJob = WorkerJob(
             JOB_PROCESSFEED,
@@ -27,6 +27,9 @@ def pushFeedJobs():
             "Process feed job put for feedId: %s. Job id: %s",
             feed,
             processFeedJob.jobId)
+        nStaleFeeds = nStaleFeeds + 1;
+
+    logging.info("Number of stale feeds are: %i", nStaleFeeds)
 
 if __name__ == '__main__':
     pushFeedJobs()
