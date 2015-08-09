@@ -21,6 +21,10 @@ class DocManagerTests(unittest.TestCase):
         self.failUnless(retrievedDoc.content == testDoc.content)
         self.failUnless(retrievedDoc.tags == testDoc.tags)
 
+        # get new doc keys
+        retrievedDocKeys = testDocManager.getNewDocKeys(1)
+        self.failUnless(len(list(retrievedDocKeys)) == 1)
+
         # delete doc
         testDocManager.delete(testDoc.key)
 

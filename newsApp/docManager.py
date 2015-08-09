@@ -1,11 +1,16 @@
 import os
 import json
+import calendar
+import time
 
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 
 from dbhelper import *
 from doc import Doc
+
+def _getEpochSecs(t):
+    return calendar.timegm(time.strptime(t[:19], "%Y-%m-%dT%H:%M:%S"))
 
 class DocManager:
     """
@@ -42,6 +47,13 @@ class DocManager:
         tags = dict(doc.tags);
         tags['content'] = doc.content;
         k.set_contents_from_string(json.dumps(tags))
+
+    def getNewDocKeys(self, ageLimit):
+        bucket = self.__getBucket();
+        timeLimit = int(time.time()) - ageLimit * 60 * 60 * 24;
+
+        return (key.name for key in bucket
+            if _getEpochSecs(key.last_modified) > timeLimit)
 
     def get(self, docKey):
         k = Key(self.__getBucket());
