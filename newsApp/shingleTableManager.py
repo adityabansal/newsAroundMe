@@ -54,7 +54,7 @@ class ShingleTableManager:
                 RangeKey('docId')
             ], throughput = {
                 'read': 1,
-                'write': 1,
+                'write': 4,
             }, global_indexes = [
                 GlobalAllIndex('docIdIndex', parts = [
                     HashKey('docId'),
@@ -72,6 +72,7 @@ class ShingleTableManager:
         Add a entries in shingles table for shingles and docId passed.
         """
 
+        shingles = list(set(shingles)) # remove duplicate shingles
         shingleTable = self.__getTable()
         with shingleTable.batch_write() as batch:
             for shingle in shingles:

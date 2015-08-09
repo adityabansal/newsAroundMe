@@ -7,10 +7,16 @@ from nltk.stem.porter import *
 nltk.download('punkt');
 nltk.download('stopwords');
 
+def _removePuntuation(text):
+    if isinstance(text, str):
+        return text.translate(None, string.punctuation)
+    elif isinstance(text, unicode):
+        remove_punctuation_map = dict((ord(char), None) for char in string.punctuation)
+        return text.translate(remove_punctuation_map)
+
 def getTokens(text):
     lowers = text.lower()
-    #remove the punctuation using the character deletion step of translate
-    no_punctuation = lowers.translate(None, string.punctuation)
+    no_punctuation = _removePuntuation(lowers)
     tokens = nltk.word_tokenize(no_punctuation)
     return tokens
 

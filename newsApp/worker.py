@@ -8,6 +8,7 @@ from jobManager import JobManager
 from workerJob import WorkerJob
 from rssProcessor import *
 from linkProcessor import *
+import clusteringJobs as cj
 
 def RunJob(job):
     "Run a job taking care of error handling."
@@ -17,6 +18,8 @@ def RunJob(job):
             processFeed(job.jobId, job.jobParams[JOBARG_PROCESSFEED_FEEDID])
         if job.jobName == JOB_PROCESSLINK:
             processLink(job.jobId, job.jobParams[JOBARG_PROCESSLINK_LINKID])
+        if job.jobName == JOB_PARSEDOC:
+            cj.parseDoc(job.jobId, job.jobParams[JOBARG_PARSEDOC_DOCID])
     except:
         logging.exception('')
 

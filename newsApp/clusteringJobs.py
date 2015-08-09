@@ -3,6 +3,7 @@ import logging
 from constants import *
 from doc import Doc
 from docManager import DocManager
+from shingleTableManager import ShingleTableManager
 import textHelper as th
 
 logger = logging.getLogger('clusteringJobs')
@@ -34,3 +35,16 @@ def compareDocs(doc1Key, doc2Key):
     doc2 = docManager.get(doc2Key)
 
     return computeDocSimScore(doc1, doc2);
+
+def parseDoc(jobId, docId):
+    docAndJobId = "Doc id: " + docId + ". Job id: " + jobId;
+    logger.info("Started parsing doc. %s.", docAndJobId)
+
+    docManager = DocManager()
+    shingleTableManager = ShingleTableManager()
+
+    doc = docManager.get(docId)
+    shingles = th.getStemmedShingles(doc.content)
+    shingleTableManager.addEntries(docId, shingles);
+
+    logger.info("Completed parsing doc. %s.", docAndJobId)
