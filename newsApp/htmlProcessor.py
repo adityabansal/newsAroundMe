@@ -38,9 +38,9 @@ def processHtml(jobId, rawHtml, textSelector, imageSelectors):
             textSelector,
             jobId);
         logger.info(
-            "Extracting text from the entire html provided. JobId: %s",
+            "Setting the text as empty. JobId: %s",
             jobId);
-        text = _extractText(parsedHtml, ":not(script)");
+        text = "";
     else:
         logger.info(
             "Sucessfully extracted out text from html. JobId: %s",
