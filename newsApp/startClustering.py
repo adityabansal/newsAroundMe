@@ -1,4 +1,5 @@
 from constants import *
+from clusterManager import ClusterManager
 from docManager import DocManager
 from loggingHelper import *
 from jobManager import JobManager
@@ -14,17 +15,21 @@ def startClustering():
     Start clustering the docs.
     """
 
+    clusterManager = ClusterManager()
     docManager = DocManager()
     jobManager = JobManager()
     shingleTableManager = ShingleTableManager()
 
-    logging.info("Cleaning up the shingle table")
     shingleTableManager.createFreshTable();
+    logging.info("Cleaned up the shingle table");
 
-    logging.info("Getting docs for clustering")
-    docKeys = docManager.getNewDocKeys(CLUSTERING_DOC_AGE_LIMIT);
+    docKeys = list(docManager.getNewDocKeys(CLUSTERING_DOC_AGE_LIMIT));
+    logging.info("Got docs for clustering");
 
-    nStaleDocs = 0;
+    clusterManager.initNewClusters(docKeys);
+    logging.info("Initialized new cluster");
+    logging.info("Number of docs to cluster are: %i", len(docKeys))
+
     for docKey in docKeys:
         parseDocJob = WorkerJob(
             JOB_PARSEDOC,
@@ -34,9 +39,6 @@ def startClustering():
             "Parse doc job put for docId: %s. Job id: %s",
             docKey,
             parseDocJob.jobId)
-        nStaleDocs = nStaleDocs + 1;
-
-    logging.info("Number of docs to cluster are: %i", nStaleDocs)
 
 if __name__ == '__main__':
     startClustering()
