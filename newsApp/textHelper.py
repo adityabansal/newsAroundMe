@@ -29,25 +29,27 @@ def getStemmedTokens(text):
 def filterStopwords(tokens):
     return [t for t in tokens if not t in stopwords.words('english')];
 
-def getStemmedShingles(text):
+def getStemmedShingles(text, minLength, maxLength):
     tokens = filterStopwords(getStemmedTokens(text));
-    twoTokenShingles = \
-        [" ".join(tokens[i:i+2]) for i in range(len(tokens) - 1) ]
-    threeTokenShingles = \
-        [" ".join(tokens[i:i+3]) for i in range(len(tokens) - 2)]
-    return twoTokenShingles + threeTokenShingles;
+    shingles = [];
+
+    for length in range(minLength, maxLength + 1):
+        shingles = shingles + \
+            [" ".join(tokens[i:i+length]) for i in range(len(tokens) - length + 1)]
+
+    return shingles;
 
 def compareTexts(text1, text2):
-    text1ShinglesSet = set(getStemmedShingles(text1))
-    text2ShinglesSet = set(getStemmedShingles(text2))
+    text1ShinglesSet = set(getStemmedShingles(text1, 3, 3))
+    text2ShinglesSet = set(getStemmedShingles(text2, 3, 3))
 
     intersection = text1ShinglesSet.intersection(text2ShinglesSet)
     union = text1ShinglesSet.union(text2ShinglesSet)
     return float(len(intersection))/len(union)
 
 def compareTitles(title1, title2):
-    title1Tokens = set(filterStopwords(getStemmedTokens(title1)))
-    title2Tokens = set(filterStopwords(getStemmedTokens(title2)))
+    title1Tokens = set(filterStopwords(getStemmedTokens(title1, 2, 3)))
+    title2Tokens = set(filterStopwords(getStemmedTokens(title2, 2, 3)))
 
     intersection = title1Tokens.intersection(title2Tokens)
     union = title1Tokens.union(title2Tokens)
