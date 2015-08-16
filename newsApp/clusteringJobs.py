@@ -1,8 +1,10 @@
 import logging
 
 from constants import *
+from clusterManager import ClusterManager
 from doc import Doc
 from docManager import DocManager
+from loggingHelper import *
 from shingleTableManager import ShingleTableManager
 import textHelper as th
 
@@ -51,3 +53,33 @@ def parseDoc(jobId, docId):
     shingleTableManager.addEntries(docId, shingles);
 
     logger.info("Completed parsing doc. %s.", docAndJobId)
+
+def getCandidateDocs(jobId):
+    jobInfo = "Job id: " + jobId
+    logger.info("Computing candidate docs. %s.", jobInfo)
+
+    shingleTableManager = ShingleTableManager()
+    clusterManager = ClusterManager()
+
+    docList = clusterManager.getDocList()
+    logger.info("Got document list. %s.", jobInfo)
+
+    for docKey in docList:
+        logger.info("Finding matches for docId: %s. %s.", docKey, jobInfo)
+
+        matches = set()
+
+        shingles = shingleTableManager.queryByDocId(docKey)
+        for shingle in shingles:
+            matchingDocs = shingleTableManager.queryByShingle(shingle)
+            for match in matchingDocs:
+                if (match > docKey):
+                    logger.info(
+                        "Candidate docs %s and %s found. Shingle: %s. %s",
+                        docKey,
+                        match,
+                        shingle,
+                        jobInfo)
+                    matches.add(match)
+
+        logger.info("Total %i matching docs for docId: %s. %s.", len(matches), docKey, jobInfo)

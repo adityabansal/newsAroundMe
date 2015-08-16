@@ -87,7 +87,7 @@ class ShingleTableManager:
 
         shingleTable = self.__getTable()
         return (row['docId'] for row in shingleTable.query_2(
-            shingle_eq = shingle))
+            shingle__eq = shingle))
 
     def queryByDocId(self, docId):
         """
@@ -96,5 +96,5 @@ class ShingleTableManager:
 
         shingleTable = self.__getTable()
         return (row['shingle'] for row in shingleTable.query_2(
-            docId_eq = docId,
+            docId__eq = docId,
             index = 'docIdIndex'))

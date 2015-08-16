@@ -39,6 +39,14 @@ class ClusterManager:
         k.key = key;
         k.set_contents_from_string(content)
 
+    def __getObject(self, docKey):
+        k = Key(self.__getBucket());
+        k.key = docKey;
+        return k.get_contents_as_string()
+
     def initNewClusters(self, docList):
         #put doc list
         self.__putObject(NEW_CLUSTER_FOLDER + DOCLIST_FILE, json.dumps(docList))
+
+    def getDocList(self):
+        return json.loads(self.__getObject(NEW_CLUSTER_FOLDER + DOCLIST_FILE))
