@@ -45,6 +45,8 @@ def parseDoc(jobId, docId):
 
     doc = docManager.get(docId)
     shingles = th.getStemmedShingles(doc.content)
+    logger.info("Completed getting shingles. %s.", docAndJobId)
+
     shingleTableManager.addEntries(docId, shingles);
 
     logger.info("Completed parsing doc. %s.", docAndJobId)

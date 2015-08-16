@@ -54,7 +54,7 @@ class ShingleTableManager:
                 RangeKey('docId')
             ], throughput = {
                 'read': 1,
-                'write': 4,
+                'write': 5,
             }, global_indexes = [
                 GlobalAllIndex('docIdIndex', parts = [
                     HashKey('docId'),
@@ -62,7 +62,7 @@ class ShingleTableManager:
                 ],
                 throughput = {
                     'read': 1,
-                    'write': 1,
+                    'write': 5,
                 })
             ],
             connection = getDbConnection(shingleTableConnectionParams))
