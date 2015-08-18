@@ -2,10 +2,13 @@ import logging
 
 from constants import *
 from clusterManager import ClusterManager
+from distanceTableManager import DistanceTableManager
 from doc import Doc
 from docManager import DocManager
+from jobManager import JobManager
 from loggingHelper import *
 from shingleTableManager import ShingleTableManager
+from workerJob import WorkerJob
 import textHelper as th
 
 logger = logging.getLogger('clusteringJobs')
@@ -30,13 +33,23 @@ def computeDocSimScore(doc1, doc2):
            + summarySim*W_SUMMARY_SIM \
            + contentSim*W_CONTENT_SIM;
 
-def compareDocs(doc1Key, doc2Key):
+def compareDocs(jobId, doc1Key, doc2Key):
+    jobInfo = "Doc1 id: " + doc1Key + "Doc2 id: " + doc2Key \
+              + ". Job id: " + jobId;
+    logger.info("Started comparing docs. %s", jobInfo);
+
     docManager = DocManager();
+    distanceTableManager = DistanceTableManager();
 
     doc1 = docManager.get(doc1Key)
     doc2 = docManager.get(doc2Key)
+    score = computeDocSimScore(doc1, doc2);
+    logger.info("Comparision score: %s. %s", str(score), jobInfo);
 
-    return computeDocSimScore(doc1, doc2);
+    distanceTableManager.addEntry(doc1Key, doc2Key, score);
+    logger.info("Added comparision score to distances table. %s", jobInfo);
+
+    logger.info("Completed comparing docs. %s", jobInfo);
 
 def parseDoc(jobId, docId):
     docAndJobId = "Doc id: " + docId + ". Job id: " + jobId;
@@ -54,32 +67,58 @@ def parseDoc(jobId, docId):
 
     logger.info("Completed parsing doc. %s.", docAndJobId)
 
-def getCandidateDocs(jobId):
+def putGetCandidateDocsJobs(jobId):
     jobInfo = "Job id: " + jobId
-    logger.info("Computing candidate docs. %s.", jobInfo)
+    logger.info("Putting get candidate docs job. %s.", jobInfo)
 
     shingleTableManager = ShingleTableManager()
     clusterManager = ClusterManager()
+    jobManager = JobManager()
 
     docList = clusterManager.getDocList()
     logger.info("Got document list. %s.", jobInfo)
 
     for docKey in docList:
-        logger.info("Finding matches for docId: %s. %s.", docKey, jobInfo)
+        job = WorkerJob(
+            JOB_GETCANDIDATEDOCS,
+            { JOBARG_GETCANDIDATEDOCS_DOCID : docKey })
+        jobManager.enqueueJob(job)
+        logging.info(
+            "Put get candidate doc job with jobId: %s for docId: %s. %s",
+            job.jobId,
+            docKey,
+            jobInfo)
 
-        matches = set()
+    logger.info("Completed putting get candidate docs job. %s.", jobInfo)
 
-        shingles = shingleTableManager.queryByDocId(docKey)
-        for shingle in shingles:
-            matchingDocs = shingleTableManager.queryByShingle(shingle)
-            for match in matchingDocs:
-                if (match > docKey):
-                    logger.info(
-                        "Candidate docs %s and %s found. Shingle: %s. %s",
-                        docKey,
-                        match,
-                        shingle,
-                        jobInfo)
-                    matches.add(match)
+def getCandidateDocs(jobId, docId):
+    docAndJobId = "Doc id: " + docId + ". Job id: " + jobId;
+    logger.info("Started get candidate docs job. %s.", docAndJobId)
 
-        logger.info("Total %i matching docs for docId: %s. %s.", len(matches), docKey, jobInfo)
+    matches = set()
+    shingleTableManager = ShingleTableManager()
+    jobManager = JobManager()
+
+    shingles = shingleTableManager.queryByDocId(docId)
+    for shingle in shingles:
+         matchingDocs = shingleTableManager.queryByShingle(shingle)
+         for match in matchingDocs:
+             matches.add(match)
+
+    logger.info("%i matching docs found. %s.", len(matches), docAndJobId)
+    for match in matches:
+        if (match > docId):
+            job = WorkerJob(
+                JOB_COMPAREDOCS,
+                {
+                    JOBARG_COMPAREDOCS_DOC1ID : docId,
+                    JOBARG_COMPAREDOCS_DOC2ID : match
+                })
+            jobManager.enqueueJob(job)
+            logging.info(
+                "Put compare docs job with jobid: %s. compared docId: %s. %s",
+                job.jobId,
+                match,
+                docAndJobId)
+
+    logger.info("Completed get candidate docs job. %s.", docAndJobId)

@@ -48,8 +48,8 @@ def compareTexts(text1, text2):
     return float(len(intersection))/len(union)
 
 def compareTitles(title1, title2):
-    title1Tokens = set(filterStopwords(getStemmedTokens(title1, 2, 3)))
-    title2Tokens = set(filterStopwords(getStemmedTokens(title2, 2, 3)))
+    title1Tokens = set(filterStopwords(getStemmedTokens(title1)))
+    title2Tokens = set(filterStopwords(getStemmedTokens(title2)))
 
     intersection = title1Tokens.intersection(title2Tokens)
     union = title1Tokens.union(title2Tokens)

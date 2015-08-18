@@ -20,6 +20,15 @@ def RunJob(job):
             processLink(job.jobId, job.jobParams[JOBARG_PROCESSLINK_LINKID])
         if job.jobName == JOB_PARSEDOC:
             cj.parseDoc(job.jobId, job.jobParams[JOBARG_PARSEDOC_DOCID])
+        if job.jobName == JOB_GETCANDIDATEDOCS:
+            cj.getCandidateDocs(
+                job.jobId,
+                job.jobParams[JOBARG_GETCANDIDATEDOCS_DOCID])
+        if job.jobName == JOB_COMPAREDOCS:
+            cj.compareDocs(
+                job.jobId,
+                job.jobParams[JOBARG_COMPAREDOCS_DOC1ID],
+                job.jobParams[JOBARG_COMPAREDOCS_DOC2ID])
     except:
         logging.exception('')
 
