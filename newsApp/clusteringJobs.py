@@ -15,8 +15,10 @@ logger = logging.getLogger('clusteringJobs')
 
 # weights. must add up to 1
 W_TITLE_SIM = 0.2
-W_SUMMARY_SIM = 0.4
-W_CONTENT_SIM = 0.4
+W_SUMMARY_SIM = 0.3
+W_CONTENT_SIM = 0.5
+
+SIMSCORE_MIN_THRESHOLD = 0.02
 
 def computeDocSimScore(doc1, doc2):
     titleSim = th.compareTitles(
@@ -46,8 +48,9 @@ def compareDocs(jobId, doc1Key, doc2Key):
     score = computeDocSimScore(doc1, doc2);
     logger.info("Comparision score: %s. %s", str(score), jobInfo);
 
-    distanceTableManager.addEntry(doc1Key, doc2Key, score);
-    logger.info("Added comparision score to distances table. %s", jobInfo);
+    if score > SIMSCORE_MIN_THRESHOLD:
+        distanceTableManager.addEntry(doc1Key, doc2Key, score);
+        logger.info("Added comparision score to distances table. %s", jobInfo);
 
     logger.info("Completed comparing docs. %s", jobInfo);
 

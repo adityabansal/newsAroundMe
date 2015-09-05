@@ -1,5 +1,8 @@
+import time
+
 from constants import *
 from clusterManager import ClusterManager
+from distanceTableManager import DistanceTableManager
 from docManager import DocManager
 from loggingHelper import *
 from jobManager import JobManager
@@ -16,12 +19,16 @@ def startClustering():
     """
 
     clusterManager = ClusterManager()
+    distanceTableManager = DistanceTableManager()
     docManager = DocManager()
     jobManager = JobManager()
     shingleTableManager = ShingleTableManager()
 
     shingleTableManager.createFreshTable();
     logging.info("Cleaned up the shingle table");
+
+    distanceTableManager.createFreshTable();
+    logging.info("Cleaned up the distance table");
 
     docKeys = list(docManager.getNewDocKeys(CLUSTERING_DOC_AGE_LIMIT));
     logging.info("Got docs for clustering");
@@ -39,6 +46,19 @@ def startClustering():
             "Parse doc job put for docId: %s. Job id: %s",
             docKey,
             parseDocJob.jobId)
+
+    logging.info("Sleeping to ensure that all parse doc jobs are enqueued.")
+    time.sleep(10)
+
+    for docKey in docKeys:
+        job = WorkerJob(
+            JOB_GETCANDIDATEDOCS,
+            { JOBARG_GETCANDIDATEDOCS_DOCID : docKey })
+        jobManager.enqueueJob(job)
+        logging.info(
+            "Put get candidate doc job with jobId: %s for docId: %s",
+            job.jobId,
+            docKey)
 
 if __name__ == '__main__':
     startClustering()
