@@ -68,3 +68,14 @@ class DistanceTableManager:
             'from' : min(docId1, docId2),
             'to' : max(docId1, docId2),
             'distance' : str(distance)})
+
+    def getEntries(self):
+        """
+        Get the distance entries.
+        Return results in a generator
+        """
+
+        table = self.__getTable();
+        scanResults = table.scan();
+        return ((result['from'], result['to'], eval(result['distance']))
+                for result in scanResults)

@@ -5,10 +5,12 @@ from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 
 from dbhelper import *
+from cluster import Cluster
 
 #constants
 NEW_CLUSTER_FOLDER = "new/"
 DOCLIST_FILE = "docList"
+CLUSTERS_FILE = "clusters"
 
 class ClusterManager:
     """
@@ -45,8 +47,18 @@ class ClusterManager:
         return k.get_contents_as_string()
 
     def initNewClusters(self, docList):
-        #put doc list
+        # initialize doc list
         self.__putObject(NEW_CLUSTER_FOLDER + DOCLIST_FILE, json.dumps(docList))
+
+        # initizalize each point as separate cluster
+        clusters = [Cluster([docId]) for docId in docList]
+        self.putClusters(clusters)
 
     def getDocList(self):
         return json.loads(self.__getObject(NEW_CLUSTER_FOLDER + DOCLIST_FILE))
+
+    def putClusters(self, clusters):
+        self.__putObject(NEW_CLUSTER_FOLDER + CLUSTERS_FILE, str(clusters))
+
+    def getClusters(self):
+        return eval(self.__getObject(NEW_CLUSTER_FOLDER + CLUSTERS_FILE))

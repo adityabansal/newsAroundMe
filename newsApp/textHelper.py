@@ -45,6 +45,7 @@ def compareTexts(text1, text2):
 
     intersection = text1ShinglesSet.intersection(text2ShinglesSet)
     shorterLen = min(len(text1ShinglesSet), len(text2ShinglesSet))
+
     return float(len(intersection))/shorterLen
 
 def compareTitles(title1, title2):
@@ -53,4 +54,5 @@ def compareTitles(title1, title2):
 
     intersection = title1Tokens.intersection(title2Tokens)
     shorterLen = min(len(title1Tokens), len(title2Tokens))
+
     return float(len(intersection))/shorterLen

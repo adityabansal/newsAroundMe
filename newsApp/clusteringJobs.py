@@ -1,3 +1,4 @@
+import itertools
 import logging
 
 from constants import *
@@ -70,30 +71,6 @@ def parseDoc(jobId, docId):
 
     logger.info("Completed parsing doc. %s.", docAndJobId)
 
-def putGetCandidateDocsJobs(jobId):
-    jobInfo = "Job id: " + jobId
-    logger.info("Putting get candidate docs job. %s.", jobInfo)
-
-    shingleTableManager = ShingleTableManager()
-    clusterManager = ClusterManager()
-    jobManager = JobManager()
-
-    docList = clusterManager.getDocList()
-    logger.info("Got document list. %s.", jobInfo)
-
-    for docKey in docList:
-        job = WorkerJob(
-            JOB_GETCANDIDATEDOCS,
-            { JOBARG_GETCANDIDATEDOCS_DOCID : docKey })
-        jobManager.enqueueJob(job)
-        logging.info(
-            "Put get candidate doc job with jobId: %s for docId: %s. %s",
-            job.jobId,
-            docKey,
-            jobInfo)
-
-    logger.info("Completed putting get candidate docs job. %s.", jobInfo)
-
 def getCandidateDocs(jobId, docId):
     docAndJobId = "Doc id: " + docId + ". Job id: " + jobId;
     logger.info("Started get candidate docs job. %s.", docAndJobId)
@@ -125,3 +102,76 @@ def getCandidateDocs(jobId, docId):
                 docAndJobId)
 
     logger.info("Completed get candidate docs job. %s.", docAndJobId)
+
+## Agglomerative clustering logic ##
+MIN_CLUSTER_SIMILARITY = 0.1
+
+def _getDocDistance(distances, docId1, docId2):
+    first = min(docId1, docId2)
+    second = max(docId1, docId2)
+
+    try:
+        match = next(d for d in distances
+                     if (d[0] == first) & (d[1] == second))
+        return match[2]
+    except StopIteration:
+        return 0
+
+def _getClusterDistance(distances, cluster1, cluster2):
+    dPairs = [_getDocDistance(distances, x[0], x[1])
+                 for x in itertools.product(cluster1, cluster2)]
+
+    return sum(dPairs)/len(dPairs)
+
+def _getClosestClusters(clusters, distances):
+    maxSimilarity = 0
+    result = None
+
+    for (c1, c2) in itertools.combinations(clusters, 2):
+        d = _getClusterDistance(distances, c1, c2)
+        if d >= maxSimilarity:
+            maxSimilarity = d
+            result = (c1, c2, d)
+
+    return result
+
+def _mergeClusters(clusters, cluster1, cluster2):
+    mergedCluster = cluster1 | cluster2
+    clusters.remove(cluster1)
+    clusters.remove(cluster2)
+    clusters.append(mergedCluster)
+
+    return clusters
+
+def clusterDocs(jobId):
+    jobInfo = "Job id: " + jobId
+    logger.info("Started clustering docs. %s.", jobInfo)
+
+    distanceTableManager = DistanceTableManager()
+    clusterManager = ClusterManager()
+
+    distances = list(distanceTableManager.getEntries())
+    logger.info("Got the pairwise distances. %s.", jobInfo)
+
+    clusters = clusterManager.getClusters()
+    logger.info("Got the clusters. %s.", jobInfo)
+
+    logger.info("Started clustering. %s.", jobInfo)
+    while True:
+        (cluster1, cluster2, similarity) = _getClosestClusters(
+            clusters,
+            distances)
+        if similarity > MIN_CLUSTER_SIMILARITY:
+            clusters = _mergeClusters(clusters, cluster1, cluster2)
+            logger.info(
+                "Merged clusters %s and %s with score %s. %s",
+                 cluster1,
+                 cluster2,
+                 similarity,
+                 jobInfo)
+        else:
+            break;
+    logger.info("Finished clustering. %s.", jobInfo)
+
+    clusterManager.putClusters(clusters)
+    logger.info("Put the computed clusters. %s.", jobInfo)
