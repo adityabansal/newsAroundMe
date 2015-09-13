@@ -54,7 +54,16 @@ class DistanceTableManager:
             ], throughput = {
                 'read': 1,
                 'write': 1,
-            },
+            }, global_indexes = [
+                GlobalAllIndex('reverseIndex', parts = [
+                    HashKey('to'),
+                    RangeKey('from')
+                ],
+                throughput = {
+                    'read': 1,
+                    'write': 1,
+                })
+            ],
             connection = getDbConnection(tableConnectionParams))
 
     def addEntry(self, docId1, docId2, distance):
