@@ -104,7 +104,7 @@ def getCandidateDocs(jobId, docId):
     logger.info("Completed get candidate docs job. %s.", docAndJobId)
 
 ## Agglomerative clustering logic ##
-MIN_CLUSTER_SIMILARITY = 0.1
+MIN_CLUSTER_SIMILARITY = 0.08
 
 def _getDocDistance(distances, docId1, docId2):
     first = min(docId1, docId2)
@@ -150,6 +150,9 @@ def clusterDocs(jobId):
     distanceTableManager = DistanceTableManager()
     clusterManager = ClusterManager()
 
+    clusterManager.setState(CLUSTER_STATE_STARTED)
+    logger.info("Set clustering state as started. %s.", jobInfo)
+
     distances = list(distanceTableManager.getEntries())
     logger.info("Got the pairwise distances. %s.", jobInfo)
 
@@ -175,3 +178,6 @@ def clusterDocs(jobId):
 
     clusterManager.putClusters(clusters)
     logger.info("Put the computed clusters. %s.", jobInfo)
+
+    clusterManager.setState(CLUSTER_STATE_COMPLETED)
+    logger.info("Set clustering state as completed. %s.", jobInfo)

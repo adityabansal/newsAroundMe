@@ -5,6 +5,7 @@ import time
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 
+from constants import *
 from dbhelper import *
 from cluster import Cluster
 
@@ -12,6 +13,7 @@ from cluster import Cluster
 NEW_CLUSTER_FOLDER = "new/"
 DOCLIST_FILE = "docList"
 CLUSTERS_FILE = "clusters"
+STATE_FILE = "state"
 
 class ClusterManager:
     """
@@ -66,6 +68,9 @@ class ClusterManager:
         self.__copyObject(
             NEW_CLUSTER_FOLDER + CLUSTERS_FILE,
             archiveFolderName + CLUSTERS_FILE)
+        self.__copyObject(
+            NEW_CLUSTER_FOLDER + STATE_FILE,
+            archiveFolderName + STATE_FILE)
 
     def __cleanupOldDocsFromCluster(self, expiredDocs):
         clusters = self.getClusters()
@@ -82,6 +87,9 @@ class ClusterManager:
         clusters = [Cluster([docId]) for docId in docList]
         self.putClusters(clusters)
 
+        # set state
+        self.setState(CLUSTER_STATE_NEW)
+
     def initNewIncrementalCluster(self, docList):
         oldDocList = self.getDocList()
 
@@ -96,6 +104,7 @@ class ClusterManager:
 
         self.putDocList(docList)
         self.__cleanupOldDocsFromCluster(expiredDocs)
+        self.setState(CLUSTER_STATE_NEW)
 
         return (list(newDocs), list(retainedDocs), list(expiredDocs))
 
@@ -110,3 +119,9 @@ class ClusterManager:
 
     def getClusters(self):
         return eval(self.__getObject(NEW_CLUSTER_FOLDER + CLUSTERS_FILE))
+
+    def setState(self, state):
+        self.__putObject(NEW_CLUSTER_FOLDER + STATE_FILE, state)
+
+    def getState(self):
+        return self.__getObject(NEW_CLUSTER_FOLDER + STATE_FILE)

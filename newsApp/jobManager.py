@@ -37,4 +37,9 @@ class JobManager:
         dequeuedJob.deserializeFromString(dequeuedMessage);
         return dequeuedJob
 
+    def count(self):
+        """
+        Return the count of messages in queue.
+        """
 
+        return self.queue.count();
