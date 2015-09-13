@@ -1,5 +1,6 @@
 import os
 import json
+import time
 
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
@@ -46,13 +47,60 @@ class ClusterManager:
         k.key = docKey;
         return k.get_contents_as_string()
 
+    def __copyObject(self, fromKey, toKey):
+        bucket = self.__getBucket()
+        source_key = bucket.get_key(fromKey)
+
+        source_key.copy(bucket, toKey)
+
+    def __archiveCluster(self):
+        """
+        Save a copy of current clusters in a new folder.
+        """
+
+        archiveFolderName = str(int(time.time())) + '/'
+
+        self.__copyObject(
+            NEW_CLUSTER_FOLDER + DOCLIST_FILE,
+            archiveFolderName + DOCLIST_FILE)
+        self.__copyObject(
+            NEW_CLUSTER_FOLDER + CLUSTERS_FILE,
+            archiveFolderName + CLUSTERS_FILE)
+
+    def __cleanupOldDocsFromCluster(self, expiredDocs):
+        clusters = self.getClusters()
+
+        newClusters = [(cluster - expiredDocs) for cluster in clusters
+                    if (cluster - expiredDocs)]
+        self.putClusters(newClusters)
+
     def initNewClusters(self, docList):
         # initialize doc list
-        self.__putObject(NEW_CLUSTER_FOLDER + DOCLIST_FILE, json.dumps(docList))
+        self.putDocList(docList)
 
         # initizalize each point as separate cluster
         clusters = [Cluster([docId]) for docId in docList]
         self.putClusters(clusters)
+
+    def initNewIncrementalCluster(self, docList):
+        oldDocList = self.getDocList()
+
+        docSet = set(docList)
+        oldDocSet = set(oldDocList)
+
+        newDocs = docSet - oldDocSet
+        retainedDocs = docSet.intersection(oldDocSet)
+        expiredDocs = oldDocSet - docSet
+
+        self.__archiveCluster()
+
+        self.putDocList(docList)
+        self.__cleanupOldDocsFromCluster(expiredDocs)
+
+        return (list(newDocs), list(retainedDocs), list(expiredDocs))
+
+    def putDocList(self, docList):
+        self.__putObject(NEW_CLUSTER_FOLDER + DOCLIST_FILE, json.dumps(docList))
 
     def getDocList(self):
         return json.loads(self.__getObject(NEW_CLUSTER_FOLDER + DOCLIST_FILE))
