@@ -1,6 +1,7 @@
 #background worker to do jobs
 
 import time
+import threading
 
 from constants import *
 from loggingHelper import *
@@ -34,7 +35,14 @@ def RunJob(job):
     except:
         logging.exception('')
 
-def DequeueAndExecuteJob():
+class JobThread(threading.Thread):
+   def __init__ (self, job):
+      threading.Thread.__init__(self)
+      self.job = job
+   def run(self):
+      RunJob(self.job)
+
+def DequeueAndStartJob():
     """
     Dequeue a job from the queue and start executing it.
     """
@@ -54,10 +62,19 @@ def DequeueAndExecuteJob():
         job.jobId,
         job.jobName,
         str(job.jobParams))
-    RunJob(job)
+    jobThread = JobThread(job)
+    jobThread.start()
 
-# keep looping over jobs and executing them
+MAX_JOB_THREADS = 5
+
 if __name__ == '__main__':
     InitLogging()
     while (True):
-        DequeueAndExecuteJob()
+        nThreads = threading.activeCount()
+        logging.info("No of threads are: %i", nThreads)
+
+        if nThreads < MAX_JOB_THREADS:
+            DequeueAndStartJob()
+        else:
+            logging.info("Too many threads. Sleeping")
+            time.sleep(5)
