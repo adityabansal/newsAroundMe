@@ -65,12 +65,13 @@ def DequeueAndStartJob():
     jobThread = JobThread(job)
     jobThread.start()
 
-MAX_JOB_THREADS = 5
+MAX_JOB_THREADS = 10
 
 if __name__ == '__main__':
     InitLogging()
     while (True):
-        nThreads = threading.activeCount()
+        #subtracting 1 because current parent thread is also counted
+        nThreads = threading.activeCount() - 1
         logging.info("No of threads are: %i", nThreads)
 
         if nThreads < MAX_JOB_THREADS:

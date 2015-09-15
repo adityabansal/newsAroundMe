@@ -24,19 +24,24 @@ def startClustering():
     jobManager = JobManager()
     shingleTableManager = ShingleTableManager()
 
-    shingleTableManager.createFreshTable();
-    logging.info("Cleaned up the shingle table");
+    #shingleTableManager.createFreshTable();
+    #logging.info("Cleaned up the shingle table");
 
-    distanceTableManager.createFreshTable();
-    logging.info("Cleaned up the distance table");
+    #distanceTableManager.createFreshTable();
+    #logging.info("Cleaned up the distance table");
 
     docKeys = list(docManager.getNewDocKeys(CLUSTERING_DOC_AGE_LIMIT));
     logging.info("Got docs for clustering");
 
-    clusterManager.initNewClusters(docKeys);
+    (newDocs, retainedDocs, expiredDocs) = clusterManager.initNewClusters(docKeys);
     logging.info("Initialized new cluster");
     logging.info("Number of docs to cluster are: %i", len(docKeys))
+    # log more about nNew, nRetained, nExpired docs
 
+    # cleanup old docs from shingles table
+    # cleanup old docs from distances table
+
+    # parse only the new docs
     for docKey in docKeys:
         parseDocJob = WorkerJob(
             JOB_PARSEDOC,
@@ -50,6 +55,7 @@ def startClustering():
     logging.info("Sleeping to ensure that all parse doc jobs are enqueued.")
     time.sleep(10)
 
+    # get candidate docs only for the new docs. remove doc1 < doc2 check
     for docKey in docKeys:
         job = WorkerJob(
             JOB_GETCANDIDATEDOCS,
