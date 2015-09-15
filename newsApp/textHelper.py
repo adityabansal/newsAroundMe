@@ -46,7 +46,10 @@ def compareTexts(text1, text2):
     intersection = text1ShinglesSet.intersection(text2ShinglesSet)
     shorterLen = min(len(text1ShinglesSet), len(text2ShinglesSet))
 
-    return float(len(intersection))/shorterLen
+    if shorterLen == 0:
+        return 0
+    else:
+        return float(len(intersection))/shorterLen
 
 def compareTitles(title1, title2):
     title1Tokens = set(filterStopwords(getStemmedTokens(title1)))
@@ -55,4 +58,7 @@ def compareTitles(title1, title2):
     intersection = title1Tokens.intersection(title2Tokens)
     shorterLen = min(len(title1Tokens), len(title2Tokens))
 
-    return float(len(intersection))/shorterLen
+    if  shorterLen == 0:
+        return 0
+    else:
+        return float(len(intersection))/shorterLen
