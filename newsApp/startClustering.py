@@ -13,6 +13,37 @@ InitLogging()
 
 CLUSTERING_DOC_AGE_LIMIT = 1
 
+def adjustThroughputAfterParsing(jobManager, shingleTableManager):
+    """
+    Reduce write throughput on shingle table after parsing is done
+    """
+
+    job = WorkerJob(
+        JOB_UPDATEDBTHROUGHPUT,
+        {
+            JOB_UPDATEDBTHROUGHPUT_CONNECTIONSTRING : shingleTableManager.tableConnString,
+            JOB_UPDATEDBTHROUGHPUT_READTHOUGHPUT: 9,
+            JOB_UPDATEDBTHROUGHPUT_WRITETHOUGHPUT: 10,
+            JOB_UPDATEDBTHROUGHPUT_INDEXNAME: None
+        })
+    jobManager.enqueueJob(job)
+    logging.info(
+        "Put job to reduce shingleTable write throughput. jobId: %s",
+        job.jobId)
+
+    job = WorkerJob(
+        JOB_UPDATEDBTHROUGHPUT,
+        {
+            JOB_UPDATEDBTHROUGHPUT_CONNECTIONSTRING : shingleTableManager.tableConnString,
+            JOB_UPDATEDBTHROUGHPUT_READTHOUGHPUT: 1,
+            JOB_UPDATEDBTHROUGHPUT_WRITETHOUGHPUT: 10,
+            JOB_UPDATEDBTHROUGHPUT_INDEXNAME: 'docIdIndex'
+        })
+    jobManager.enqueueJob(job)
+    logging.info(
+        "Put job to reduce shingleTable secondary write throughput. jobId: %s",
+        job.jobId)
+
 def startClustering():
     """
     Start clustering the docs.
@@ -49,6 +80,8 @@ def startClustering():
 
     logging.info("Sleeping to ensure that all parse doc jobs are enqueued.")
     time.sleep(10)
+
+    adjustThroughputAfterParsing(jobManager, shingleTableManager)
 
     for docKey in docKeys:
         job = WorkerJob(

@@ -10,6 +10,7 @@ from workerJob import WorkerJob
 from rssProcessor import *
 from linkProcessor import *
 import clusteringJobs as cj
+import dbJobs as dj
 
 def RunJob(job):
     "Run a job taking care of error handling."
@@ -32,6 +33,13 @@ def RunJob(job):
                 job.jobParams[JOBARG_COMPAREDOCS_DOC2ID])
         if job.jobName == JOB_CLUSTERDOCS:
             cj.clusterDocs(job.jobId)
+        if job.jobName == JOB_UPDATEDBTHROUGHPUT:
+            dj.updateDbThroughput(
+                job.jobId,
+                job.jobParams[JOB_UPDATEDBTHROUGHPUT_CONNECTIONSTRING],
+                job.jobParams[JOB_UPDATEDBTHROUGHPUT_READTHOUGHPUT],
+                job.jobParams[JOB_UPDATEDBTHROUGHPUT_WRITETHOUGHPUT],
+                job.jobParams[JOB_UPDATEDBTHROUGHPUT_INDEXNAME])
     except:
         logging.exception('')
 
@@ -57,11 +65,9 @@ def DequeueAndStartJob():
         return
 
     logging.info(
-        "Job found. Starting it now." + \
-        "Job id: %s. Job Name: %s. Job Params: %s.",
+        "Job found. Starting it now." + "Job id: %s. Job Name: %s.",
         job.jobId,
-        job.jobName,
-        str(job.jobParams))
+        job.jobName)
     jobThread = JobThread(job)
     jobThread.start()
 
