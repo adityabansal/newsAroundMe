@@ -43,13 +43,6 @@ def RunJob(job):
     except:
         logging.exception('')
 
-class JobThread(threading.Thread):
-   def __init__ (self, job):
-      threading.Thread.__init__(self)
-      self.job = job
-   def run(self):
-      RunJob(self.job)
-
 def DequeueAndStartJob():
     """
     Dequeue a job from the queue and start executing it.
@@ -60,16 +53,20 @@ def DequeueAndStartJob():
     job = jobManager.dequeueJob()
 
     if job is None:
-        logging.info("No job found. Sleeping for 30 seconds")
-        time.sleep(30)
+        logging.info("No job found.")
         return
 
     logging.info(
         "Job found. Starting it now." + "Job id: %s. Job Name: %s.",
         job.jobId,
         job.jobName)
-    jobThread = JobThread(job)
-    jobThread.start()
+    RunJob(job)
+
+class JobThread(threading.Thread):
+   def __init__ (self):
+      threading.Thread.__init__(self)
+   def run(self):
+      DequeueAndStartJob()
 
 MAX_JOB_THREADS = 10
 
@@ -81,7 +78,8 @@ if __name__ == '__main__':
         logging.info("No of threads are: %i", nThreads)
 
         if nThreads < MAX_JOB_THREADS:
-            DequeueAndStartJob()
+            jobThread = JobThread()
+            jobThread.start()
         else:
             logging.info("Too many threads. Sleeping")
             time.sleep(5)
