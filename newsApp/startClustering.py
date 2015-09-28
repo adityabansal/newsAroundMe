@@ -79,9 +79,7 @@ def startClustering():
             parseDocJob.jobId)
 
     logging.info("Sleeping to ensure that all parse doc jobs are enqueued.")
-    time.sleep(10)
-
-    adjustThroughputAfterParsing(jobManager, shingleTableManager)
+    time.sleep(10);
 
     for docKey in docKeys:
         job = WorkerJob(
@@ -92,6 +90,8 @@ def startClustering():
             "Put get candidate doc job with jobId: %s for docId: %s",
             job.jobId,
             docKey)
+
+    adjustThroughputAfterParsing(jobManager, shingleTableManager)
 
 if __name__ == '__main__':
     startClustering()
