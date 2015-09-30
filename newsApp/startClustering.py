@@ -22,8 +22,8 @@ def adjustThroughputAfterParsing(jobManager, shingleTableManager):
         JOB_UPDATEDBTHROUGHPUT,
         {
             JOB_UPDATEDBTHROUGHPUT_CONNECTIONSTRING : shingleTableManager.tableConnString,
-            JOB_UPDATEDBTHROUGHPUT_READTHOUGHPUT: 9,
-            JOB_UPDATEDBTHROUGHPUT_WRITETHOUGHPUT: 10,
+            JOB_UPDATEDBTHROUGHPUT_READTHOUGHPUT: 14,
+            JOB_UPDATEDBTHROUGHPUT_WRITETHOUGHPUT: 5,
             JOB_UPDATEDBTHROUGHPUT_INDEXNAME: None
         })
     jobManager.enqueueJob(job)
@@ -36,7 +36,7 @@ def adjustThroughputAfterParsing(jobManager, shingleTableManager):
         {
             JOB_UPDATEDBTHROUGHPUT_CONNECTIONSTRING : shingleTableManager.tableConnString,
             JOB_UPDATEDBTHROUGHPUT_READTHOUGHPUT: 1,
-            JOB_UPDATEDBTHROUGHPUT_WRITETHOUGHPUT: 10,
+            JOB_UPDATEDBTHROUGHPUT_WRITETHOUGHPUT: 5,
             JOB_UPDATEDBTHROUGHPUT_INDEXNAME: 'docIdIndex'
         })
     jobManager.enqueueJob(job)

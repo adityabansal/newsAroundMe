@@ -9,3 +9,6 @@ def InitLogging():
     """
 
     logging.basicConfig(format='%(module)s:%(levelname)s:%(message)s', level=logging.INFO)
+
+    # suppress all logs except critical ones from boto
+    logging.getLogger('boto').setLevel(logging.CRITICAL)
