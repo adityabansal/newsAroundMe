@@ -82,4 +82,4 @@ if __name__ == '__main__':
             jobThread.start()
         else:
             logging.info("Too many threads. Sleeping")
-            time.sleep(5)
+            time.sleep(1)
