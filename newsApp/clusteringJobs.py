@@ -123,15 +123,23 @@ def _getClusterDistance(distances, cluster1, cluster2):
 
     return sum(dPairs)/len(dPairs)
 
-def _getClosestClusters(clusters, distances):
-    maxSimilarity = 0
-    result = None
+def _getCloseClusters(clusters, distances):
+    result = []
 
     for (c1, c2) in itertools.combinations(clusters, 2):
         d = _getClusterDistance(distances, c1, c2)
-        if d >= maxSimilarity:
-            maxSimilarity = d
-            result = (c1, c2, d)
+        if d > MIN_CLUSTER_SIMILARITY:
+            #insert the close clusters at appropiate place in list
+            #the list should be sorted with decreasing cluster similarity
+            nCloser = 0;
+            for i in range(0,len(result)):
+                currentValue = result[i][2];
+                if currentValue > d:
+                    nCloser += 1;
+                else:
+                    break;
+
+            result.insert(nCloser, (c1, c2, d))
 
     return result
 
@@ -142,6 +150,29 @@ def _mergeClusters(clusters, cluster1, cluster2):
     clusters.append(mergedCluster)
 
     return clusters
+
+def clusterHierarchical(jobInfo, clusters, distances):
+    passNumber = 1
+    while  True:
+        closeClusters = _getCloseClusters(clusters, distances)
+        touchedClusters = []
+
+        for (c1, c2, d) in closeClusters:
+            if c1 not in touchedClusters and c2 not in touchedClusters:
+                touchedClusters.append(c1)
+                touchedClusters.append(c2)
+                clusters = _mergeClusters(clusters, c1, c2)
+                logger.info(
+                    "Pass %i. Merged clusters %s and %s with score %s. %s",
+                    passNumber,
+                    c1,
+                    c2,
+                    d,
+                    jobInfo)
+
+        if len(closeClusters) == 0:
+            break;
+        passNumber += 1;
 
 def clusterDocs(jobId):
     jobInfo = "Job id: " + jobId
@@ -160,20 +191,7 @@ def clusterDocs(jobId):
     logger.info("Got the clusters. %s.", jobInfo)
 
     logger.info("Started clustering. %s.", jobInfo)
-    while True:
-        (cluster1, cluster2, similarity) = _getClosestClusters(
-            clusters,
-            distances)
-        if similarity > MIN_CLUSTER_SIMILARITY:
-            clusters = _mergeClusters(clusters, cluster1, cluster2)
-            logger.info(
-                "Merged clusters %s and %s with score %s. %s",
-                 cluster1,
-                 cluster2,
-                 similarity,
-                 jobInfo)
-        else:
-            break;
+    clusterHierarchical(jobInfo, clusters, distances)
     logger.info("Finished clustering. %s.", jobInfo)
 
     clusterManager.putClusters(clusters)
