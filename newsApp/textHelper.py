@@ -30,6 +30,9 @@ def filterStopwords(tokens):
     return [t for t in tokens if not t in stopwords.words('english')];
 
 def getStemmedShingles(text, minLength, maxLength):
+    if text is None:
+        return [];
+
     tokens = filterStopwords(getStemmedTokens(text));
     shingles = [];
 
