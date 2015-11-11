@@ -25,3 +25,7 @@ class ShingleTableManagerTests(unittest.TestCase):
         #query by docId
         result = testShingleTableManager.queryByDocId('testDoc1')
         self.failUnless(result, ['a', 'b', 'c'])
+
+        #delete by docId
+        testShingleTableManager.cleanUpDocShingles('testDoc1')
+        self.failUnless(result, [])

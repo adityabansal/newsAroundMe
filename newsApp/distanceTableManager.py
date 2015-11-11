@@ -88,3 +88,26 @@ class DistanceTableManager:
         scanResults = table.scan();
         return ((result['from'], result['to'], eval(result['distance']))
                 for result in scanResults)
+
+    def cleanUpDoc(self, docId):
+        """
+        Cleanup a document from the distance table
+        """
+
+        docEntries = self.__queryByDocId(docId)
+
+        table = self.__getTable();
+        with table.batch_write() as batch:
+            for entry in docEntries:
+                batch.delete_item(**{
+                    'from': entry['from'],
+                    'to': entry['to']
+                })
+
+    def __queryByDocId(self, docId):
+        table = self.__getTable();
+
+        entries = list(table.query_2(from__eq = docId)) +\
+            list(table.query_2(to__eq = docId, index = 'reverseIndex'))
+
+        return entries

@@ -87,19 +87,18 @@ def getCandidateDocs(jobId, docId):
 
     logger.info("%i matching docs found. %s.", len(matches), docAndJobId)
     for match in matches:
-        if (match > docId):
-            job = WorkerJob(
-                JOB_COMPAREDOCS,
-                {
-                    JOBARG_COMPAREDOCS_DOC1ID : docId,
-                    JOBARG_COMPAREDOCS_DOC2ID : match
-                })
-            jobManager.enqueueJob(job)
-            logging.info(
-                "Put compare docs job with jobid: %s. compared docId: %s. %s",
-                job.jobId,
-                match,
-                docAndJobId)
+        job = WorkerJob(
+            JOB_COMPAREDOCS,
+            {
+                JOBARG_COMPAREDOCS_DOC1ID : docId,
+                JOBARG_COMPAREDOCS_DOC2ID : match
+            })
+        jobManager.enqueueJob(job)
+        logging.info(
+            "Put compare docs job with jobid: %s. compared docId: %s. %s",
+            job.jobId,
+            match,
+            docAndJobId)
 
     logger.info("Completed get candidate docs job. %s.", docAndJobId)
 

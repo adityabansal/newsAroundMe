@@ -98,3 +98,15 @@ class ShingleTableManager:
         return (row['shingle'] for row in shingleTable.query_2(
             docId__eq = docId,
             index = 'docIdIndex'))
+
+    def cleanUpDocShingles(self, docId):
+        """
+        Cleanup all shingles of doc.
+        """
+
+        shingles = self.queryByDocId(docId)
+        shingleTable = self.__getTable()
+
+        with shingleTable.batch_write() as batch:
+            for shingle in shingles:
+                batch.delete_item(docId=docId, shingle=shingle)
