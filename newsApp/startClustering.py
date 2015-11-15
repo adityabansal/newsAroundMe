@@ -1,3 +1,5 @@
+import getopt
+import sys
 import time
 
 from constants import *
@@ -158,4 +160,15 @@ def startIncrementalClustering():
     putGetCandidateDocsJobs(jobManager, newDocs);
 
 if __name__ == '__main__':
+    if len(sys.argv) > 1:
+        try:
+            opts, args = getopt.getopt(sys.argv[1:], "i", ["incremental"])
+        except getopt.GetoptError as err:
+            print str(err)
+            sys.exit(2)
+        for o, a in opts:
+            if o in ("-i", "--incremental"):
+                startIncrementalClustering()
+                sys.exit()
+
     startClustering()
