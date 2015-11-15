@@ -55,6 +55,24 @@ def compareDocs(jobId, doc1Key, doc2Key):
 
     logger.info("Completed comparing docs. %s", jobInfo);
 
+def cleanUpDocShingles(jobId, docId):
+    docAndJobId = "Doc id: " + docId + ". Job id: " + jobId;
+    logger.info("Started cleaning up doc shingles. %s.", docAndJobId)
+
+    shingleTableManager = ShingleTableManager()
+    shingleTableManager.cleanUpDocShingles(docId)
+
+    logger.info("Completed cleaning up doc shingles. %s.", docAndJobId)
+
+def cleanUpDocDistances(jobId, docId):
+    docAndJobId = "Doc id: " + docId + ". Job id: " + jobId;
+    logger.info("Started cleaning up doc distances. %s.", docAndJobId)
+
+    distanceTableManager = DistanceTableManager()
+    distanceTableManager.cleanUpDoc(docId)
+
+    logger.info("Completed cleaning up doc distances. %s.", docAndJobId)
+
 def parseDoc(jobId, docId):
     docAndJobId = "Doc id: " + docId + ". Job id: " + jobId;
     logger.info("Started parsing doc. %s.", docAndJobId)

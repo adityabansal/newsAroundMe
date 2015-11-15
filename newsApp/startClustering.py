@@ -44,6 +44,50 @@ def adjustThroughputAfterParsing(jobManager, shingleTableManager):
         "Put job to reduce shingleTable secondary write throughput. jobId: %s",
         job.jobId)
 
+def putParseDocJobs(jobManager, docKeys):
+    for docKey in docKeys:
+        parseDocJob = WorkerJob(
+            JOB_PARSEDOC,
+            { JOBARG_PARSEDOC_DOCID : docKey})
+        jobManager.enqueueJob(parseDocJob)
+        logging.info(
+            "Parse doc job put for docId: %s. Job id: %s",
+            docKey,
+            parseDocJob.jobId)
+
+def putGetCandidateDocsJobs(jobManager, docKeys):
+    for docKey in docKeys:
+        job = WorkerJob(
+            JOB_GETCANDIDATEDOCS,
+            { JOBARG_GETCANDIDATEDOCS_DOCID : docKey })
+        jobManager.enqueueJob(job)
+        logging.info(
+            "Put get candidate doc job with jobId: %s for docId: %s",
+            job.jobId,
+            docKey)
+
+def putCleanUpDocShinglesJobs(jobManager, docKeys):
+    for docKey in docKeys:
+        job = WorkerJob(
+            JOB_CLEANUPDOCSHINGLES,
+            { JOBARG_CLEANUPDOCSHINGLES_DOCID : docKey})
+        jobManager.enqueueJob(job)
+        logging.info(
+            "Put cleanup doc shingles job for docId: %s. Job id: %s",
+            docKey,
+            job.jobId)
+
+def putCleanUpDocDistancesJobs(jobManager, docKeys):
+    for docKey in docKeys:
+        job = WorkerJob(
+            JOB_CLEANUPDOCDISTANCES,
+            { JOBARG_CLEANUPDOCDISTANCES_DOCID : docKey})
+        jobManager.enqueueJob(job)
+        logging.info(
+            "Put cleanup doc distances job for docId: %s. Job id: %s",
+            docKey,
+            job.jobId)
+
 def startClustering():
     """
     Start clustering the docs.
@@ -68,30 +112,50 @@ def startClustering():
     logging.info("Initialized new cluster");
     logging.info("Number of docs to cluster are: %i", len(docKeys))
 
-    for docKey in docKeys:
-        parseDocJob = WorkerJob(
-            JOB_PARSEDOC,
-            { JOBARG_PARSEDOC_DOCID : docKey})
-        jobManager.enqueueJob(parseDocJob)
-        logging.info(
-            "Parse doc job put for docId: %s. Job id: %s",
-            docKey,
-            parseDocJob.jobId)
+    putParseDocJobs(jobManager, docKeys);
 
     logging.info("Sleeping to ensure that all parse doc jobs are enqueued.")
     time.sleep(10);
 
-    for docKey in docKeys:
-        job = WorkerJob(
-            JOB_GETCANDIDATEDOCS,
-            { JOBARG_GETCANDIDATEDOCS_DOCID : docKey })
-        jobManager.enqueueJob(job)
-        logging.info(
-            "Put get candidate doc job with jobId: %s for docId: %s",
-            job.jobId,
-            docKey)
+    putGetCandidateDocsJobs(jobManager, docKeys);
 
     adjustThroughputAfterParsing(jobManager, shingleTableManager)
+
+def startIncrementalClustering():
+    """
+    Start incremental clustering using clusters in previous run of the docs.
+    """
+
+    clusterManager = ClusterManager()
+    distanceTableManager = DistanceTableManager()
+    docManager = DocManager()
+    jobManager = JobManager()
+    shingleTableManager = ShingleTableManager()
+
+    docKeys = list(docManager.getNewDocKeys(CLUSTERING_DOC_AGE_LIMIT));
+    logging.info("Got docs for clustering");
+
+    (newDocs, retainedDocs, expiredDocs) = \
+        clusterManager.initNewIncrementalCluster(docKeys)
+    logging.info("Initialized new cluster");
+
+    logging.info("Number of docs to cluster are: %i", len(docKeys))
+    logging.info(
+        "Number of new, retained and expired docs are: %i, %i, %i",
+        len(newDocs),
+        len(retainedDocs),
+        len(expiredDocs))
+
+    putCleanUpDocShinglesJobs(jobManager, expiredDocs)
+
+    putParseDocJobs(jobManager, newDocs)
+
+    putCleanUpDocDistancesJobs(jobManager, expiredDocs)
+
+    logging.info("Sleeping to ensure shingles table is in good state before putting get candidate jobs.")
+    time.sleep(10);
+
+    putGetCandidateDocsJobs(jobManager, newDocs);
 
 if __name__ == '__main__':
     startClustering()
