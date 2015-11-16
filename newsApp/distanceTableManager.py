@@ -77,7 +77,7 @@ class DistanceTableManager:
             'from' : min(docId1, docId2),
             'to' : max(docId1, docId2),
             'distance' : str(distance)},
-            overwrite = False)
+            overwrite = True)
 
     def getEntries(self):
         """
