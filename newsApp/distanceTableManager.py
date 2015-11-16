@@ -102,7 +102,7 @@ class DistanceTableManager:
                 batch.delete_item(**{
                     'from': entry['from'],
                     'to': entry['to']
-                })
+                }, overwrite = False)
 
     def __queryByDocId(self, docId):
         table = self.__getTable();

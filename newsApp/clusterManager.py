@@ -79,6 +79,10 @@ class ClusterManager:
                     if (cluster - expiredDocs)]
         self.putClusters(newClusters)
 
+    def __addNewDocsToCluster(self, newDocs):
+        clusters = self.getClusters() + [Cluster([docId]) for docId in newDocs]
+        self.putClusters(clusters)
+
     def initNewClusters(self, docList):
         # initialize doc list
         self.putDocList(docList)
@@ -104,6 +108,7 @@ class ClusterManager:
 
         self.putDocList(docList)
         self.__cleanupOldDocsFromCluster(expiredDocs)
+        self.__addNewDocsToCluster(newDocs)
         self.setState(CLUSTER_STATE_NEW)
 
         return (list(newDocs), list(retainedDocs), list(expiredDocs))
