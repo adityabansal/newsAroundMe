@@ -76,7 +76,8 @@ class DistanceTableManager:
         table.put_item(data = {
             'from' : min(docId1, docId2),
             'to' : max(docId1, docId2),
-            'distance' : str(distance)})
+            'distance' : str(distance)},
+            overwrite = False)
 
     def getEntries(self):
         """
@@ -102,7 +103,7 @@ class DistanceTableManager:
                 batch.delete_item(**{
                     'from': entry['from'],
                     'to': entry['to']
-                }, overwrite = False)
+                })
 
     def __queryByDocId(self, docId):
         table = self.__getTable();
