@@ -37,7 +37,7 @@ def computeDocSimScore(doc1, doc2):
            + contentSim*W_CONTENT_SIM;
 
 def compareDocs(jobId, doc1Key, doc2Key):
-    jobInfo = "Doc1 id: " + doc1Key + "Doc2 id: " + doc2Key \
+    jobInfo = "Doc1 id: " + doc1Key + " Doc2 id: " + doc2Key \
               + ". Job id: " + jobId;
     logger.info("Started comparing docs. %s", jobInfo);
 
@@ -105,18 +105,19 @@ def getCandidateDocs(jobId, docId):
 
     logger.info("%i matching docs found. %s.", len(matches), docAndJobId)
     for match in matches:
-        job = WorkerJob(
-            JOB_COMPAREDOCS,
-            {
-                JOBARG_COMPAREDOCS_DOC1ID : docId,
-                JOBARG_COMPAREDOCS_DOC2ID : match
-            })
-        jobManager.enqueueJob(job)
-        logging.info(
-            "Put compare docs job with jobid: %s. compared docId: %s. %s",
-            job.jobId,
-            match,
-            docAndJobId)
+        if match != docId:
+            job = WorkerJob(
+                JOB_COMPAREDOCS,
+                {
+                    JOBARG_COMPAREDOCS_DOC1ID : docId,
+                    JOBARG_COMPAREDOCS_DOC2ID : match
+                })
+            jobManager.enqueueJob(job)
+            logging.info(
+                "Put compare docs job with jobid: %s. compared docId: %s. %s",
+                job.jobId,
+                match,
+                docAndJobId)
 
     logger.info("Completed get candidate docs job. %s.", docAndJobId)
 
