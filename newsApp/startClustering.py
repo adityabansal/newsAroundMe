@@ -30,8 +30,11 @@ def adjustThroughputBeforeParsing(jobManager, shingleTableManager):
         })
     jobManager.enqueueJob(job)
     logging.info(
-        "Put job to reduce shingleTable write throughput. jobId: %s",
+        "Put job to increase shingleTable write throughput. jobId: %s",
         job.jobId)
+
+    logging.info("Sleeping to ensure both modify throughput jobs don't get executed concurrently")
+    time.sleep(5);
 
     job = WorkerJob(
         JOB_UPDATEDBTHROUGHPUT,
@@ -43,7 +46,7 @@ def adjustThroughputBeforeParsing(jobManager, shingleTableManager):
         })
     jobManager.enqueueJob(job)
     logging.info(
-        "Put job to reduce shingleTable secondary write throughput. jobId: %s",
+        "Put job to increase shingleTable secondary write throughput. jobId: %s",
         job.jobId)
 
 def adjustThroughputAfterParsing(jobManager, shingleTableManager):
@@ -63,6 +66,9 @@ def adjustThroughputAfterParsing(jobManager, shingleTableManager):
     logging.info(
         "Put job to reduce shingleTable write throughput. jobId: %s",
         job.jobId)
+
+    logging.info("Sleeping to ensure both modify throughput jobs don't get executed concurrently")
+    time.sleep(5);
 
     job = WorkerJob(
         JOB_UPDATEDBTHROUGHPUT,
