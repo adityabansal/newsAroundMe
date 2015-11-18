@@ -72,7 +72,7 @@ class JobThread(threading.Thread):
    def run(self):
       DequeueAndStartJob()
 
-MAX_JOB_THREADS = 15
+MAX_JOB_THREADS = 30
 
 if __name__ == '__main__':
     InitLogging()

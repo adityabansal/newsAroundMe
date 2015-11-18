@@ -53,7 +53,7 @@ class DistanceTableManager:
                 RangeKey('to')
             ], throughput = {
                 'read': 1,
-                'write': 1,
+                'write': 2,
             }, global_indexes = [
                 GlobalAllIndex('reverseIndex', parts = [
                     HashKey('to'),
@@ -61,7 +61,7 @@ class DistanceTableManager:
                 ],
                 throughput = {
                     'read': 1,
-                    'write': 1,
+                    'write': 2,
                 })
             ],
             connection = getDbConnection(tableConnectionParams))
