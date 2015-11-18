@@ -77,16 +77,16 @@ MAX_JOB_THREADS = 30
 if __name__ == '__main__':
     InitLogging()
     while (True):
-        #subtracting 1 because current parent thread is also counted
-        nThreads = threading.activeCount() - 1
-        logging.info("No of threads are: %i", nThreads)
-
         jobManager = JobManager()
         jobCount = jobManager.count()
 
         # not spawning new thread for unless queue has a job
         # otherwise lot of SQS calls are made and bill is high
         if jobCount > 0:
+            #subtracting 1 because current parent thread is also counted
+            nThreads = threading.activeCount() - 1
+            logging.info("No of threads are: %i", nThreads)
+
             while nThreads < MAX_JOB_THREADS:
                 jobThread = JobThread()
                 jobThread.start()
@@ -95,5 +95,5 @@ if __name__ == '__main__':
             logging.info("Too many threads. Sleeping")
             time.sleep(1)
         else:
-            logging.info("No job found. Sleeping")
+            logging.info("No job found in queue. Sleeping")
             time.sleep(5)
