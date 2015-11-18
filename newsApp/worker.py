@@ -90,7 +90,7 @@ if __name__ == '__main__':
             while nThreads < MAX_JOB_THREADS:
                 jobThread = JobThread()
                 jobThread.start()
-                nThreads++;
+                nThreads = nThreads + 1;
 
             logging.info("Too many threads. Sleeping")
             time.sleep(1)
