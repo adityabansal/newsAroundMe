@@ -87,12 +87,11 @@ if __name__ == '__main__':
         # not spawning new thread for unless queue has a job
         # otherwise lot of SQS calls are made and bill is high
         if jobCount > 0:
-            if nThreads < MAX_JOB_THREADS:
+            while nThreads < MAX_JOB_THREADS:
                 jobThread = JobThread()
                 jobThread.start()
-            else:
-                logging.info("Too many threads. Sleeping")
-                time.sleep(1)
+            logging.info("Too many threads. Sleeping")
+            time.sleep(1)
         else:
             logging.info("No job found. Sleeping")
             time.sleep(5)
