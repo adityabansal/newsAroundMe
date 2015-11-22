@@ -16,74 +16,6 @@ InitLogging()
 
 CLUSTERING_DOC_AGE_LIMIT = 1
 
-def adjustThroughputBeforeParsing(jobManager, shingleTableManager):
-    """
-    Increase write throughput on shingle table before parsing is done
-    """
-
-    job = WorkerJob(
-        JOB_UPDATEDBTHROUGHPUT,
-        {
-            JOB_UPDATEDBTHROUGHPUT_CONNECTIONSTRING : shingleTableManager.tableConnString,
-            JOB_UPDATEDBTHROUGHPUT_READTHOUGHPUT: 14,
-            JOB_UPDATEDBTHROUGHPUT_WRITETHOUGHPUT: eval(os.environ['SHINGLE_TABLE_PARSE_THOUGHPUT']),
-            JOB_UPDATEDBTHROUGHPUT_INDEXNAME: None
-        })
-    jobManager.enqueueJob(job)
-    logging.info(
-        "Put job to increase shingleTable write throughput. jobId: %s",
-        job.jobId)
-
-    logging.info("Sleeping to ensure both modify throughput jobs don't get executed concurrently")
-    time.sleep(5);
-
-    job = WorkerJob(
-        JOB_UPDATEDBTHROUGHPUT,
-        {
-            JOB_UPDATEDBTHROUGHPUT_CONNECTIONSTRING : shingleTableManager.tableConnString,
-            JOB_UPDATEDBTHROUGHPUT_READTHOUGHPUT: 1,
-            JOB_UPDATEDBTHROUGHPUT_WRITETHOUGHPUT: eval(os.environ['SHINGLE_TABLE_PARSE_THOUGHPUT']),
-            JOB_UPDATEDBTHROUGHPUT_INDEXNAME: 'docIdIndex'
-        })
-    jobManager.enqueueJob(job)
-    logging.info(
-        "Put job to increase shingleTable secondary write throughput. jobId: %s",
-        job.jobId)
-
-def adjustThroughputAfterParsing(jobManager, shingleTableManager):
-    """
-    Reduce write throughput on shingle table after parsing is done
-    """
-
-    job = WorkerJob(
-        JOB_UPDATEDBTHROUGHPUT,
-        {
-            JOB_UPDATEDBTHROUGHPUT_CONNECTIONSTRING : shingleTableManager.tableConnString,
-            JOB_UPDATEDBTHROUGHPUT_READTHOUGHPUT: 14,
-            JOB_UPDATEDBTHROUGHPUT_WRITETHOUGHPUT: 1,
-            JOB_UPDATEDBTHROUGHPUT_INDEXNAME: None
-        })
-    jobManager.enqueueJob(job)
-    logging.info(
-        "Put job to reduce shingleTable write throughput. jobId: %s",
-        job.jobId)
-
-    logging.info("Sleeping to ensure both modify throughput jobs don't get executed concurrently")
-    time.sleep(5);
-
-    job = WorkerJob(
-        JOB_UPDATEDBTHROUGHPUT,
-        {
-            JOB_UPDATEDBTHROUGHPUT_CONNECTIONSTRING : shingleTableManager.tableConnString,
-            JOB_UPDATEDBTHROUGHPUT_READTHOUGHPUT: 1,
-            JOB_UPDATEDBTHROUGHPUT_WRITETHOUGHPUT: 1,
-            JOB_UPDATEDBTHROUGHPUT_INDEXNAME: 'docIdIndex'
-        })
-    jobManager.enqueueJob(job)
-    logging.info(
-        "Put job to reduce shingleTable secondary write throughput. jobId: %s",
-        job.jobId)
-
 def putParseDocJobs(jobManager, docKeys):
     for docKey in docKeys:
         parseDocJob = WorkerJob(
@@ -145,8 +77,6 @@ def startClustering():
     distanceTableManager.createFreshTable();
     logging.info("Cleaned up the distance table");
 
-    adjustThroughputBeforeParsing(jobManager, shingleTableManager)
-
     docKeys = list(docManager.getNewDocKeys(CLUSTERING_DOC_AGE_LIMIT));
     logging.info("Got docs for clustering");
 
@@ -161,8 +91,6 @@ def startClustering():
 
     putGetCandidateDocsJobs(jobManager, docKeys);
 
-    adjustThroughputAfterParsing(jobManager, shingleTableManager)
-
 def startIncrementalClustering():
     """
     Start incremental clustering using clusters in previous run of the docs.
@@ -173,8 +101,6 @@ def startIncrementalClustering():
     docManager = DocManager()
     jobManager = JobManager()
     shingleTableManager = ShingleTableManager()
-
-    adjustThroughputBeforeParsing(jobManager, shingleTableManager)
 
     docKeys = list(docManager.getNewDocKeys(CLUSTERING_DOC_AGE_LIMIT));
     logging.info("Got docs for clustering");
@@ -200,8 +126,6 @@ def startIncrementalClustering():
     time.sleep(10);
 
     putGetCandidateDocsJobs(jobManager, newDocs);
-
-    adjustThroughputAfterParsing(jobManager, shingleTableManager)
 
 def isClusteringInProgress():
     clusterManager = ClusterManager()
