@@ -202,6 +202,15 @@ def startIncrementalClustering():
 
     adjustThroughputAfterParsing(jobManager, shingleTableManager)
 
+def isClusteringInProgress():
+    clusterManager = ClusterManager()
+
+    if clusterManager.getState() == CLUSTER_STATE_COMPLETED:
+        return False;
+
+    logging.info("Clustering currently in progress")
+    return True;
+
 if __name__ == '__main__':
     if len(sys.argv) > 1:
         try:
@@ -211,7 +220,9 @@ if __name__ == '__main__':
             sys.exit(2)
         for o, a in opts:
             if o in ("-i", "--incremental"):
-                startIncrementalClustering()
+                if not isClusteringInProgress():
+                    startIncrementalClustering()
                 sys.exit()
 
-    startClustering()
+    if not isClusteringInProgress():
+        startClustering()
