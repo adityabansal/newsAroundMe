@@ -1,5 +1,6 @@
 #background worker to do jobs
 
+import os
 import time
 import threading
 
@@ -72,8 +73,6 @@ class JobThread(threading.Thread):
    def run(self):
       DequeueAndStartJob()
 
-MAX_JOB_THREADS = 30
-
 if __name__ == '__main__':
     InitLogging()
     while (True):
@@ -87,7 +86,7 @@ if __name__ == '__main__':
             nThreads = threading.activeCount() - 1
             logging.info("No of threads are: %i", nThreads)
 
-            while nThreads < MAX_JOB_THREADS:
+            while nThreads < eval(os.environ['MAX_JOB_THREADS']):
                 jobThread = JobThread()
                 jobThread.start()
                 nThreads = nThreads + 1;
