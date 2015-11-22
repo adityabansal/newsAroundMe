@@ -1,6 +1,7 @@
 import logging
 import urllib
 
+from lxml.etree import XMLSyntaxError
 import lxml.html as lh
 
 logger = logging.getLogger('htmlProcessor')
@@ -28,7 +29,12 @@ def processHtml(jobId, rawHtml, textSelector, imageSelectors):
     """
 
     # Parse html with lxml library
-    parsedHtml = lh.fromstring(rawHtml);
+    try:
+        parsedHtml = lh.fromstring(rawHtml);
+    except XMLSyntaxError:
+        logger.warning(
+            "Could not parse page html: %s. JobId: %s", jobId)
+        return ("", [])
 
     # Extract out text
     text = _extractText(parsedHtml, textSelector)
