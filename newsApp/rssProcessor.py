@@ -14,7 +14,13 @@ from link import Link
 from linkManager import LinkManager
 from workerJob import WorkerJob
 
-UNECESSARY_FEED_TAGS = [FEEDTAG_TYPE, FEEDTAG_NEXTPOLLTIME, FEEDTAG_POLLFREQUENCY, FEEDTAG_LASTPOLLTIME, FEEDTAG_URL]
+UNECESSARY_FEED_TAGS = [
+  FEEDTAG_TYPE,
+  FEEDTAG_NEXTPOLLTIME,
+  FEEDTAG_POLLFREQUENCY,
+  FEEDTAG_LASTPOLLTIME,
+  FEEDTAG_URL,
+  FEEDTAG_LASTPUBDATE]
 
 logger = logging.getLogger('rssProcessor')
 
@@ -72,7 +78,7 @@ def processFeed(jobId, feedId):
 
   Steps:
   1. get Feed from database
-  2. get all feed entries published since lastPollTime
+  2. get all feed entries published since lastPubDate
   3. put the entries into the links database
   """
 
@@ -84,16 +90,15 @@ def processFeed(jobId, feedId):
   feed = feedManager.get(feedId)
   logger.info("Got feed from database. %s.", feedAndJobId)
 
-  # compute the last poll time
-  lastPollTime = 0;
-  if FEEDTAG_LASTPOLLTIME in feed.tags:
-      lastPollTime = feed.tags[FEEDTAG_LASTPOLLTIME]
+  # compute the last pubDate
+  lastPubDate = 0;
+  if FEEDTAG_LASTPUBDATE in feed.tags:
+      lastPubDate = feed.tags[FEEDTAG_LASTPUBDATE]
 
   # get all feed entries since last poll time
   parsedFeed = feedparser.parse(feed.tags[FEEDTAG_URL])
   newEntries = [entry for entry in parsedFeed.entries
-               if entry.published_parsed > time.gmtime(lastPollTime) or \
-                 entry.published_parsed is None]
+               if entry.published_parsed > time.gmtime(lastPubDate)]
   logger.info("Got %i new entries. %s", len(newEntries), feedAndJobId)
 
   # for each entry add link in link database and a process link job
@@ -118,6 +123,9 @@ def processFeed(jobId, feedId):
         feedAndJobId)
 
   # last step update the feed on successful completion of poll
+  if len(newEntries) > 0:
+    feed.tags[FEEDTAG_LASTPUBDATE] = calendar.timegm(
+      newEntries[0].published_parsed)
   feedManager.updateFeedOnSuccessfullPoll(feed)
   logger.info(
     "Feed updated after being successfully processed. %s.",

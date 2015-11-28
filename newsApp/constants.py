@@ -13,6 +13,7 @@ FEEDTAG_NEXTPOLLTIME = 'nextPollTime'
 FEEDTAG_POLLFREQUENCY = 'pollFrequency'
 FEEDTAG_LASTPOLLTIME = 'lastPollTime'
 FEEDTAG_URL = 'feedUrl'
+FEEDTAG_LASTPUBDATE = 'lastPubDate'
 
 # link tags
 LINKTAG_ISPROCESSED = 'isProcessed'
