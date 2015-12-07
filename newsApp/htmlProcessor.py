@@ -33,7 +33,7 @@ def processHtml(jobId, rawHtml, textSelector, imageSelectors):
         parsedHtml = lh.fromstring(rawHtml);
     except XMLSyntaxError:
         logger.warning(
-            "Could not parse page html: %s. JobId: %s", jobId)
+            "Could not parse page html. JobId: %s", jobId)
         return ("", [])
 
     # Extract out text
