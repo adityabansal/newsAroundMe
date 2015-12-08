@@ -13,7 +13,10 @@ from cluster import Cluster
 NEW_CLUSTER_FOLDER = "new/"
 DOCLIST_FILE = "docList"
 CLUSTERS_FILE = "clusters"
-STATE_FILE = "state"
+METADATA_FILE = "metadata"
+
+METADATA_NAME_STATE = 'state'
+METADATA_NAME_RUNID = 'runId'
 
 class ClusterManager:
     """
@@ -69,8 +72,8 @@ class ClusterManager:
             NEW_CLUSTER_FOLDER + CLUSTERS_FILE,
             archiveFolderName + CLUSTERS_FILE)
         self.__copyObject(
-            NEW_CLUSTER_FOLDER + STATE_FILE,
-            archiveFolderName + STATE_FILE)
+            NEW_CLUSTER_FOLDER + METADATA_FILE,
+            archiveFolderName + METADATA_FILE)
 
     def __cleanupOldDocsFromCluster(self, expiredDocs):
         clusters = self.getClusters()
@@ -83,6 +86,24 @@ class ClusterManager:
         clusters = self.getClusters() + [Cluster([docId]) for docId in newDocs]
         self.putClusters(clusters)
 
+    def __getMetadata(self, key):
+        metadata = eval(self.__getObject(NEW_CLUSTER_FOLDER + METADATA_FILE))
+
+        try:
+          return metadata[key]
+        except KeyError:
+          return None;
+
+    def __setMetadata(self, key, value):
+        metadata = eval(self.__getObject(NEW_CLUSTER_FOLDER + METADATA_FILE))
+        metadata[key] = value
+
+        self.__putObject(NEW_CLUSTER_FOLDER + METADATA_FILE, str(metadata))
+
+    def __setRandomRunId(self):
+        runId = ''.join(random.choice('0123456789ABCDEF') for i in range(16))
+        self.__setMetadata(METADATA_NAME_RUNID, runId)
+
     def initNewClusters(self, docList):
         # initialize doc list
         self.putDocList(docList)
@@ -93,6 +114,9 @@ class ClusterManager:
 
         # set state
         self.setState(CLUSTER_STATE_NEW)
+
+        # set runId
+        self.__setRandomRunId()
 
     def initNewIncrementalCluster(self, docList):
         oldDocList = self.getDocList()
@@ -110,6 +134,7 @@ class ClusterManager:
         self.__cleanupOldDocsFromCluster(expiredDocs)
         self.__addNewDocsToCluster(newDocs)
         self.setState(CLUSTER_STATE_NEW)
+        self.__setRandomRunId()
 
         return (list(newDocs), list(retainedDocs), list(expiredDocs))
 
@@ -126,7 +151,10 @@ class ClusterManager:
         return eval(self.__getObject(NEW_CLUSTER_FOLDER + CLUSTERS_FILE))
 
     def setState(self, state):
-        self.__putObject(NEW_CLUSTER_FOLDER + STATE_FILE, state)
+        self.__setMetadata(METADATA_NAME_STATE, state)
 
     def getState(self):
-        return self.__getObject(NEW_CLUSTER_FOLDER + STATE_FILE)
+        return self.__getMetadata(METADATA_NAME_STATE)
+
+    def getRunId(self):
+        return self.__getMetadata(METADATA_NAME_RUNID)
