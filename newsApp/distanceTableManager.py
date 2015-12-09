@@ -105,6 +105,18 @@ class DistanceTableManager:
                     'to': entry['to']
                 })
 
+    def deleteEntry(self, docId1, docId2):
+        """
+        Delete a entry from the distances table.
+        """
+
+        table = self.__getTable();
+
+        table.delete_item(**{
+            'from': min(docId1, docId2),
+            'to': max(docId1, docId2)
+        })
+
     def __queryByDocId(self, docId):
         table = self.__getTable();
 

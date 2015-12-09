@@ -73,6 +73,22 @@ def cleanUpDocDistances(jobId, docId):
 
     logger.info("Completed cleaning up doc distances. %s.", docAndJobId)
 
+def cleanUpDistanceTable(jobId):
+    distanceTableManager = DistanceTableManager()
+    clusterManager = ClusterManager()
+
+    docList = clusterManager.getDocList()
+    distances = list(distanceTableManager.getEntries())
+
+    nStaleEntries = 0
+    for entry in distances:
+        if entry[0] not in docList or entry[1] not in docList:
+            nStaleEntries = nStaleEntries + 1
+            distanceTableManager.deleteEntry(entry[0], entry[1])
+            logging.info("Deleted stale entry %s. %s", str(entry), jobId)
+
+    logging.info("Number of stale entries: %i. %s", nStaleEntries, jobId)
+
 def parseDoc(jobId, docId):
     docAndJobId = "Doc id: " + docId + ". Job id: " + jobId;
     logger.info("Started parsing doc. %s.", docAndJobId)
@@ -217,3 +233,6 @@ def clusterDocs(jobId):
 
     clusterManager.setState(CLUSTER_STATE_COMPLETED)
     logger.info("Set clustering state as completed. %s.", jobInfo)
+
+    logger.info("Cleaning up distance table. %s.", jobInfo)
+    cleanUpDistanceTable(jobId)
