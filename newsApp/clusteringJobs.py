@@ -1,5 +1,6 @@
 import itertools
 import logging
+from multiprocessing import Pool
 
 from constants import *
 from clusterManager import ClusterManager
@@ -128,6 +129,10 @@ def parseDoc(jobId, docId):
 
     logger.info("Completed parsing doc. %s.", docAndJobId)
 
+def __getDocShingles(shingle):
+    shingleTableManager = ShingleTableManager()
+    return list(shingleTableManager.queryByShingle(shingle))
+
 def getCandidateDocs(jobId, docId):
     docAndJobId = "Doc id: " + docId + ". Job id: " + jobId;
     logger.info("Started get candidate docs job. %s.", docAndJobId)
@@ -137,13 +142,16 @@ def getCandidateDocs(jobId, docId):
     jobManager = JobManager()
 
     shingles = shingleTableManager.queryByDocId(docId)
-    for shingle in shingles:
-         matchingDocs = shingleTableManager.queryByShingle(shingle)
-         for match in matchingDocs:
-             if match in matchFreq:
-                 matchFreq[match] = matchFreq[match] + 1
-             else:
-                 matchFreq[match] = 1
+
+    pool = Pool(4)
+    poolResults = pool.map(__getDocShingles, list(shingles))
+    matchingDocs = [item for results in poolResults for item in results]
+
+    for match in matchingDocs:
+        if match in matchFreq:
+            matchFreq[match] = matchFreq[match] + 1
+        else:
+            matchFreq[match] = 1
 
     matches = [match for match in matchFreq.keys() if matchFreq[match] > 4]
 
