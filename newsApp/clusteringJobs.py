@@ -145,6 +145,8 @@ def getCandidateDocs(jobId, docId):
 
     pool = Pool(4)
     poolResults = pool.map(__getDocShingles, list(shingles))
+    pool.terminate()
+
     matchingDocs = [item for results in poolResults for item in results]
 
     for match in matchingDocs:
