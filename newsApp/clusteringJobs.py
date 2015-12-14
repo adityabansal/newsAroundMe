@@ -168,10 +168,8 @@ def _getDocDistance(distances, docId1, docId2):
     second = max(docId1, docId2)
 
     try:
-        match = next(d for d in distances
-                     if (d[0] == first) & (d[1] == second))
-        return match[2]
-    except StopIteration:
+        return distances[first][second]
+    except KeyError:
         return 0
 
 def _getClusterDistance(distances, cluster1, cluster2):
@@ -241,8 +239,8 @@ def clusterDocs(jobId):
     clusterManager.setState(CLUSTER_STATE_STARTED)
     logger.info("Set clustering state as started. %s.", jobInfo)
 
-    distances = list(distanceTableManager.getEntries())
-    logger.info("Got the pairwise distances. %s.", jobInfo)
+    distances = distanceTableManager.getDistanceMatrix()
+    logger.info("Got the distance matrix. %s.", jobInfo)
 
     clusters = clusterManager.getClusters()
     logger.info("Got the clusters. %s.", jobInfo)

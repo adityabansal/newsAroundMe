@@ -90,6 +90,21 @@ class DistanceTableManager:
         return ((result['from'], result['to'], eval(result['distance']))
                 for result in scanResults)
 
+    def getDistanceMatrix(self):
+        """
+        Get the distance entries in matrix form.
+        """
+
+        entries = self.getEntries()
+        dMatrix = {}
+
+        for entry in entries:
+            if entry[0] not in dMatrix:
+                dMatrix[entry[0]] = {}
+            dMatrix[entry[0]][entry[1]] = entry[2]
+
+        return dMatrix
+
     def cleanUpDoc(self, docId):
         """
         Cleanup a document from the distance table
