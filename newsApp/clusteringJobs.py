@@ -74,6 +74,7 @@ def cleanUpDocDistances(jobId, docId):
     logger.info("Completed cleaning up doc distances. %s.", docAndJobId)
 
 def cleanUpDistanceTable(jobId):
+    jobInfo = "Job id: " + jobId
     distanceTableManager = DistanceTableManager()
     clusterManager = ClusterManager()
 
@@ -85,9 +86,31 @@ def cleanUpDistanceTable(jobId):
         if entry[0] not in docList or entry[1] not in docList:
             nStaleEntries = nStaleEntries + 1
             distanceTableManager.deleteEntry(entry[0], entry[1])
-            logging.info("Deleted stale entry %s. %s", str(entry), jobId)
+            logging.info("Deleted stale entry %s. %s", str(entry), jobInfo)
 
-    logging.info("Number of stale entries: %i. %s", nStaleEntries, jobId)
+    logging.info(
+        "Number of stale entries in distances table: %i. %s",
+        nStaleEntries,
+        jobInfo)
+
+def cleanupShingleTable(jobId):
+    jobInfo = "Job id: " + jobId
+    clusterManager = ClusterManager()
+    docManager = DocManager()
+    shingleTableManager = ShingleTableManager()
+
+    docList = clusterManager.getDocList()
+    allDocs = list(docManager.getNewDocKeys(1.5))
+
+    for docKey in allDocs:
+        if docKey not in docList:
+            docShingles = list(shingleTableManager.queryByDocId(docKey))
+            if len(docShingles) > 0:
+                logging.info(
+                    "Stale entry found in shingle table for docId %s. %s",
+                    docKey,
+                    jobInfo)
+                shingleTableManager.cleanUpDocShingles(docKey)
 
 def parseDoc(jobId, docId):
     docAndJobId = "Doc id: " + docId + ". Job id: " + jobId;
@@ -234,5 +257,9 @@ def clusterDocs(jobId):
     clusterManager.setState(CLUSTER_STATE_COMPLETED)
     logger.info("Set clustering state as completed. %s.", jobInfo)
 
+    logger.info("Starting post-clustering cleanup tasks. %s", jobInfo)
     logger.info("Cleaning up distance table. %s.", jobInfo)
     cleanUpDistanceTable(jobId)
+
+    logger.info("Cleaning up shingle table. %s.", jobInfo)
+    cleanupShingleTable(jobId)
