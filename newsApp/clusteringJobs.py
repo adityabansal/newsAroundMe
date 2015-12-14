@@ -266,3 +266,4 @@ def clusterDocs(jobId):
 
     logger.info("Cleaning up shingle table. %s.", jobInfo)
     cleanupShingleTable(jobId)
+    logger.info("Completed post-clustering cleanup tasks. %s", jobInfo)
