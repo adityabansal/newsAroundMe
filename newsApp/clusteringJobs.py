@@ -132,7 +132,7 @@ def getCandidateDocs(jobId, docId):
     docAndJobId = "Doc id: " + docId + ". Job id: " + jobId;
     logger.info("Started get candidate docs job. %s.", docAndJobId)
 
-    matches = set()
+    matchFreq = {}
     shingleTableManager = ShingleTableManager()
     jobManager = JobManager()
 
@@ -140,7 +140,12 @@ def getCandidateDocs(jobId, docId):
     for shingle in shingles:
          matchingDocs = shingleTableManager.queryByShingle(shingle)
          for match in matchingDocs:
-             matches.add(match)
+             if match in matchFreq:
+                 matchFreq[match] = matchFreq[match] + 1
+             else:
+                 matchFreq[match] = 1
+
+    matches = [match for match in matchFreq.keys() if matchFreq[match] > 4]
 
     logger.info("%i matching docs found. %s.", len(matches), docAndJobId)
     for match in matches:
