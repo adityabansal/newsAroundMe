@@ -144,7 +144,7 @@ def getCandidateDocs(jobId, docId):
     shingles = shingleTableManager.queryByDocId(docId)
 
     pool = Pool(4)
-    poolResults = pool.map(__getDocShingles, list(shingles))
+    poolResults = pool.map_async(__getDocShingles, list(shingles)).get(timeout=600)
     pool.terminate()
 
     matchingDocs = [item for results in poolResults for item in results]
