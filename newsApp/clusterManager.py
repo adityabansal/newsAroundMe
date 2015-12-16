@@ -114,7 +114,7 @@ class ClusterManager:
         self.putClusters(clusters)
 
         # set state
-        self.setState(CLUSTER_STATE_NEW)
+        self.setState(CLUSTER_STATE_INITIALIZED)
 
         # set runId
         self.__setRandomRunId()
@@ -134,7 +134,7 @@ class ClusterManager:
         self.putDocList(docList)
         self.__cleanupOldDocsFromCluster(expiredDocs)
         self.__addNewDocsToCluster(newDocs)
-        self.setState(CLUSTER_STATE_NEW)
+        self.setState(CLUSTER_STATE_INITIALIZED)
         self.__setRandomRunId()
 
         return (list(newDocs), list(retainedDocs), list(expiredDocs))

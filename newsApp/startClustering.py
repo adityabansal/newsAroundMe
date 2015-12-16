@@ -87,9 +87,10 @@ def startClustering():
     putParseDocJobs(jobManager, docKeys);
 
     logging.info("Sleeping to ensure that all parse doc jobs are enqueued.")
-    time.sleep(10);
+    time.sleep(120);
 
     putGetCandidateDocsJobs(jobManager, docKeys);
+    clusterManager.setState(CLUSTER_STATE_NEW)
 
 def startIncrementalClustering():
     """
@@ -123,9 +124,10 @@ def startIncrementalClustering():
     putCleanUpDocDistancesJobs(jobManager, expiredDocs)
 
     logging.info("Sleeping to ensure shingles table is in good state before putting get candidate jobs.")
-    time.sleep(10);
+    time.sleep(120);
 
     putGetCandidateDocsJobs(jobManager, newDocs);
+    clusterManager.setState(CLUSTER_STATE_NEW)
 
 def isClusteringInProgress():
     clusterManager = ClusterManager()

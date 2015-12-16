@@ -52,6 +52,7 @@ JOB_CLEANUPDOCDISTANCES = 'cleanupDocDistances'
 JOBARG_CLEANUPDOCDISTANCES_DOCID = 'docId'
 
 #clustering job states
+CLUSTER_STATE_INITIALIZED = 'initialized'
 CLUSTER_STATE_NEW = 'new'
 CLUSTER_STATE_STARTED = 'started'
 CLUSTER_STATE_COMPLETED = 'completed'
