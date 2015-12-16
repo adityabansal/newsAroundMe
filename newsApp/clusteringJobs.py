@@ -2,6 +2,8 @@ import itertools
 import logging
 from multiprocessing import Pool
 
+from retrying import retry
+
 from constants import *
 from clusterManager import ClusterManager
 from distanceTableManager import DistanceTableManager
@@ -133,6 +135,21 @@ def __getDocShingles(shingle):
     shingleTableManager = ShingleTableManager()
     return list(shingleTableManager.queryByShingle(shingle))
 
+@retry(stop_max_attempt_number=3)
+def __queryShingles(shingles):
+    pool = Pool(8)
+    poolResults = [[]]
+    try:
+        poolResults = pool.map_async(__getDocShingles, list(shingles)).get(
+            timeout=300)
+    except:
+        logger.warning("Could not get shingles. %s.", docAndJobId)
+        raise
+    finally:
+        pool.terminate()
+
+    return poolResults
+
 def getCandidateDocs(jobId, docId):
     docAndJobId = "Doc id: " + docId + ". Job id: " + jobId;
     logger.info("Started get candidate docs job. %s.", docAndJobId)
@@ -142,16 +159,7 @@ def getCandidateDocs(jobId, docId):
     jobManager = JobManager()
 
     shingles = shingleTableManager.queryByDocId(docId)
-
-    pool = Pool(8)
-    poolResults = [[]]
-    try:
-        poolResults = pool.map_async(__getDocShingles, list(shingles)).get(
-            timeout=600)
-    except:
-        logger.error("Could not get shingles. %s.", docAndJobId)
-    finally:
-        pool.terminate()
+    poolResults = __queryShingles(shingles)
 
     matchingDocs = [item for results in poolResults for item in results]
 
