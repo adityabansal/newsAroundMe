@@ -2,6 +2,7 @@
 
 # common tag names
 TAG_PUBLISHER = 'publisher'
+TAG_PUBLISHER_DETAILS = 'publisherDetails'
 TAG_IMAGES = 'images'
 
 #doc tags
@@ -14,6 +15,10 @@ FEEDTAG_POLLFREQUENCY = 'pollFrequency'
 FEEDTAG_LASTPOLLTIME = 'lastPollTime'
 FEEDTAG_URL = 'feedUrl'
 FEEDTAG_LASTPUBDATE = 'lastPubDate'
+FEEDTAG_CATEGORY = 'category'
+FEEDTAG_COUNTRY = 'country'
+FEEDTAG_LANG = 'lang'
+FEEDTAG_LOCALE = 'locale'
 
 # link tags
 LINKTAG_ISPROCESSED = 'isProcessed'
@@ -27,6 +32,9 @@ LINKTAG_TITLE = 'title'
 # publisher tags
 PUBLISHERTAG_TEXTSELECTOR = 'textSelector'
 PUBLISHERTAG_IMAGESELECTORS = 'imageSelectors'
+PUBLISHERTAG_HOMEPAGE = 'homepage'
+PUBLISHERTAG_NAME = 'name'
+PUBLISHERTAG_FRIENDLYID = 'friendlyId'
 
 #job names
 JOB_PROCESSFEED = 'processFeed'
