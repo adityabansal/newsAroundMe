@@ -5,6 +5,7 @@ from multiprocessing import Pool
 from retrying import retry
 
 from constants import *
+from cluster import Cluster
 from clusterManager import ClusterManager
 from distanceTableManager import DistanceTableManager
 from doc import Doc
