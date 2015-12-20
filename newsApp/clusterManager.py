@@ -9,15 +9,16 @@ from boto.s3.key import Key
 from constants import *
 from dbhelper import *
 from cluster import Cluster
+from clusterTableManager import ClusterTableManager
 
 #constants
 NEW_CLUSTER_FOLDER = "new/"
+PROCESSED_CLUSTERS_FOLDER = "processedClusters/"
 DOCLIST_FILE = "docList"
 CLUSTERS_FILE = "clusters"
 METADATA_FILE = "metadata"
 
 METADATA_NAME_STATE = 'state'
-METADATA_NAME_RUNID = 'runId'
 
 class ClusterManager:
     """
@@ -33,6 +34,7 @@ class ClusterManager:
         """
 
         self.bucketConnString = os.environ['CLUSTERSBUCKET_CONNECTIONSTRING'];
+        self.clusterTableManager = ClusterTableManager()
 
     def __getBucket(self):
         bucketConnParams = parseConnectionString(self.bucketConnString);
@@ -101,10 +103,6 @@ class ClusterManager:
 
         self.__putObject(NEW_CLUSTER_FOLDER + METADATA_FILE, str(metadata))
 
-    def __setRandomRunId(self):
-        runId = ''.join(random.choice('0123456789ABCDEF') for i in range(16))
-        self.__setMetadata(METADATA_NAME_RUNID, runId)
-
     def initNewClusters(self, docList):
         # initialize doc list
         self.putDocList(docList)
@@ -115,9 +113,6 @@ class ClusterManager:
 
         # set state
         self.setState(CLUSTER_STATE_INITIALIZED)
-
-        # set runId
-        self.__setRandomRunId()
 
     def initNewIncrementalCluster(self, docList):
         oldDocList = self.getDocList()
@@ -135,7 +130,6 @@ class ClusterManager:
         self.__cleanupOldDocsFromCluster(expiredDocs)
         self.__addNewDocsToCluster(newDocs)
         self.setState(CLUSTER_STATE_INITIALIZED)
-        self.__setRandomRunId()
 
         return (list(newDocs), list(retainedDocs), list(expiredDocs))
 
@@ -145,7 +139,26 @@ class ClusterManager:
     def getDocList(self):
         return json.loads(self.__getObject(NEW_CLUSTER_FOLDER + DOCLIST_FILE))
 
+    def processNewCluster(self, cluster):
+        cluster.process()
+
+        self.clusterTableManager.addCluster(cluster)
+        self.__putObject(
+            PROCESSED_CLUSTERS_FOLDER + cluster.id,
+            json.dumps(cluster.articles))
+
     def putClusters(self, clusters):
+        existingClusters = self.getClusters()
+        newClusters = [cluster for cluster in clusters
+            if cluster not in existingClusters]
+        expiredClusters = [cluster for cluster in existingClusters
+            if cluster not in clusters]
+
+        for cluster in newClusters:
+            self.processNewCluster(cluster)
+
+        self.clusterTableManager.deleteClusters(expiredClusters)
+
         self.__putObject(NEW_CLUSTER_FOLDER + CLUSTERS_FILE, str(clusters))
 
     def getClusters(self):
@@ -156,6 +169,3 @@ class ClusterManager:
 
     def getState(self):
         return self.__getMetadata(METADATA_NAME_STATE)
-
-    def getRunId(self):
-        return self.__getMetadata(METADATA_NAME_RUNID)

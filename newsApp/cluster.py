@@ -19,9 +19,9 @@ class Cluster(set):
     docList.sort();
     self.id = hashlib.md5(str(docList)).hexdigest().upper()
 
-  def expand(self):
+  def process(self):
     """
-    Expands the cluster to include metadata of consisting documents,
+    Processes the cluster to include metadata of consisting documents,
     and overall metadata of cluster like category, location, feeds, etc.
     """
 

@@ -68,6 +68,9 @@ class ClusterTableManager:
           'publishers': str(cluster.publishers),
           'languages': str(cluster.languages)})
 
+  def addCluster(self, cluster):
+    self.addClusters([cluster])
+
   def getCluster(self, clusterId):
     table = self.__getTable();
     queryResult = list(table.query_2(clusterId__eq = clusterId))
@@ -89,6 +92,16 @@ class ClusterTableManager:
 
     return (self.__getClusterFromTableRow(row) for row in table.scan(
       locales__contains = locale))
+
+  def deleteClusters(self, clusters):
+    table = self.__getTable()
+
+    with table.batch_write() as batch:
+      for cluster in clusters:
+        batch.delete_item(clusterId = cluster.id)
+
+  def deleteCluster(self, cluster):
+    self.deleteClusters([cluster])
 
   def __getClusterFromTableRow(self, row):
     cluster = Cluster(eval(row['docKeys']))

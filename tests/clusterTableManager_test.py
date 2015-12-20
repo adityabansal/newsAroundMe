@@ -5,8 +5,8 @@ from newsApp.clusterTableManager import ClusterTableManager
 from newsApp.cluster import Cluster
 
 class ClusterTableManagerTests(unittest.TestCase):
-
-  def setUp(self):
+  @classmethod
+  def setUpClass(self):
     # construct the mock clusters to put
     clusters = [
       Cluster(['d1', 'd2', 'd3', 'd4', 'd5']),
@@ -37,16 +37,19 @@ class ClusterTableManagerTests(unittest.TestCase):
     time.sleep(10);
     self.clusterTableManager.addClusters(self.clusters)
 
-  def tearDown(self):
-    self.clusterTableManager.deleteTable()
+  @classmethod
+  def tearDownClass(self):
+    time.sleep(1);
+    #self.clusterTableManager.deleteTable()
 
-  def testQueries(self):
+  def testGet(self):
     #simple get
     result = self.clusterTableManager.getCluster(self.clusters[0].id)
     self.assertEqual(result.id, self.clusters[0].id)
     result = self.clusterTableManager.getCluster(self.clusters[1].id)
     self.assertEqual(result.id, self.clusters[1].id)
 
+  def testQueries(self):
     #query by category & country
     result = self.clusterTableManager.queryByCategoryAndCountry('sports', 'nepal')
     self.assertEqual(list(result)[0].id, self.clusters[0].id)
@@ -60,3 +63,12 @@ class ClusterTableManagerTests(unittest.TestCase):
     self.assertEqual(list(result)[0].id, self.clusters[0].id)
     result = self.clusterTableManager.queryByLocale('hyderabad')
     self.assertEqual(list(result)[0].id, self.clusters[1].id)
+
+  def testDelete(self):
+    self.clusterTableManager.deleteCluster(self.clusters[0])
+    #just to ensure delete operation works if item isn't there
+    self.clusterTableManager.deleteCluster(self.clusters[0])
+    result = self.clusterTableManager.getCluster(self.clusters[0].id)
+    self.assertEqual(result, None)
+
+    self.clusterTableManager.addCluster(self.clusters[0])
