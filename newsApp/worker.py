@@ -45,6 +45,8 @@ def RunJob(job):
             cj.cleanUpDocShingles(job.jobId, job.jobParams[JOBARG_CLEANUPDOCSHINGLES_DOCID])
         if job.jobName == JOB_CLEANUPDOCDISTANCES:
             cj.cleanUpDocDistances(job.jobId, job.jobParams[JOBARG_CLEANUPDOCDISTANCES_DOCID])
+        if job.jobName == JOB_PROCESSNEWCLUSTER:
+            cj.processNewCluster(job.jobId, job.jobParams[JOBARG_PROCESSNEWCLUSTER_CLUSTER])
     except:
         logging.exception('')
 

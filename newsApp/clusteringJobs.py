@@ -116,6 +116,16 @@ def cleanupShingleTable(jobId):
                     jobInfo)
                 shingleTableManager.cleanUpDocShingles(docKey)
 
+def processNewCluster(jobId, strCluster):
+    cluster = eval(strCluster)
+    clusterAndJobId = "Cluster id: " + cluster.id + ". Job id: " + jobId;
+    logger.info("Started processing new cluster. %s.", clusterAndJobId)
+
+    clusterManager = ClusterManager()
+    clusterManager.processNewCluster(cluster)
+
+    logger.info("Completed processing new cluster. %s.", clusterAndJobId)
+
 def parseDoc(jobId, docId):
     docAndJobId = "Doc id: " + docId + ". Job id: " + jobId;
     logger.info("Started parsing doc. %s.", docAndJobId)

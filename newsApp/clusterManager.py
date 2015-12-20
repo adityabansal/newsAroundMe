@@ -10,6 +10,9 @@ from constants import *
 from dbhelper import *
 from cluster import Cluster
 from clusterTableManager import ClusterTableManager
+from loggingHelper import *
+from jobManager import JobManager
+from workerJob import WorkerJob
 
 #constants
 NEW_CLUSTER_FOLDER = "new/"
@@ -148,6 +151,8 @@ class ClusterManager:
             json.dumps(cluster.articles))
 
     def putClusters(self, clusters):
+        jobManager = JobManager()
+
         existingClusters = self.getClusters()
         newClusters = [cluster for cluster in clusters
             if cluster not in existingClusters]
@@ -155,7 +160,13 @@ class ClusterManager:
             if cluster not in clusters]
 
         for cluster in newClusters:
-            self.processNewCluster(cluster)
+            job = WorkerJob(
+                JOB_PROCESSNEWCLUSTER,
+                { JOBARG_PROCESSNEWCLUSTER_CLUSTER : str(cluster)})
+            jobManager.enqueueJob(job)
+            logging.info(
+                "Put process new cluster job. Cluster id: %s.",
+                cluster.id)
 
         self.clusterTableManager.deleteClusters(expiredClusters)
 
