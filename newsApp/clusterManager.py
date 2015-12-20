@@ -81,7 +81,7 @@ class ClusterManager:
     def __cleanupOldDocsFromCluster(self, expiredDocs):
         clusters = self.getClusters()
 
-        newClusters = [(cluster - expiredDocs) for cluster in clusters
+        newClusters = [Cluster(list(cluster - expiredDocs)) for cluster in clusters
                     if (cluster - expiredDocs)]
         self.putClusters(newClusters)
 

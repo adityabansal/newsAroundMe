@@ -228,7 +228,7 @@ def _getCloseClusters(clusters, distances):
     return result
 
 def _mergeClusters(clusters, cluster1, cluster2):
-    mergedCluster = cluster1 | cluster2
+    mergedCluster = Cluster(list(cluster1 | cluster2))
     clusters.remove(cluster1)
     clusters.remove(cluster2)
     clusters.append(mergedCluster)
