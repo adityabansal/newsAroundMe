@@ -8,3 +8,4 @@ six==1.10.0
 Flask==0.10.1
 gunicorn==19.4.1
 gevent==1.0.2
+python-binary-memcached==0.24.6
