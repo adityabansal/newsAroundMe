@@ -66,3 +66,8 @@ CLUSTER_STATE_INITIALIZED = 'initialized'
 CLUSTER_STATE_NEW = 'new'
 CLUSTER_STATE_STARTED = 'started'
 CLUSTER_STATE_COMPLETED = 'completed'
+
+#allowed input parameter values
+ALLOWED_LOCALES = ['bangalore']
+ALLOWED_CATEGORIES = ['sports', 'business', 'national', 'world']
+ALLOWED_COUNTRIES = ['India']

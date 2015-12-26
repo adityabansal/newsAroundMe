@@ -137,7 +137,9 @@ class ClusterManager:
         return (list(newDocs), list(retainedDocs), list(expiredDocs))
 
     def putDocList(self, docList):
-        self.__putObject(NEW_CLUSTER_FOLDER + DOCLIST_FILE, json.dumps(docList))
+        self.__putObject(
+            NEW_CLUSTER_FOLDER + DOCLIST_FILE,
+            json.dumps(docList))
 
     def getDocList(self):
         return json.loads(self.__getObject(NEW_CLUSTER_FOLDER + DOCLIST_FILE))
@@ -149,6 +151,38 @@ class ClusterManager:
         self.__putObject(
             PROCESSED_CLUSTERS_FOLDER + cluster.id,
             json.dumps(cluster.articles))
+
+    def getProcessedCluster(self, clusterId):
+        return json.loads(
+            self.__getObject(PROCESSED_CLUSTERS_FOLDER + clusterId))
+
+    def __computeClusterRankingScore(self, cluster):
+        return len(cluster)
+
+    def __constructQueryResponse(self, clusters, skip, top):
+        response = []
+        clusterList = list(clusters)
+        clusterList.sort(key = self.__computeClusterRankingScore, reverse=True)
+
+        for cluster in clusterList[skip:top]:
+            try:
+                response.append(self.getProcessedCluster(cluster.id))
+            except:
+                continue
+
+        return response;
+
+    def queryByCategoryAndCountry(self, category, country, skip = 0, top = 5):
+        clusters = self.clusterTableManager.queryByCategoryAndCountry(
+            category,
+            country)
+        return self.__constructQueryResponse(clusters, skip, top)
+
+    def queryByLocale(self, locale, skip = 0, top = 5):
+        clusters = self.clusterTableManager.queryByLocale(locale)
+        response = []
+
+        return self.__constructQueryResponse(clusters, skip, top)
 
     def putClusters(self, clusters):
         jobManager = JobManager()

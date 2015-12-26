@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block childHtml %}
+  <div class="row newsSections">
+    {% for section in sections %}
+    <div class="col-xs-12 newsSection">
+      <div id="{{ section.id }}" class="panel panel-primary">
+        <div class="panel-heading">
+          <h3 class="panel-title text-capitalize">{{ section.title }}</h3>
+        </div>
+        <div class="panel-body">
+          <p data-bind="text: panelText"></p>
+
+          <ul class="list-group" data-bind="foreach: stories">
+            <li class="list-group-item">
+              <div class="thumbnail storyDiv">
+                <a target="_blank" data-bind="text : mainArticle.title, attr: {href:mainArticle.link}"></a>
+                <p class="summaryText" data-bind="text : mainArticle.summaryText"></p>
+                <div data-bind="if: relatedArticles">
+                  <em>Related</em>
+                  <ul data-bind="foreach: relatedArticles">
+                    <li><a target="_blank" data-bind="text : title, attr: {href:link}"></a></li>
+                  </ul>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+{% endblock %}
+{% block childScripts %}
+  <script src="{{ url_for('static', filename='SectionViewModel.js') }}"></script>
+{% endblock %}

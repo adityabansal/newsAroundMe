@@ -1,0 +1,21 @@
+body {
+  padding-top: 1em;
+}
+
+.newsSections {
+  padding: 4em 0 0 0;
+}
+
+.storyDiv {
+  padding: 0;
+  margin-bottom: 0;
+  border: 0;
+}
+
+.summaryText {
+  height: 2em;
+  width: 100%;                   
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

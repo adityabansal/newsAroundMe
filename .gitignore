@@ -1,7 +1,12 @@
 *.pyc
 
 *.env
+
 *.py~
 *.env~
+.gitignore~
+*.html~
+*.js~
+*.css~
 
 /venv
