@@ -160,7 +160,7 @@ class ClusterManager:
         value = self.cache.get(key)
         if not value:
           value = self.__getObject(PROCESSED_CLUSTERS_FOLDER + clusterId)
-          self.cache.set(key, value, time = 300)
+          self.cache.set(key, value, time = 7200)
 
         return json.loads(value)
 
