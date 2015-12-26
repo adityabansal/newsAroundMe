@@ -7,6 +7,7 @@ from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 
 from constants import *
+from cachingHelper import getCache
 from dbhelper import *
 from cluster import Cluster
 from clusterTableManager import ClusterTableManager
@@ -38,6 +39,7 @@ class ClusterManager:
 
         self.bucketConnString = os.environ['CLUSTERSBUCKET_CONNECTIONSTRING'];
         self.clusterTableManager = ClusterTableManager()
+        self.cache = getCache()
 
     def __getBucket(self):
         bucketConnParams = parseConnectionString(self.bucketConnString);
@@ -153,8 +155,14 @@ class ClusterManager:
             json.dumps(cluster.articles))
 
     def getProcessedCluster(self, clusterId):
-        return json.loads(
-            self.__getObject(PROCESSED_CLUSTERS_FOLDER + clusterId))
+        key = PROCESSED_CLUSTERS_FOLDER + clusterId
+
+        value = self.cache.get(key)
+        if not value:
+          value = self.__getObject(PROCESSED_CLUSTERS_FOLDER + clusterId)
+          self.cache.set(key, value, time = 300)
+
+        return json.loads(value)
 
     def __computeClusterRankingScore(self, cluster):
         return len(cluster)
