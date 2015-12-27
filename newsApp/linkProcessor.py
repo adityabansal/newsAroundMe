@@ -23,6 +23,12 @@ def _getDocKey(link):
     else:
         return _generateRandomDocKey();
 
+def _getPublisherDetails(publisher):
+    return {
+        PUBLISHERTAG_FRIENDLYID: publisher.tags[PUBLISHERTAG_FRIENDLYID],
+        PUBLISHERTAG_NAME: publisher.tags[PUBLISHERTAG_NAME],
+        PUBLISHERTAG_HOMEPAGE: publisher.tags[PUBLISHERTAG_HOMEPAGE]}
+
 def processLink(jobId, linkId):
   """
   Processes a link(takes as input the linkId)
@@ -57,7 +63,6 @@ def processLink(jobId, linkId):
   logger.info("Got html for the link. %s.", linkAndJobId)
 
   # process that html
-  linkManager = LinkManager()
   processingResult = hp.processHtml(
       jobId,
       pageHtml,
@@ -68,6 +73,7 @@ def processLink(jobId, linkId):
   doc = Doc(_getDocKey(link), processingResult[0], link.tags);
   doc.tags[TAG_IMAGES] = processingResult[1];
   doc.tags[DOCTAG_URL] = linkId;
+  doc.tags[TAG_PUBLISHER_DETAILS] = _getPublisherDetails(publisher)
 
   # save the doc
   docManager = DocManager();
