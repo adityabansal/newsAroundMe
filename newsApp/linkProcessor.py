@@ -66,7 +66,7 @@ def processLink(jobId, linkId):
 
   # generate corresponding doc
   doc = Doc(_getDocKey(link), processingResult[0], link.tags);
-  doc.tags[TAG_IMAGES] = json.dumps(processingResult[1]);
+  doc.tags[TAG_IMAGES] = processingResult[1];
   doc.tags[DOCTAG_URL] = linkId;
 
   # save the doc

@@ -51,7 +51,7 @@ def _retrieveNewTagsFromFeedEntry(jobId, entry):
       ["img"]);
   newTags[LINKTAG_SUMMARY] = entry.summary;
   newTags[LINKTAG_SUMMARYTEXT] = processingResult[0];
-  newTags[LINKTAG_SUMMARYIMAGES] = json.dumps(processingResult[1]);
+  newTags[LINKTAG_SUMMARYIMAGES] = processingResult[1];
 
   newTags[LINKTAG_PUBTIME] = calendar.timegm(entry.published_parsed);
 
