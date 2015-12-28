@@ -4,27 +4,65 @@
     {% for section in sections %}
     <div class="col-xs-12 newsSection">
       <div id="{{ section.id }}" class="panel panel-primary">
+
         <div class="panel-heading">
           <h3 class="panel-title text-capitalize">{{ section.title }}</h3>
         </div>
-        <div class="panel-body">
-          <p data-bind="text: panelText"></p>
 
-          <ul class="list-group" data-bind="foreach: stories">
-            <li class="list-group-item">
-              <div class="thumbnail storyDiv">
-                <a target="_blank" data-bind="text : mainArticle.title, attr: {href:mainArticle.link}"></a>
-                <p class="summaryText" data-bind="text : mainArticle.summaryText"></p>
-                <div data-bind="if: relatedArticles">
-                  <em>Related</em>
-                  <ul data-bind="foreach: relatedArticles">
-                    <li><a target="_blank" data-bind="text : title, attr: {href:link}"></a></li>
-                  </ul>
+        <div class="panel-body">
+          <div class=row">
+            <p data-bind="text: panelText"></p>
+
+            <ul class="list-group" data-bind="foreach: stories">
+              <li class="list-group-item row">
+
+                <div class="col-xs-12 col-md-4" data-bind="if: images().length > 0">
+		  <div class="carousel slide storyMedia" data-bind="attr:{'id': carouselId}">
+                    <ol class="carousel-indicators"   data-bind="foreach: images ">
+                      <li data-bind="attr:{'data-slide-to': $index, 'data-target': '#' + $parent.carouselId}, css:{'active' : $index() == 0}"></li>
+                    </ol>
+
+                    <div class="carousel-inner" data-bind="foreach: images">
+                      <div class="item" data-bind="css: {'active' : $index() == 0}" >
+                        <a class="thumbnail" target="_blank" data-bind="attr:{'href': link}">
+                          <img class="storyCarouselPic" data-bind="attr:{'src': src}">
+                        </a>
+                      </div>
+                    </div>
+
+                    <!-- Controls -->
+                    <!-- ko if: images().length > 1 -->
+                    <a class="left carousel-control" data-bind="attr:{'href': '#' + carouselId}" data-slide="prev">
+                      <span class="icon-prev"></span>
+                    </a>
+                    <a class="right carousel-control" data-bind="attr:{'href': '#' + carouselId}" data-slide="next">
+                      <span class="icon-next"></span>
+                    </a>
+                    <!-- /ko -->
+		  </div>
                 </div>
-              </div>
-            </li>
-          </ul>
+
+                <div class="col-xs-12" data-bind="css:{'col-md-8' : images().length > 0}">
+                  <div class="thumbnail storyDiv">
+                    <a target="_blank" data-bind="text : mainArticle.title, attr: {href:mainArticle.link}"></a>
+                    <p class="summaryText" data-bind="text : mainArticle.summaryText"></p>
+
+                    <div data-bind="if: relatedArticles">
+                      <em>Related</em>
+                      <ul data-bind="foreach: relatedArticles">
+                        <li><a target="_blank" data-bind="text : title, attr: {href:link}"></a></li>
+                      </ul>
+                    </div>
+
+                  </div>
+                </div>
+
+              </li>
+            </ul>
+
+          </div>
         </div>
+
       </div>
     </div>
     {% endfor %}

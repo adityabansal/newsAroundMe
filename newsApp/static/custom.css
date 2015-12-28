@@ -12,6 +12,14 @@ body {
   border: 0;
 }
 
+.storyMedia {
+  height: 10em;
+}
+
+.storyCarouselPic {
+  max-height: 10em;
+} 
+
 .summaryText {
   height: 2em;
   width: 100%;                   
