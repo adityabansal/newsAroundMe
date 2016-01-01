@@ -3,6 +3,16 @@ import hashlib
 from constants import *
 from docManager import DocManager
 
+def _removeDuplicatesAndOutliers(items, articleCount):
+  d = {}
+  for item in items:
+    if item in d:
+      d[item] = d[item] + 1
+    else:
+      d[item] = 1
+
+  return [item for item in d.keys() if d[item] > 0.3 * articleCount]
+
 class Cluster(set):
   """
   Represents a cluster(set of similar documents)
@@ -55,9 +65,10 @@ class Cluster(set):
       if doc.tags.get(FEEDTAG_LANG):
          self.languages.append(doc.tags[FEEDTAG_LANG])
 
+    nArticles = len(self.articles)
     #remove duplicates
-    self.categories = list(set(self.categories))
-    self.countries = list(set(self.countries))
-    self.locales = list(set(self.locales))
+    self.categories = _removeDuplicatesAndOutliers(self.categories, nArticles)
+    self.countries = _removeDuplicatesAndOutliers(self.countries, nArticles)
+    self.locales = _removeDuplicatesAndOutliers(self.locales, nArticles)
     self.publishers = list(set(self.publishers))
     self.languages = list(set(self.languages))
