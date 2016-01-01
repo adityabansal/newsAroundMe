@@ -78,7 +78,10 @@ def processLink(jobId, linkId):
   # save the doc
   docManager = DocManager();
   docManager.put(doc);
-  logger.info("Document generated and saved for link. %s.", linkAndJobId)
+  logger.info(
+      "Document generated and saved for link. Doc key %s. %s.",
+      doc.key,
+      linkAndJobId)
 
   # update the link
   link.tags[LINKTAG_ISPROCESSED] = 'true';

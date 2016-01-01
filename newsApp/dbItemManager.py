@@ -75,7 +75,8 @@ class DbItemManager:
                 batch.put_item(data = {
                     'itemId' : item.id,
                     'tagName' : tagName,
-                    'tagValue' : item.tags[tagName]})
+                    'tagValue' : item.tags[tagName]},
+                overwrite = True)
 
     def get(self, itemId):
         """

@@ -17,6 +17,22 @@ def _extractImages(html, imageSelector):
     images = html.cssselect(imageSelector);
     return [img.attrib['src'] for img in images if 'src' in img.attrib];
 
+def _getImageSize(jobId, url):
+    jobInfo = "Image url: " + url + ". JobId: " + jobId
+
+    try:
+        logger.info("Fetching image. %s", jobInfo)
+        img = urllib.urlopen(url)
+        size = img.headers.get("content-length")
+        if size:
+            logger.info("Image has size %s. %s", size, jobInfo)
+            return int(size)
+    except:
+        pass;
+
+    logger.info("Could not determine image size. %s", jobInfo)
+    return 0
+
 def processHtml(jobId, rawHtml, textSelector, imageSelectors):
     """
     Process given html to extract out some text and images from it.
@@ -56,6 +72,7 @@ def processHtml(jobId, rawHtml, textSelector, imageSelectors):
     images = [];
     for imageSelector in imageSelectors:
         images += _extractImages(parsedHtml, imageSelector);
+    images = [img for img in images if _getImageSize(jobId, img) > 5000]
     logger.info("Extracted out %i images. JobId: %s", len(images), jobId);
 
     return (text, images);
