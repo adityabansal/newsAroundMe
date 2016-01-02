@@ -10,6 +10,7 @@ from linkManager import LinkManager
 import htmlProcessor as hp
 from publisher import Publisher
 from publisherManager import PublisherManager
+from translation import translate
 
 logger = logging.getLogger('linkProcessor')
 
@@ -28,6 +29,25 @@ def _getPublisherDetails(publisher):
         PUBLISHERTAG_FRIENDLYID: publisher.tags[PUBLISHERTAG_FRIENDLYID],
         PUBLISHERTAG_NAME: publisher.tags[PUBLISHERTAG_NAME],
         PUBLISHERTAG_HOMEPAGE: publisher.tags[PUBLISHERTAG_HOMEPAGE]}
+
+def _addTranslationTags(doc):
+  docLang = doc.tags[FEEDTAG_LANG]
+
+  if docLang != LANG_ENGLISH:
+    doc.tags[DOCTAG_TRANSLATED_TITLE] = translate(
+      jobId,
+      doc.tags[LINKTAG_TITLE],
+      docLang)
+    doc.tags[DOCTAG_TRANSLATED_SUMMARYTEXT] = translate(
+      jobId,
+      doc.tags[LINKTAG_SUMMARYTEXT],
+      docLang)
+    doc.tags[DOCTAG_TRANSLATED_CONTENT] = translate(
+      jobId,
+      doc.content,
+      docLang)
+
+  return doc
 
 def processLink(jobId, linkId):
   """
@@ -74,6 +94,7 @@ def processLink(jobId, linkId):
   doc.tags[TAG_IMAGES] = processingResult[1];
   doc.tags[DOCTAG_URL] = linkId;
   doc.tags[TAG_PUBLISHER_DETAILS] = _getPublisherDetails(publisher)
+  doc = _addTranslationTags(doc)
 
   # save the doc
   docManager = DocManager();

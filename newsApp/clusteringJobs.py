@@ -25,16 +25,42 @@ W_CONTENT_SIM = 0.5
 
 SIMSCORE_MIN_THRESHOLD = 0.02
 
+def __getDocEnglishTitle(doc):
+  docLang = doc.tags[FEEDTAG_LANG]
+
+  if docLang != LANG_ENGLISH:
+    return doc.tags[DOCTAG_TRANSLATED_TITLE]
+  else:
+    return doc.tags[LINKTAG_TITLE]
+
+def __getDocEnglishSummaryText(doc):
+  docLang = doc.tags[FEEDTAG_LANG]
+
+  if docLang != LANG_ENGLISH:
+    return doc.tags[DOCTAG_TRANSLATED_SUMMARYTEXT]
+  else:
+    return doc.tags[LINKTAG_SUMMARYTEXT]
+
+def __getDocEnglishContent(doc):
+  docLang = doc.tags[FEEDTAG_LANG]
+
+  if docLang != LANG_ENGLISH:
+    return doc.tags[DOCTAG_TRANSLATED_CONTENT]
+  else:
+    return doc.content
+
 def computeDocSimScore(doc1, doc2):
     titleSim = th.compareTitles(
-        doc1.tags[LINKTAG_TITLE],
-        doc2.tags[LINKTAG_TITLE])
+        __getDocEnglishTitle(doc1),
+        __getDocEnglishTitle(doc2))
 
     summarySim = th.compareTexts(
-        doc1.tags[LINKTAG_SUMMARYTEXT],
-        doc2.tags[LINKTAG_SUMMARYTEXT])
+        __getDocEnglishSummaryText(doc1),
+        __getDocEnglishSummaryText(doc2))
 
-    contentSim = th.compareTexts(doc1.content, doc2.content)
+    contentSim = th.compareTexts(
+        __getDocEnglishContent(doc1),
+        __getDocEnglishContent(doc2))
 
     return titleSim*W_TITLE_SIM \
            + summarySim*W_SUMMARY_SIM \
@@ -46,7 +72,6 @@ def compareDocs(jobId, doc1Key, doc2Key):
     logger.info("Started comparing docs. %s", jobInfo);
 
     docManager = DocManager();
-    distanceTableManager = DistanceTableManager();
 
     doc1 = docManager.get(doc1Key)
     doc2 = docManager.get(doc2Key)
@@ -54,6 +79,7 @@ def compareDocs(jobId, doc1Key, doc2Key):
     logger.info("Comparision score: %s. %s", str(score), jobInfo);
 
     if score > SIMSCORE_MIN_THRESHOLD:
+        distanceTableManager = DistanceTableManager();
         distanceTableManager.addEntry(doc1Key, doc2Key, score);
         logger.info("Added comparision score to distances table. %s", jobInfo);
 
@@ -131,13 +157,19 @@ def parseDoc(jobId, docId):
     logger.info("Started parsing doc. %s.", docAndJobId)
 
     docManager = DocManager()
-    shingleTableManager = ShingleTableManager()
 
     doc = docManager.get(docId)
-    shingles = th.getStemmedShingles(doc.tags[LINKTAG_SUMMARYTEXT], 2, 3)
-    shingles = shingles + th.getStemmedShingles(doc.content, 3, 3)
+    shingles = th.getStemmedShingles(
+      __getDocEnglishSummaryText(doc), 2, 3)
+    shingles = shingles + th.getStemmedShingles(
+      __getDocEnglishContent(doc), 3, 3)
     logger.info("Completed getting shingles. %s.", docAndJobId)
+    logger.info(
+      "Number of unique shigles are %i. %s.",
+      len(set(shingles)),
+      docAndJobId)
 
+    shingleTableManager = ShingleTableManager()
     shingleTableManager.addEntries(docId, shingles);
 
     logger.info("Completed parsing doc. %s.", docAndJobId)

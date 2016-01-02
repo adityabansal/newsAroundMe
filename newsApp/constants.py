@@ -1,5 +1,7 @@
 # define some constants used across modules.
 
+LANG_ENGLISH = 'en'
+
 # common tag names
 TAG_PUBLISHER = 'publisher'
 TAG_PUBLISHER_DETAILS = 'publisherDetails'
@@ -7,6 +9,9 @@ TAG_IMAGES = 'images'
 
 #doc tags
 DOCTAG_URL = 'url'
+DOCTAG_TRANSLATED_TITLE = 'translatedTitle'
+DOCTAG_TRANSLATED_SUMMARYTEXT = 'translatedSummaryText'
+DOCTAG_TRANSLATED_CONTENT = 'translatedContent'
 
 # feed tags
 FEEDTAG_TYPE = 'type'
