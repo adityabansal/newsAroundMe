@@ -30,7 +30,7 @@ def _getPublisherDetails(publisher):
         PUBLISHERTAG_NAME: publisher.tags[PUBLISHERTAG_NAME],
         PUBLISHERTAG_HOMEPAGE: publisher.tags[PUBLISHERTAG_HOMEPAGE]}
 
-def _addTranslationTags(doc):
+def _addTranslationTags(jobId, doc):
   docLang = doc.tags[FEEDTAG_LANG]
 
   if docLang != LANG_ENGLISH:
@@ -94,7 +94,7 @@ def processLink(jobId, linkId):
   doc.tags[TAG_IMAGES] = processingResult[1];
   doc.tags[DOCTAG_URL] = linkId;
   doc.tags[TAG_PUBLISHER_DETAILS] = _getPublisherDetails(publisher)
-  doc = _addTranslationTags(doc)
+  doc = _addTranslationTags(jobId, doc)
 
   # save the doc
   docManager = DocManager();
