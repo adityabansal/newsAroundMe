@@ -63,11 +63,11 @@ def show_entries():
   return render_template(
     'home.html',
     sections = [
-      {'id': 'localNews', 'title': 'bangalore'},
+      {'id': 'localNews', 'title': 'Local'},
+      {'id': 'nationalNews', 'title': 'National'},
       {'id': 'businessNews', 'title': 'Business'},
-      {'id': 'sportsNews', 'title': 'Sports'},
       {'id': 'worldNews', 'title': 'World'},
-      {'id': 'nationalNews', 'title': 'National'}])
+      {'id': 'sportsNews', 'title': 'Sports'}])
 
 if __name__ == '__main__':
   app.run()

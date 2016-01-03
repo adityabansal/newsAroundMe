@@ -11,6 +11,21 @@
 
         <div class="panel-body">
           <div class=row">
+
+            {% if section.id == 'localNews' %}
+              <div id="locationDropown" class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  Select Location
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" data-bind="foreach: availableLocations">
+                  <li><a role="menuitem" tabindex="-1" href="#" class="text-capitalize" data-bind="text: $data, click: $parent.location"></a></li>
+                </ul>
+
+                <span class="text-capitalize" data-bind="text: location"></span>
+              </div>
+            {% endif %}
+
             <p data-bind="text: panelText"></p>
 
             <ul class="list-group" data-bind="foreach: stories">

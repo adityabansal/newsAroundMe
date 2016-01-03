@@ -42,19 +42,33 @@ $(function() {
   function SectionViewModel(url) {
     var self = this;
     self.stories = ko.observableArray();
-    self.panelText = ko.observable("Loading ...");
+    self.panelText = ko.observable("");
 
-    $.getJSON(url, function( stories ) {
-      var items = [];
-      $.each( stories, function( index, story ) {
-        self.stories.push(new StoryViewModel(story))
+    self.loadData = function(url) {
+      self.panelText("Loading ...");
+      self.stories([])
+      $.getJSON(url, function( stories ) {
+        var items = [];
+        $.each( stories, function( index, story ) {
+          self.stories.push(new StoryViewModel(story))
+        });
+        self.panelText("")
       });
-      self.panelText("")
-    });
+    }
+
+    if (!!url) {
+      self.loadData(url);
+    }
+
+    self.availableLocations = ko.observableArray(['bangalore', 'delhi'])
+    self.location = ko.observable('')
+    self.location.subscribe(function(newValue) {
+      self.loadData("/api/stories?locale=" + newValue)
+    })
   }
 
   if ($("#localNews").length === 1) {
-      var localNewsVM = new SectionViewModel("/api/stories?locale=bangalore");
+      var localNewsVM = new SectionViewModel();
       ko.applyBindings(localNewsVM, $("#localNews")[0]);
   }
 
