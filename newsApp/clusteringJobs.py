@@ -23,7 +23,7 @@ W_TITLE_SIM = 0.2
 W_SUMMARY_SIM = 0.3
 W_CONTENT_SIM = 0.5
 
-SIMSCORE_MIN_THRESHOLD = 0.02
+SIMSCORE_MIN_THRESHOLD = 0.03
 
 def __getDocEnglishTitle(doc):
   docLang = doc.tags[FEEDTAG_LANG]
@@ -233,7 +233,7 @@ def getCandidateDocs(jobId, docId):
     logger.info("Completed get candidate docs job. %s.", docAndJobId)
 
 ## Agglomerative clustering logic ##
-MIN_CLUSTER_SIMILARITY = 0.08
+MIN_CLUSTER_SIMILARITY = 0.1
 
 def _getDocDistance(distances, docId1, docId2):
     first = min(docId1, docId2)
