@@ -13,17 +13,9 @@ body {
 }
 
 .storyMedia {
-  height: 10em;
+  height: 12em;
 }
 
 .storyCarouselPic {
-  max-height: 10em;
-} 
-
-.summaryText {
-  height: 2em;
-  width: 100%;                   
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  max-height: 12em;
 }

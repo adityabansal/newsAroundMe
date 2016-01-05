@@ -6,9 +6,14 @@ $(function() {
     return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
   }
 
+  function cropText(text, maxLength) {
+    return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
+  }
+
   function StoryViewModel(story) {
     var self = this
     self.mainArticle = story[0]
+    self.mainArticle.summaryText = cropText(self.mainArticle.summaryText, 500)
 
     self.relatedArticles = null
     if (story.length > 1) {
