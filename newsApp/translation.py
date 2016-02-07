@@ -63,8 +63,8 @@ def translateMicrosoft(jobInfo, text, fromLang, toLang = 'en'):
         "Microsoft translation call returned with status code %i",
         translation_result.status_code)
       return ""
-  except:
-    logger.info("Microsoft translation failed. %s", jobInfo)
+  except Exception as e:
+    logging.exception("Microsoft translation failed. %s", jobInfo)
     return ""
 
 def translate(jobId, text, fromLang, toLang = 'en'):
