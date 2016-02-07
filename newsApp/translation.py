@@ -44,11 +44,16 @@ def translateMicrosoft(jobInfo, text, fromLang, toLang = 'en'):
       requests.post(oauth_url, data=urllib.urlencode(args)).content)
 
     # make the translate api call
+    strText = text
+    if isinstance(text, unicode):
+      strText = text.encode('utf-8')
+
     translation_args = {
-      'text': text,
+      'text': strText,
       'to': toLang,
       'from': fromLang
     }
+
     headers={'Authorization': 'Bearer '+ oauth_response['access_token']}
     translate_url = 'https://api.microsofttranslator.com/V2/Ajax.svc/Translate?'
     translation_result = requests.get(
