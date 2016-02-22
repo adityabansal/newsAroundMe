@@ -60,7 +60,8 @@ def translateMicrosoft(jobInfo, text, fromLang, toLang = 'en'):
       translate_url + urllib.urlencode(translation_args),
       headers=headers)
 
-    if translation_result.status_code == 200:
+    if translation_result.status_code == 200 and \
+      'TranslateApiException' not in translation_result.content:
       logger.info("Completed microsoft translation. %s", jobInfo)
       return translation_result.content
     else:
