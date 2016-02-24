@@ -172,7 +172,7 @@ class ClusterManager:
         clusterList = list(clusters)
         clusterList.sort(key = self.__computeClusterRankingScore, reverse=True)
 
-        for cluster in clusterList[skip:top]:
+        for cluster in clusterList[skip:(skip + top)]:
             try:
                 response.append(self.getProcessedCluster(cluster.id))
             except:
@@ -180,13 +180,13 @@ class ClusterManager:
 
         return response;
 
-    def queryByCategoryAndCountry(self, category, country, skip = 0, top = 5):
+    def queryByCategoryAndCountry(self, category, country, skip, top):
         clusters = self.clusterTableManager.queryByCategoryAndCountry(
             category,
             country)
         return self.__constructQueryResponse(clusters, skip, top)
 
-    def queryByLocale(self, locale, skip = 0, top = 5):
+    def queryByLocale(self, locale, skip, top):
         clusters = self.clusterTableManager.queryByLocale(locale)
         response = []
 

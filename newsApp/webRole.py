@@ -37,6 +37,28 @@ def validateCountry(value):
   except StopIteration:
     abort(400, "Allowed country values are: " + str(ALLOWED_COUNTRIES))
 
+def validateSkipAndTop(skip, top):
+  # if not specified return default values"
+  if not skip and not top:
+    return (0, 5)
+
+  if not skip or not top:
+    abort(400, "Specify both skip and top")
+
+  try:
+    parsedSkip = int(skip)
+    parsedTop = int(top)
+  except ValueError:
+    abort(400, "skip and top values should be integers")
+
+  if parsedSkip < 0 or parsedTop < 0:
+    abort(400, "skip and top cannot not be negative")
+
+  if parsedTop > 5:
+    abort(400, "Top cannot be greater than 5")
+
+  return (parsedSkip, parsedTop)
+
 #end validations
 
 @app.route('/api/stories', methods=['GET'])
@@ -44,17 +66,25 @@ def get_stories():
   countryFilter = request.args.get('country')
   categoryFilter = request.args.get('category')
   localeFilter = request.args.get('locale')
+  (skip, top) = validateSkipAndTop(
+    request.args.get('skip'),
+    request.args.get('top'))
 
   clusterManager = ClusterManager()
   if localeFilter and not (countryFilter or categoryFilter):
     localeFilter = validateLocale(localeFilter)
-    return getJsonResponse(clusterManager.queryByLocale(localeFilter))
+    return getJsonResponse(clusterManager.queryByLocale(
+      localeFilter,
+      skip,
+      top))
   elif (countryFilter and categoryFilter) and not localeFilter:
     countryFilter = validateCountry(countryFilter)
     categoryFilter = validateCategory(categoryFilter)
     return getJsonResponse(clusterManager.queryByCategoryAndCountry(
       categoryFilter,
-      countryFilter))
+      countryFilter,
+      skip,
+      top))
 
   abort(400, "Invalid query")
 

@@ -26,8 +26,6 @@
               </div>
             {% endif %}
 
-            <p data-bind="text: panelText"></p>
-
             <ul class="list-group" data-bind="foreach: stories">
               <li class="list-group-item row">
 
@@ -74,6 +72,9 @@
 
               </li>
             </ul>
+
+            <p data-bind="text: panelText"></p>
+            <button type="button" class="btn btn-primary" data-bind="click: loadMoreStories, visible: stories().length > 0, disable: panelText()">Load more</button>
 
           </div>
         </div>

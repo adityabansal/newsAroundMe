@@ -51,13 +51,25 @@ $(function() {
 
     self.loadData = function(url) {
       self.panelText("Loading ...");
+      self.url = ko.observable(url);
       self.stories([])
+
       $.getJSON(url, function( stories ) {
-        var items = [];
         $.each( stories, function( index, story ) {
           self.stories.push(new StoryViewModel(story))
         });
-        self.panelText("")
+        self.panelText("");
+      });
+    }
+
+    self.loadMoreStories = function() {
+      var urlWithSkipAndTop = self.url() + "&skip=" + self.stories().length + "&top=5";
+      self.panelText("Loading ...");
+      $.getJSON(urlWithSkipAndTop, function(stories) {
+        $.each( stories, function( index, story ) {
+          self.stories.push(new StoryViewModel(story))
+        });
+        self.panelText("");
       });
     }
 
