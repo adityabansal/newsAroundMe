@@ -10,6 +10,7 @@ from clusterManager import ClusterManager
 from distanceTableManager import DistanceTableManager
 from doc import Doc
 from docManager import DocManager
+from entityTableManager import EntityTableManager
 from jobManager import JobManager
 from loggingHelper import *
 from shingleTableManager import ShingleTableManager
@@ -87,12 +88,17 @@ def compareDocs(jobId, doc1Key, doc2Key):
 
 def cleanUpDocShingles(jobId, docId):
     docAndJobId = "Doc id: " + docId + ". Job id: " + jobId;
-    logger.info("Started cleaning up doc shingles. %s.", docAndJobId)
+    logger.info("Started cleaning up doc. %s.", docAndJobId)
 
     shingleTableManager = ShingleTableManager()
     shingleTableManager.cleanUpDocShingles(docId)
-
     logger.info("Completed cleaning up doc shingles. %s.", docAndJobId)
+
+    entityTableManager = EntityTableManager()
+    entityTableManager.cleanUpDocEntities(docId)
+    logger.info("Completed cleaning up doc shingles. %s.", docAndJobId)
+
+    logger.info("Completed cleaning up doc. %s.", docAndJobId)
 
 def cleanUpDocDistances(jobId, docId):
     docAndJobId = "Doc id: " + docId + ". Job id: " + jobId;
@@ -157,8 +163,9 @@ def parseDoc(jobId, docId):
     logger.info("Started parsing doc. %s.", docAndJobId)
 
     docManager = DocManager()
-
     doc = docManager.get(docId)
+
+    # compute and put shingles
     shingles = th.getStemmedShingles(
       __getDocEnglishSummaryText(doc), 2, 3)
     shingles = shingles + th.getStemmedShingles(
@@ -171,6 +178,22 @@ def parseDoc(jobId, docId):
 
     shingleTableManager = ShingleTableManager()
     shingleTableManager.addEntries(docId, shingles);
+    logger.info("Added shingles to shingle table. %s.", docAndJobId)
+
+    # compute and put entities
+    entities = th.getEntities(__getDocEnglishTitle(doc)) + \
+        th.getEntities(__getDocEnglishSummaryText(doc)) + \
+        th.getEntities(__getDocEnglishContent(doc));
+    entities = list(set(entities))
+    logger.info("Completed getting entities. %s.", docAndJobId)
+    logger.info(
+      "Number of unique entities are %i. %s.",
+      len(set(entities)),
+      docAndJobId)
+
+    entityTableManager = EntityTableManager()
+    entityTableManager.addEntries(docId, entities)
+    logger.info("Added entities to entity table. %s.", docAndJobId)
 
     logger.info("Completed parsing doc. %s.", docAndJobId)
 
