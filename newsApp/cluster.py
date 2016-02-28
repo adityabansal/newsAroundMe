@@ -2,7 +2,9 @@ import hashlib
 
 from constants import *
 from docManager import DocManager
+from distanceTableManager import DistanceTableManager
 
+DOC_DUPLICATION_THRESHOLD = 0.85
 def _removeDuplicatesAndOutliers(items, articleCount):
   d = {}
   for item in items:
@@ -12,6 +14,16 @@ def _removeDuplicatesAndOutliers(items, articleCount):
       d[item] = 1
 
   return [item for item in d.keys() if d[item] > 0.3 * articleCount]
+
+def _isDuplicateArticle(docKey, docsAdded):
+  distanceTableManager = DistanceTableManager()
+
+  for addedDoc in docsAdded:
+    distance = distanceTableManager.getDistance(docKey, addedDoc)
+    if distance > DOC_DUPLICATION_THRESHOLD:
+      return True
+
+  return False
 
 class Cluster(set):
   """
@@ -40,19 +52,22 @@ class Cluster(set):
     self.locales = []
     self.publishers = []
     self.languages = []
-    self.articles = []
+    self.articles = [] # contains non-duplicate articles
 
     docManager = DocManager()
+    docsAdded = []
     for docKey in super(Cluster, self).__iter__():
       doc = docManager.get(docKey)
 
-      self.articles.append({
+      if not _isDuplicateArticle(docKey, docsAdded):
+        self.articles.append({
           'title': doc.tags.get(LINKTAG_TITLE, ""),
           'publisher': doc.tags.get(TAG_PUBLISHER_DETAILS, ""),
           'link': doc.tags.get(DOCTAG_URL, "#"),
           'summaryText': doc.tags.get(LINKTAG_SUMMARYTEXT, ""),
           'images': doc.tags.get(TAG_IMAGES, "[]"),
           'lang': doc.tags.get(FEEDTAG_LANG, "")})
+        docsAdded.append(docKey)
 
       if doc.tags.get(FEEDTAG_CATEGORY):
          self.categories.append(doc.tags[FEEDTAG_CATEGORY])

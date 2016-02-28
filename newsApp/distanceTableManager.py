@@ -79,6 +79,22 @@ class DistanceTableManager:
             'distance' : str(distance)},
             overwrite = True)
 
+    def getDistance(self, docId1, docId2):
+        """
+        Get the distance between two entries.
+        """
+
+        queryFrom = min(docId1, docId2)
+        queryTo = max(docId1, docId2)
+
+        table = self.__getTable()
+        entry = list(table.query_2(from__eq = queryFrom, to__eq = queryTo))
+
+        if not entry:
+          return 0
+        else:
+          return eval(entry[0]['distance'])
+
     def getEntries(self):
         """
         Get the distance entries.
