@@ -14,8 +14,6 @@ from workerJob import WorkerJob
 
 InitLogging()
 
-CLUSTERING_DOC_AGE_LIMIT = 1
-
 def putParseDocJobs(jobManager, docKeys):
     for docKey in docKeys:
         parseDocJob = WorkerJob(
@@ -87,7 +85,7 @@ def startClustering():
     putParseDocJobs(jobManager, docKeys);
 
     logging.info("Sleeping to ensure that all parse doc jobs are enqueued.")
-    time.sleep(120);
+    time.sleep(60);
 
     putGetCandidateDocsJobs(jobManager, docKeys);
     clusterManager.setState(CLUSTER_STATE_NEW)
@@ -124,7 +122,7 @@ def startIncrementalClustering():
     putCleanUpDocDistancesJobs(jobManager, expiredDocs)
 
     logging.info("Sleeping to ensure shingles table is in good state before putting get candidate jobs.")
-    time.sleep(120);
+    time.sleep(60);
 
     putGetCandidateDocsJobs(jobManager, newDocs);
     clusterManager.setState(CLUSTER_STATE_NEW)

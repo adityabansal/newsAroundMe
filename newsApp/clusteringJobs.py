@@ -130,7 +130,7 @@ def cleanupShingleTable(jobId):
     shingleTableManager = ShingleTableManager()
 
     docList = clusterManager.getDocList()
-    allDocs = list(docManager.getNewDocKeys(1.5))
+    allDocs = list(docManager.getNewDocKeys(CLUSTERING_DOC_AGE_LIMIT + 0.2))
 
     for docKey in allDocs:
         if docKey not in docList:

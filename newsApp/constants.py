@@ -72,6 +72,9 @@ CLUSTER_STATE_NEW = 'new'
 CLUSTER_STATE_STARTED = 'started'
 CLUSTER_STATE_COMPLETED = 'completed'
 
+# global parameters
+CLUSTERING_DOC_AGE_LIMIT = 1
+
 #allowed input parameter values
 ALLOWED_LOCALES = ['bangalore', 'delhi']
 ALLOWED_CATEGORIES = ['sports', 'business', 'national', 'world']
