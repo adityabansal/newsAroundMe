@@ -75,6 +75,9 @@ def compareTitles(title1, title2):
 
 def getEntities(text):
     try:
+        if not text:
+            return []
+
         text = _removeNonAsciiChars(text)
 
         sentences = nltk.sent_tokenize(text)
