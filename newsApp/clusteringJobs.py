@@ -129,25 +129,6 @@ def cleanUpDistanceTable(jobId):
         nStaleEntries,
         jobInfo)
 
-def cleanupShingleTable(jobId):
-    jobInfo = "Job id: " + jobId
-    clusterManager = ClusterManager()
-    docManager = DocManager()
-    shingleTableManager = ShingleTableManager()
-
-    docList = clusterManager.getDocList()
-    allDocs = list(docManager.getNewDocKeys(CLUSTERING_DOC_AGE_LIMIT + 0.2))
-
-    for docKey in allDocs:
-        if docKey not in docList:
-            docShingles = list(shingleTableManager.queryByDocId(docKey))
-            if len(docShingles) > 0:
-                logging.info(
-                    "Stale entry found in shingle table for docId %s. %s",
-                    docKey,
-                    jobInfo)
-                shingleTableManager.cleanUpDocShingles(docKey)
-
 def processNewCluster(jobId, strCluster):
     cluster = eval(strCluster)
     clusterAndJobId = "Cluster id: " + cluster.id + ". Job id: " + jobId;
@@ -354,6 +335,4 @@ def clusterDocs(jobId):
     logger.info("Cleaning up distance table. %s.", jobInfo)
     cleanUpDistanceTable(jobId)
 
-    logger.info("Cleaning up shingle table. %s.", jobInfo)
-    cleanupShingleTable(jobId)
     logger.info("Completed post-clustering cleanup tasks. %s", jobInfo)
