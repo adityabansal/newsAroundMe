@@ -30,7 +30,7 @@
               <li class="list-group-item row">
 
                 <div class="col-xs-12 col-sm-4" data-bind="if: images().length > 0">
-		  <div class="carousel slide storyMedia" data-bind="attr:{'id': carouselId}">
+		              <div class="carousel slide storyMedia" data-bind="attr:{'id': carouselId}">
                     <ol class="carousel-indicators"   data-bind="foreach: images ">
                       <li data-bind="attr:{'data-slide-to': $index, 'data-target': '#' + $parent.carouselId}, css:{'active' : $index() == 0}"></li>
                     </ol>
@@ -51,8 +51,7 @@
                     <a class="right carousel-control" data-bind="attr:{'href': '#' + carouselId}" data-slide="next">
                       <span class="icon-next"></span>
                     </a>
-                    <!-- /ko -->
-		  </div>
+		              </div>
                 </div>
 
                 <div class="col-xs-12" data-bind="css:{'col-sm-8' : images().length > 0}">

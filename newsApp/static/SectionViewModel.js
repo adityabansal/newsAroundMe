@@ -7,6 +7,9 @@ $(function() {
   }
 
   function cropText(text, maxLength) {
+    if (!text) {
+      return ""
+    }
     return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
   }
 

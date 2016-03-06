@@ -96,7 +96,7 @@ def cleanUpDocShingles(jobId, docId):
 
     entityTableManager = EntityTableManager()
     entityTableManager.cleanUpDocEntities(docId)
-    logger.info("Completed cleaning up doc shingles. %s.", docAndJobId)
+    logger.info("Completed cleaning up doc entities. %s.", docAndJobId)
 
     logger.info("Completed cleaning up doc. %s.", docAndJobId)
 
