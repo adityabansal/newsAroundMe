@@ -147,19 +147,20 @@ def parseDoc(jobId, docId):
     doc = docManager.get(docId)
 
     # compute and put shingles
-    shingles = th.getStemmedShingles(
-      __getDocEnglishSummaryText(doc), 2, 3)
-    shingles = shingles + th.getStemmedShingles(
-      __getDocEnglishContent(doc), 3, 3)
-    logger.info("Completed getting shingles. %s.", docAndJobId)
-    logger.info(
-      "Number of unique shigles are %i. %s.",
-      len(set(shingles)),
-      docAndJobId)
+    if (doc.tags[FEEDTAG_LANG] == LANG_ENGLISH):
+        shingles = th.getStemmedShingles(
+          __getDocEnglishSummaryText(doc), 2, 3)
+        shingles = shingles + th.getStemmedShingles(
+          __getDocEnglishContent(doc), 3, 3)
+        logger.info("Completed getting shingles. %s.", docAndJobId)
+        logger.info(
+          "Number of unique shigles are %i. %s.",
+          len(set(shingles)),
+          docAndJobId)
 
-    shingleTableManager = ShingleTableManager()
-    shingleTableManager.addEntries(docId, shingles);
-    logger.info("Added shingles to shingle table. %s.", docAndJobId)
+        shingleTableManager = ShingleTableManager()
+        shingleTableManager.addEntries(docId, shingles);
+        logger.info("Added shingles to shingle table. %s.", docAndJobId)
 
     # compute and put entities
     entities = th.getEntities(__getDocEnglishTitle(doc)) + \
