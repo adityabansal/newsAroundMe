@@ -79,8 +79,8 @@ def translate(jobId, text, fromLang, toLang = 'en'):
      + " Job id: " + jobId
 
   # clip text if too long to save costs
-  if len(text) > 1200:
-    text = text[:1200]
+  if len(text) > 600:
+    text = text[:600]
 
   if fromLang in MSTRANSLATE_LANGS and fromLang in GOOGLE_LANGS:
     msResult = translateMicrosoft(jobInfo, text, fromLang, toLang)
