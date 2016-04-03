@@ -1,9 +1,12 @@
+import itertools
 import logging
 import string
 
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem.porter import *
+
+from encodedEntity import EncodedEntity
 
 nltk.download('punkt');
 nltk.download('stopwords');
@@ -89,22 +92,38 @@ def getEntities(text):
             extractedEntities = nltk.ne_chunk(sentence, binary=True).subtrees(
                 filter = lambda x: x.label() == 'NE')
             for entity in extractedEntities:
-                entities.append(
-                    ' '.join([leaf[0] for leaf in entity.leaves()]))
+                newEntity = ' '.join([leaf[0] for leaf in entity.leaves()])
+                entities.append(newEntity)
 
         return list(set(entities))
     except Exception as e:
         logging.exception("Could not extract entities for text: '%s'", text)
         return []
 
+def compareEntities(entity1, entity2):
+    entity1 = EncodedEntity(entity1)
+    entity2 = EncodedEntity(entity2)
+
+    if entity1.encoded == entity2.encoded:
+        return 1.0
+    else:
+        entity1Words = set(entity1.encoded.split())
+        entity2Words = set(entity2.encoded.split())
+        commonWords = entity1Words.intersection(entity2Words)
+
+        if len(commonWords) > 0:
+            return float(len(commonWords))/(len(entity1Words) + len(entity2Words))
+        else:
+            return 0.0
+
 def compareTextEntities(text1, text2):
     text1Entities = set(getEntities(text1))
     text2Entities = set(getEntities(text2))
 
-    intersection = text1Entities.intersection(text2Entities)
-    union = text1Entities.union(text2Entities)
+    entityPairSimilarities = [compareEntities(x[0], x[1])
+                 for x in itertools.product(text1Entities, text2Entities)]
 
-    if len(union) == 0:
-        return 0
+    if len(entityPairSimilarities) == 0:
+        return 0;
     else:
-        return float(len(intersection))/len(union)
+        return float(sum(entityPairSimilarities))/len(entityPairSimilarities)

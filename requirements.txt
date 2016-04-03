@@ -12,3 +12,4 @@ python-binary-memcached==0.24.6
 google-api-python-client==1.4.2
 requests==2.9.1
 numpy==1.10.4
+jellyfish==0.5.3

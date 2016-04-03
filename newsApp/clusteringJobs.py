@@ -80,9 +80,9 @@ def computeDocSimScoreUsingEntities(doc1, doc2):
         __getDocEnglishContent(doc1),
         __getDocEnglishContent(doc2))
 
-    return titleSim*W_TITLE_SIM \
-           + summarySim*W_SUMMARY_SIM \
-           + contentSim*W_CONTENT_SIM;
+    return titleSim*0.4 \
+           + summarySim*0.4\
+           + contentSim*0.2;
 
 def compareDocs(jobId, doc1Key, doc2Key):
     jobInfo = "Doc1 id: " + doc1Key + " Doc2 id: " + doc2Key \
@@ -256,7 +256,7 @@ def getCandidateDocsUsingEntities(jobId, docId, docAndJobId):
             else:
                 matchFreq[match] = 1
 
-    matches = [match for match in matchFreq.keys() if matchFreq[match] > 4]
+    matches = [match for match in matchFreq.keys() if matchFreq[match] > 2]
 
     logger.info("%i matching docs found using entities. %s.", len(matches), docAndJobId)
     return matches

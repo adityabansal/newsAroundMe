@@ -5,6 +5,7 @@ from boto.dynamodb2.table import Table
 from boto.dynamodb2.fields import HashKey, RangeKey, GlobalAllIndex
 
 from dbhelper import *
+from encodedEntity import EncodedEntity
 
 class EntityTableManager:
     """
@@ -76,9 +77,12 @@ class EntityTableManager:
         table = self.__getTable()
         with table.batch_write() as batch:
             for entity in entities:
+                encodedEntity = EncodedEntity(entity)
                 batch.put_item(data={
                     'docId': docId,
-                    'entity': entity})
+                    'entity': encodedEntity.encoded,
+                    'plain': encodedEntity.plain},
+                    overwrite = True)
 
     def queryByEntity(self, entity):
         """
