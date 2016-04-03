@@ -49,7 +49,7 @@ def getStemmedShingles(text, minLength, maxLength):
 
     return shingles;
 
-def compareTexts(text1, text2):
+def compareEnglishTexts(text1, text2):
     text1ShinglesSet = set(getStemmedShingles(text1, 3, 3))
     text2ShinglesSet = set(getStemmedShingles(text2, 3, 3))
 
@@ -61,7 +61,7 @@ def compareTexts(text1, text2):
     else:
         return float(len(intersection))/shorterLen
 
-def compareTitles(title1, title2):
+def compareEnglishTitles(title1, title2):
     title1Tokens = set(filterStopwords(getStemmedTokens(title1)))
     title2Tokens = set(filterStopwords(getStemmedTokens(title2)))
 
@@ -96,3 +96,15 @@ def getEntities(text):
     except Exception as e:
         logging.exception("Could not extract entities for text: '%s'", text)
         return []
+
+def compareTextEntities(text1, text2):
+    text1Entities = set(getEntities(text1))
+    text2Entities = set(getEntities(text2))
+
+    intersection = text1Entities.intersection(text2Entities)
+    union = text1Entities.union(text2Entities)
+
+    if len(union) == 0:
+        return 0
+    else:
+        return float(len(intersection))/len(union)

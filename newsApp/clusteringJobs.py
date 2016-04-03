@@ -50,16 +50,33 @@ def __getDocEnglishContent(doc):
   else:
     return doc.content
 
-def computeDocSimScore(doc1, doc2):
-    titleSim = th.compareTitles(
+def computeEnglishDocsSimScore(doc1, doc2):
+    titleSim = th.compareEnglishTitles(
         __getDocEnglishTitle(doc1),
         __getDocEnglishTitle(doc2))
 
-    summarySim = th.compareTexts(
+    summarySim = th.compareEnglishTexts(
         __getDocEnglishSummaryText(doc1),
         __getDocEnglishSummaryText(doc2))
 
-    contentSim = th.compareTexts(
+    contentSim = th.compareEnglishTexts(
+        __getDocEnglishContent(doc1),
+        __getDocEnglishContent(doc2))
+
+    return titleSim*W_TITLE_SIM \
+           + summarySim*W_SUMMARY_SIM \
+           + contentSim*W_CONTENT_SIM;
+
+def computeDocSimScoreUsingEntities(doc1, doc2):
+    titleSim = th.compareTextEntities(
+        __getDocEnglishTitle(doc1),
+        __getDocEnglishTitle(doc2))
+
+    summarySim = th.compareTextEntities(
+        __getDocEnglishSummaryText(doc1),
+        __getDocEnglishSummaryText(doc2))
+
+    contentSim = th.compareTextEntities(
         __getDocEnglishContent(doc1),
         __getDocEnglishContent(doc2))
 
@@ -73,10 +90,17 @@ def compareDocs(jobId, doc1Key, doc2Key):
     logger.info("Started comparing docs. %s", jobInfo);
 
     docManager = DocManager();
-
     doc1 = docManager.get(doc1Key)
     doc2 = docManager.get(doc2Key)
-    score = computeDocSimScore(doc1, doc2);
+
+    score = 0;
+    if (doc1.tags[FEEDTAG_LANG] == LANG_ENGLISH) and \
+        (doc2.tags[FEEDTAG_LANG] == LANG_ENGLISH):
+        score = computeEnglishDocsSimScore(doc1, doc2)
+        logger.info("Comparing using shingles. %s", jobInfo)
+    else:
+        score = computeDocSimScoreUsingEntities(doc1, doc2)
+        logger.info("Comparing using entities. %s", jobInfo)
     logger.info("Comparision score: %s. %s", str(score), jobInfo);
 
     if score > SIMSCORE_MIN_THRESHOLD:
