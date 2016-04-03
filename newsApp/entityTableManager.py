@@ -33,6 +33,22 @@ class EntityTableManager:
             tableConnectionParams['name'],
             connection = getDbConnection(tableConnectionParams));
 
+    def __removeDuplicateEntities(self, entities):
+        """
+        Remove entities which might result in duplicate encodings.
+        """
+
+        seenEncodedEntities = set()
+        uniqueEntitiesList = []
+
+        for entity in entities:
+            encodedEntity = EncodedEntity(entity).encoded
+            if encodedEntity not in seenEncodedEntities:
+                seenEncodedEntities.add(encodedEntity)
+                uniqueEntitiesList.append(entity)
+
+        return uniqueEntitiesList
+
     def createFreshTable(self):
         """
         Create a fresh empty entity table.
@@ -73,7 +89,7 @@ class EntityTableManager:
         Add entries in entities table for entities and docId passed.
         """
 
-        entities = list(set(entities)) # remove duplicate
+        entities = self.__removeDuplicateEntities(entities)
         table = self.__getTable()
         with table.batch_write() as batch:
             for entity in entities:
