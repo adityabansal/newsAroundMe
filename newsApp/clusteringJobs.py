@@ -198,13 +198,9 @@ def __queryShingles(shingles):
 
     return poolResults
 
-def getCandidateDocs(jobId, docId):
-    docAndJobId = "Doc id: " + docId + ". Job id: " + jobId;
-    logger.info("Started get candidate docs job. %s.", docAndJobId)
-
+def getCandidateDocsUsingShingles(jobId, docId, docAndJobId):
     matchFreq = {}
     shingleTableManager = ShingleTableManager()
-    jobManager = JobManager()
 
     shingles = shingleTableManager.queryByDocId(docId)
     poolResults = __queryShingles(shingles)
@@ -219,7 +215,31 @@ def getCandidateDocs(jobId, docId):
 
     matches = [match for match in matchFreq.keys() if matchFreq[match] > 4]
 
-    logger.info("%i matching docs found. %s.", len(matches), docAndJobId)
+    logger.info("%i matching docs found using shingles. %s.", len(matches), docAndJobId)
+    return matches;
+
+def getCandidateDocsUsingEntities(jobId, docId, docAndJobId):
+    entityTableManager = EntityTableManager()
+    matchFreq = {}
+
+    entities = entityTableManager.queryByDocId(docId)
+
+    for entity in entities:
+        matchingDocs = entityTableManager.queryByEntity(entity)
+        for match in matchingDocs:
+            if match in matchFreq:
+                matchFreq[match] = matchFreq[match] + 1
+            else:
+                matchFreq[match] = 1
+
+    matches = [match for match in matchFreq.keys() if matchFreq[match] > 4]
+
+    logger.info("%i matching docs found using entities. %s.", len(matches), docAndJobId)
+    return matches
+
+def putComareDocJobs(docId, matches, docAndJobId):
+    jobManager = JobManager()
+
     for match in matches:
         if match != docId:
             job = WorkerJob(
@@ -234,6 +254,20 @@ def getCandidateDocs(jobId, docId):
                 job.jobId,
                 match,
                 docAndJobId)
+
+def getCandidateDocs(jobId, docId):
+    docAndJobId = "Doc id: " + docId + ". Job id: " + jobId;
+    logger.info("Started get candidate docs job. %s.", docAndJobId)
+
+    matchesUsingShingles = getCandidateDocsUsingShingles(jobId, docId, docAndJobId)
+    matchesUsingEntities = getCandidateDocsUsingEntities(jobId, docId, docAndJobId)
+
+    uniqueMatches = list(set(matchesUsingShingles) | set(matchesUsingEntities))
+    logger.info(
+        "%i unique matching docs found using shingles and entities. %s.",
+        len(uniqueMatches),
+        docAndJobId)
+    putComareDocJobs(docId, uniqueMatches, docAndJobId)
 
     logger.info("Completed get candidate docs job. %s.", docAndJobId)
 
