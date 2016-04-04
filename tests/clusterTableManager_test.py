@@ -28,6 +28,9 @@ class ClusterTableManagerTests(unittest.TestCase):
     clusters[0].languages = str(['en'])
     clusters[1].languages = str(['es'])
 
+    clusters[0].duplicates = ['d4']
+    clusters[1].duplicates = []
+
     self.clusters = clusters
 
     self.clusterTableManager = ClusterTableManager()
@@ -40,7 +43,7 @@ class ClusterTableManagerTests(unittest.TestCase):
   @classmethod
   def tearDownClass(self):
     time.sleep(1);
-    #self.clusterTableManager.deleteTable()
+    self.clusterTableManager.deleteTable()
 
   def testGet(self):
     #simple get

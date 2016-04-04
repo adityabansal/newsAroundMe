@@ -66,7 +66,8 @@ class ClusterTableManager:
           'countries': str(cluster.countries),
           'locales': str(cluster.locales),
           'publishers': str(cluster.publishers),
-          'languages': str(cluster.languages)})
+          'languages': str(cluster.languages),
+          'duplicates': str(cluster.duplicates)})
 
   def addCluster(self, cluster):
     self.addClusters([cluster])
@@ -110,5 +111,6 @@ class ClusterTableManager:
     cluster.locales = eval(row['locales'])
     cluster.publishers = eval(row['publishers'])
     cluster.languages = eval(row['languages'])
+    cluster.duplicates = eval(row['duplicates'])
 
     return cluster

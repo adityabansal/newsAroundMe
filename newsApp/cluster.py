@@ -53,6 +53,7 @@ class Cluster(set):
     self.publishers = []
     self.languages = []
     self.articles = [] # contains non-duplicate articles
+    self.duplicates = []
 
     docManager = DocManager()
     docsAdded = []
@@ -68,6 +69,8 @@ class Cluster(set):
           'images': doc.tags.get(TAG_IMAGES, "[]"),
           'lang': doc.tags.get(FEEDTAG_LANG, "")})
         docsAdded.append(docKey)
+      else:
+        self.duplicates.append(docKey)
 
       if doc.tags.get(FEEDTAG_CATEGORY):
          self.categories.append(doc.tags[FEEDTAG_CATEGORY])
