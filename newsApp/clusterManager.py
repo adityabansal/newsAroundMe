@@ -165,7 +165,7 @@ class ClusterManager:
         return json.loads(value)
 
     def __computeClusterRankingScore(self, cluster):
-        return len(cluster)
+        return len(cluster) - len(cluster.duplicates)
 
     def __constructQueryResponse(self, clusters, skip, top):
         response = []
