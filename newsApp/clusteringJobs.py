@@ -283,15 +283,15 @@ def getCandidateDocs(jobId, docId):
     docAndJobId = "Doc id: " + docId + ". Job id: " + jobId;
     logger.info("Started get candidate docs job. %s.", docAndJobId)
 
-    docManager = DocManager()
-    doc = docManager.get(docId)
+    matchesUsingShingles = getCandidateDocsUsingShingles(jobId, docId, docAndJobId)
+    matchesUsingEntities = getCandidateDocsUsingEntities(jobId, docId, docAndJobId)
 
-    if (doc.tags[FEEDTAG_LANG] == LANG_ENGLISH):
-        matches = getCandidateDocsUsingShingles(jobId, docId, docAndJobId)
-    else:
-        matches = getCandidateDocsUsingEntities(jobId, docId, docAndJobId)
-
-    putComareDocJobs(docId, matches, docAndJobId)
+    uniqueMatches = list(set(matchesUsingShingles) | set(matchesUsingEntities))
+    logger.info(
+        "%i unique matching docs found using shingles and entities. %s.",
+        len(uniqueMatches),
+        docAndJobId)
+    putComareDocJobs(docId, uniqueMatches, docAndJobId)
 
     logger.info("Completed get candidate docs job. %s.", docAndJobId)
 
