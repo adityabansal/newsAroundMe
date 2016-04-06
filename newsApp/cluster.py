@@ -13,7 +13,7 @@ def _removeDuplicatesAndOutliers(items, articleCount):
     else:
       d[item] = 1
 
-  return [item for item in d.keys() if d[item] > 0.3 * articleCount]
+  return [item for item in d.keys() if d[item] > 0.4 * articleCount]
 
 def _isDuplicateArticle(docKey, docsAdded):
   distanceTableManager = DistanceTableManager()
@@ -83,7 +83,7 @@ class Cluster(set):
       if doc.tags.get(FEEDTAG_LANG):
          self.languages.append(doc.tags[FEEDTAG_LANG])
 
-    nArticles = len(self.articles)
+    nArticles = len(self.articles) + len(self.duplicates)
     #remove duplicates
     self.categories = _removeDuplicatesAndOutliers(self.categories, nArticles)
     self.countries = _removeDuplicatesAndOutliers(self.countries, nArticles)
