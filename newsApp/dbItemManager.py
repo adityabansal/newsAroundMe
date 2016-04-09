@@ -107,9 +107,11 @@ class DbItemManager:
         tagsTable = self.__getTables()
 
         itemTags = self.__getItemTags(tagsTable, itemId)
-        for itemTagName in itemTags:
-            tagsTable.delete_item(
-                itemId=itemId,
-                tagName=itemTagName)
+
+        with tagsTable.batch_write() as batch:
+            for itemTagName in itemTags:
+                batch.delete_item(
+                    itemId=itemId,
+                    tagName=itemTagName)
 
         return
