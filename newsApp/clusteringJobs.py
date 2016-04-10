@@ -68,7 +68,11 @@ def computeEnglishDocsSimScore(doc1, doc2):
            + contentSim*W_CONTENT_SIM;
 
 def computeDocSimScoreUsingEntities(doc1, doc2):
-    titleSim = th.compareTextEntities(
+    titleSim = th.compareEnglishTitles(
+        __getDocEnglishTitle(doc1),
+        __getDocEnglishTitle(doc2))
+
+    titleSimEntities = th.compareTextEntities(
         __getDocEnglishTitle(doc1),
         __getDocEnglishTitle(doc2))
 
@@ -80,8 +84,9 @@ def computeDocSimScoreUsingEntities(doc1, doc2):
         __getDocEnglishContent(doc1),
         __getDocEnglishContent(doc2))
 
-    return titleSim*0.4 \
-           + summarySim*0.4\
+    return titleSim*0.3 \
+           + titleSimEntities*0.3 \
+           + summarySim*0.2 \
            + contentSim*0.2;
 
 def compareDocs(jobId, doc1Key, doc2Key):
