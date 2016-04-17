@@ -2,6 +2,16 @@ body {
   padding-top: 1em;
 }
 
+.logo-img {
+	padding-left: 4px;
+}
+
+.logo-text {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    font-size: 32px;
+    font-style: italic;
+}
+
 .newsSections {
   padding: 4em 0 0 0;
 }
