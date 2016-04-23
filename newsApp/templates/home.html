@@ -1,89 +1,105 @@
 {% extends "layout.html" %}
 {% block childHtml %}
-  <div class="row newsSections">
-    {% for section in sections %}
-    <div class="col-md-12 newsSection">
-      <div id="{{ section.id }}" class="panel panel-primary">
+<!-- BEGIN: Section and Language filters -->
+<div class="filters row">
 
-        <div class="panel-heading">
-          <h3 class="panel-title text-capitalize">{{ section.title }}</h3>
-        </div>
+<!-- BEGIN: Section dropdown -->
+<div id="section-dropdown" class="dropdown pull-right">
+  <button id="section-dropdown-button"
+    class="btn btn-primary dropdown-toggle"
+    type="button"
+    data-toggle="dropdown"
+    aria-haspopup="true"
+    aria-expanded="true"
+    data-bind="disable: disabled" >
+    <span data-bind="text: label"></span>
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu pull-right" aria-labelledby="section-dropdown-button">
+    <!-- ko foreach: locations -->
+      <li>
+        <a href="#" data-bind="click: $parent.chooseSection">
+          <img class="section-dropdown-icon" data-bind="attr:{'src': icon}">
+          <span data-bind="text: displayName"></span>
+        </a>
+      </li>
+    <!-- /ko -->
+    <li role="separator" class="divider"></li>
+    <li class="dropdown-header">Non local sections</li>
+    <!-- ko foreach: otherSections -->
+      <li>
+        <a href="#" data-bind="click: $parent.chooseSection">
+          <img class="section-dropdown-icon" data-bind="attr:{'src': icon}">
+          <span data-bind="text: displayName"></span>
+        </a>
+      </li>
+    <!-- /ko -->
+  </ul>
+</div>
+<!-- END: Section dropdown -->
 
-        <div class="panel-body">
-          <div class=row">
+</div>
+<!-- END: Section and Language filters -->
 
-            {% if section.id == 'localNews' %}
-              <div id="locationDropown" class="dropdown">
-                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                  Select Location
-                  <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" data-bind="foreach: availableLocations">
-                  <li><a role="menuitem" tabindex="-1" href="#" class="text-capitalize" data-bind="text: $data, click: $parent.location"></a></li>
-                </ul>
+<!-- BEGIN: News stories -->
+<div id="storyList">
+<ul class="stories list-group" data-bind="foreach: stories">
+  <li class="list-group-item row story">
+    <div class="col-xs-12 col-sm-4" data-bind="if: images().length > 0">
+      <div class="carousel slide storyMedia" data-bind="attr:{'id': carouselId}">
+        <ol class="carousel-indicators"   data-bind="foreach: images ">
+          <li data-bind="attr:{'data-slide-to': $index, 'data-target': '#' + $parent.carouselId}, css:{'active' : $index() == 0}"></li>
+        </ol>
 
-                <span class="text-capitalize" data-bind="text: location"></span>
-              </div>
-            {% endif %}
-
-            <ul class="list-group" data-bind="foreach: stories">
-              <li class="list-group-item row">
-
-                <div class="col-xs-12 col-sm-4" data-bind="if: images().length > 0">
-		              <div class="carousel slide storyMedia" data-bind="attr:{'id': carouselId}">
-                    <ol class="carousel-indicators"   data-bind="foreach: images ">
-                      <li data-bind="attr:{'data-slide-to': $index, 'data-target': '#' + $parent.carouselId}, css:{'active' : $index() == 0}"></li>
-                    </ol>
-
-                    <div class="carousel-inner" data-bind="foreach: images">
-                      <div class="item" data-bind="css: {'active' : $index() == 0}" >
-                        <a class="thumbnail" target="_blank" data-bind="attr:{'href': link}">
-                          <img class="storyCarouselPic" data-bind="attr:{'src': src}">
-                        </a>
-                      </div>
-                    </div>
-
-                    <!-- Controls -->
-                    <!-- ko if: images().length > 1 -->
-                    <a class="left carousel-control" data-bind="attr:{'href': '#' + carouselId}" data-slide="prev">
-                      <span class="icon-prev"></span>
-                    </a>
-                    <a class="right carousel-control" data-bind="attr:{'href': '#' + carouselId}" data-slide="next">
-                      <span class="icon-next"></span>
-                    </a>
-                    <!-- /ko -->
-		              </div>
-                </div>
-
-                <div class="col-xs-12" data-bind="css:{'col-sm-8' : images().length > 0}">
-                  <div class="thumbnail storyDiv">
-                    <h4><a target="_blank" data-bind="text : mainArticle.title, attr: {href:mainArticle.link}"></a></h4>
-                    <p data-bind="text : mainArticle.summaryText"></p>
-
-                    <div data-bind="if: relatedArticles">
-                      <em>Related</em>
-                      <ul data-bind="foreach: relatedArticles">
-                        <li><a target="_blank" data-bind="text : title, attr: {href:link}"></a></li>
-                      </ul>
-                    </div>
-
-                  </div>
-                </div>
-
-              </li>
-            </ul>
-
-            <p data-bind="text: panelText"></p>
-            <button type="button" class="btn btn-primary" data-bind="click: loadMoreStories, visible: stories().length > 0, disable: panelText()">Load more</button>
-
+        <div class="carousel-inner" data-bind="foreach: images">
+          <div class="item" data-bind="css: {'active' : $index() == 0}" >
+            <a target="_blank" data-bind="attr:{'href': link}">
+              <img class="storyCarouselPic" data-bind="attr:{'src': src}">
+            </a>
           </div>
         </div>
 
+        <!-- Controls -->
+        <!-- ko if: images().length > 1 -->
+        <a class="left carousel-control" data-bind="attr:{'href': '#' + carouselId}" data-slide="prev">
+          <span class="icon-prev"></span>
+        </a>
+        <a class="right carousel-control" data-bind="attr:{'href': '#' + carouselId}" data-slide="next">
+          <span class="icon-next"></span>
+        </a>
+        <!-- /ko -->
       </div>
     </div>
-    {% endfor %}
-  </div>
+
+
+
+    <div class="col-xs-12" data-bind="css:{'col-sm-8' : images().length > 0}">
+      <h4><a target="_blank" data-bind="text : mainArticle.title, attr: {href:mainArticle.link}"></a></h4>
+      <small>
+        <a class="publisher-link" target="_blank" data-bind="text: mainArticle.publisher.name, attr: {href:mainArticle.publisher.homepage}"></a>
+      </small>
+      <p data-bind="text : mainArticle.summaryTextToDisplay"></p>
+
+      <div data-bind="if: relatedArticles">
+        <em>Related</em>
+        <ul data-bind="foreach: relatedArticles">
+          <li>
+            <a target="_blank" data-bind="text : title, attr: {href:link}"></a>
+            <small><a class="publisher-link" target="_blank" data-bind="text: publisher.name, attr: {href:publisher.homepage}"></a></small>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </li>
+</ul>
+<img  class="center-block" data-bind="visible: isDataLoading" src="{{ url_for('static', filename='loading.gif') }}">
+</div>
+<!-- END: News stories -->
+
 {% endblock %}
 {% block childScripts %}
-  <script src="{{ url_for('static', filename='SectionViewModel.js') }}"></script>
+  <script src="{{ url_for('static', filename='sectionDropdownViewModel.js') }}"></script>
+  <script src="{{ url_for('static', filename='storyViewModel.js') }}"></script>
+  <script src="{{ url_for('static', filename='storiesViewModel.js') }}"></script>
 {% endblock %}

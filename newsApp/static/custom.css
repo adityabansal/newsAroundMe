@@ -12,20 +12,34 @@ body {
     font-style: italic;
 }
 
-.newsSections {
-  padding: 4em 0 0 0;
+.body-content {
+  padding: 32px 0 0 0;
 }
 
+.section-dropdown-icon {
+    height: 1.5em;
+    width: 2em;
+    margin-right: 2px;
+}
+
+.publisher-link {
+  color: #666666;
+}
+
+.storyCarouselPic {
+  max-height: 14em;
+  width: 100%
+}
+
+.storyMedia {
+  height: 14em;
+}
+
+/* used in old site */
 .storyDiv {
   padding: 0;
   margin-bottom: 0;
   border: 0;
 }
 
-.storyMedia {
-  height: 12em;
-}
 
-.storyCarouselPic {
-  max-height: 12em;
-}
