@@ -13,7 +13,11 @@ body {
 }
 
 .body-content {
-  padding: 32px 0 0 0;
+  padding: 40px 0 0 0;
+}
+
+#section-dropdown-button {
+  margin-bottom: 0.5em;
 }
 
 .section-dropdown-icon {
