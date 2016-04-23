@@ -39,7 +39,8 @@ $(function() {
           if (!added) {
             self.images.push({
               'src': image,
-              'link': article.link
+              'link': article.link,
+              'publisher': article.publisher
             })
           }
         })
