@@ -46,7 +46,7 @@
 <ul class="stories list-group" data-bind="foreach: stories">
   <li class="list-group-item row story">
     <div class="col-xs-12 col-sm-4" data-bind="if: images().length > 0">
-      <div class="carousel slide storyMedia" data-bind="attr:{'id': carouselId}">
+      <div class="carousel slide storyMedia center-block" data-bind="attr:{'id': carouselId}">
         <ol class="carousel-indicators"   data-bind="foreach: images ">
           <li data-bind="attr:{'data-slide-to': $index, 'data-target': '#' + $parent.carouselId}, css:{'active' : $index() == 0}"></li>
         </ol>

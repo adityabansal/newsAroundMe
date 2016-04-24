@@ -37,6 +37,7 @@ body {
 
 .storyMedia {
   height: 14em;
+  max-width: 25em;
 }
 
 /* used in old site */
