@@ -44,15 +44,20 @@
       <div class="container">
         <div class="navbar-header brand-name">
           <a class="pull-left logo-text" href="#">
-            <img class="logo-img" src="{{ url_for('static', filename='logoNavbar.png') }}">
-            newsAroundMe</a>
+            <img class="logo-img" src="{{ url_for('static', filename='logoNavbar.png') }}">newsAroundMe
+          </a>
         </div>
       </div>
     </nav>
 
     <div class="container body-content">
-      {% block childHtml %}{% endblock %}
-    </div><!-- /.container -->
+      <div id="content" style="display: none;">
+        {% block childHtml %}{% endblock %}
+      </div>
+      <div id="content-loading">
+        <img  class="center-block" src="{{ url_for('static', filename='loading.gif') }}">
+      </div>
+    </div>
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
@@ -65,5 +70,13 @@
     <script src="{{ url_for('static', filename='ie10-viewport-bug-workaround.js') }}"></script>
     <!-- custom scripts -->
     {% block childScripts %}{% endblock %}
+
+    <!-- just show the loading icon until all scripts loaded -->
+    <script>
+      $(window).load(function() {
+        $("#content").show();
+        $("#content-loading").hide();
+      });
+    </script>
   </body>
 </html>
