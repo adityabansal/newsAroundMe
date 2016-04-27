@@ -6,8 +6,8 @@ $(function() {
     self.selection = ko.observable();
 
     self.locations = ko.observableArray(
-    	[{displayName: "Delhi", icon: "/static/delhi.svg", value: 'delhi'},
-    	 {displayName: "Bangalore", icon: "/static/city.svg", value: 'bangalore'}])
+        [{displayName: "Bangalore", icon: "/static/city.svg", value: 'bangalore'},
+         {displayName: "Delhi", icon: "/static/delhi.svg", value: 'delhi'}])
 
     self.otherSections = ko.observableArray(
     	[{displayName: "National", icon: "/static/national.svg", value: 'national'},

@@ -14,6 +14,7 @@ $(function() {
           self.stories.push(new window.StoryViewModel(story));
         });
         self.isDataLoading(false);
+        self.loadMoreStoriesIfAtEnd();
       });
     }
 
@@ -29,17 +30,20 @@ $(function() {
       });
     }
 
-    // Load more data on page scroll
-    $(window).scroll(function() {
-
-      // End of the document reached?
-      if ($(document).height() - $(window).height() == $(window).scrollTop()) {
+    self.loadMoreStoriesIfAtEnd = function() {
+      if (($(window).height() > $(document).height()) || // space still there at end of page
+          ($(document).height() - $(window).height() + 5 > $(window).scrollTop())) { // near the end of the document
         if (!self.isDataLoading()) {
           if (!!self.url && !!self.url()) {
             self.loadMoreStories();
           }
         }        
       }
+    }
+
+    // Load more data on page scroll
+    $(window).scroll(function() {
+      self.loadMoreStoriesIfAtEnd();
     });
   }
 
