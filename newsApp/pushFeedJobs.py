@@ -2,7 +2,7 @@ from constants import *
 from loggingHelper import *
 from feedManager import FeedManager
 from workerJob import WorkerJob
-from jobManager import JobManager
+from minerJobManager import MinerJobManager
 
 InitLogging()
 
@@ -11,7 +11,7 @@ def pushFeedJobs():
     Push feed processing jobs to job queue.
     """
 
-    jobManager = JobManager()
+    jobManager = MinerJobManager()
     feedManager = FeedManager()
     
     logging.info("Getting stale  feeds.")

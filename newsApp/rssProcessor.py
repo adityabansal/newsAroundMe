@@ -9,7 +9,7 @@ from constants import *
 from feed import Feed
 from feedManager import FeedManager
 import htmlProcessor as hp
-from jobManager import JobManager
+from minerJobManager import MinerJobManager
 from link import Link
 from linkManager import LinkManager
 from workerJob import WorkerJob
@@ -103,7 +103,7 @@ def processFeed(jobId, feedId):
 
   # for each entry add link in link database and a process link job
   linkManager = LinkManager()
-  jobManager = JobManager()
+  jobManager = MinerJobManager()
   for entry in newEntries:
     link = _linkFromFeedEntry(jobId, entry, feed)
     linkManager.put(link)

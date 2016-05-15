@@ -19,7 +19,7 @@ class JobManagerTests(unittest.TestCase):
             { 'param1Name' : 'dummy3', 'param2Name' : 'dummy4', 'param3Name' : 'dummy5' })
 
         # enqueue jobs
-        testJobManager = JobManager()
+        testJobManager = JobManager('testJobQueue')
         testJobManager.enqueueJob(testJob1)
         testJobManager.enqueueJob(testJob2)
 

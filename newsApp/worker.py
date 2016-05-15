@@ -1,6 +1,7 @@
 #background worker to do jobs
-
+import getopt
 import os
+import sys
 import time
 import threading
 
@@ -50,13 +51,13 @@ def RunJob(job):
     except:
         logging.exception('')
 
-def DequeueAndStartJob():
+def DequeueAndStartJob(connectionStringKey):
     """
     Dequeue a job from the queue and start executing it.
     """
 
     logging.info("Dequeing a job.");
-    jobManager = JobManager()
+    jobManager = JobManager(connectionStringKey)
     job = jobManager.dequeueJob()
 
     if job is None:
@@ -70,15 +71,16 @@ def DequeueAndStartJob():
     RunJob(job)
 
 class JobThread(threading.Thread):
-   def __init__ (self):
+   def __init__ (self, connectionStringKey):
       threading.Thread.__init__(self)
+      self.connectionStringKey = connectionStringKey;
    def run(self):
-      DequeueAndStartJob()
+      DequeueAndStartJob(self.connectionStringKey)
 
-if __name__ == '__main__':
+def RunWorker(connectionStringKey):
     InitLogging()
     while (True):
-        jobManager = JobManager()
+        jobManager = JobManager(connectionStringKey)
         jobCount = jobManager.count()
 
         # not spawning new thread for unless queue has a job
@@ -89,7 +91,7 @@ if __name__ == '__main__':
             logging.info("No of threads are: %i", nThreads)
 
             while nThreads < eval(os.environ['MAX_JOB_THREADS']):
-                jobThread = JobThread()
+                jobThread = JobThread(connectionStringKey)
                 jobThread.start()
                 nThreads = nThreads + 1;
 
@@ -98,3 +100,19 @@ if __name__ == '__main__':
         else:
             logging.info("No job found in queue. Sleeping")
             time.sleep(5)
+
+
+if __name__ == '__main__':
+    if len(sys.argv) > 1:
+        try:
+            opts, args = getopt.getopt(sys.argv[1:], "q:", ["queue"])
+        except getopt.GetoptError as err:
+            print str(err)
+            sys.exit(2)
+        for o, a in opts:
+            if o in ("-q", "--queue"):
+                RunWorker(a)
+                sys.exit()
+
+    print("Specify the queue connection string key with -q option");
+    sys.exit(2);

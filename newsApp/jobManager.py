@@ -8,15 +8,15 @@ class JobManager:
     Helper class to enqueue and dequeue jobs to the job queue.
     """
 
-    def __init__(self):
+    def __init__(self, connectionStringKey):
         """
         Instantiates the job manager.
 
-        Following environment variables need to be set -
-        'JOBSQUEUE_CONNECTIONSTRING' : connection string of jobs queue.
+        'connectionStringKey' : name of environment variable containing the
+        connection string to use.
         """
 
-        self.queue = getQueue(os.environ['JOBSQUEUE_CONNECTIONSTRING'])
+        self.queue = getQueue(os.environ[connectionStringKey])
 
     def enqueueJob(self, job):
         """
