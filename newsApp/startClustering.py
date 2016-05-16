@@ -5,10 +5,12 @@ import time
 
 from constants import *
 from clusterManager import ClusterManager
+from clusterTableManager import ClusterTableManager
 from distanceTableManager import DistanceTableManager
+from entityTableManager import EntityTableManager
 from docManager import DocManager
 from loggingHelper import *
-from jobManager import JobManager
+from clusterJobManager import ClusterJobManager
 from shingleTableManager import ShingleTableManager
 from workerJob import WorkerJob
 
@@ -64,16 +66,24 @@ def startClustering():
     """
 
     clusterManager = ClusterManager()
+    clusterTableManager = ClusterTableManager()
     distanceTableManager = DistanceTableManager()
     docManager = DocManager()
-    jobManager = JobManager()
+    entityTableManager = EntityTableManager()
+    jobManager = ClusterJobManager()
     shingleTableManager = ShingleTableManager()
 
     shingleTableManager.createFreshTable();
     logging.info("Cleaned up the shingle table");
 
+    entityTableManager.createFreshTable();
+    logging.info("Cleaned up the entity table");
+
     distanceTableManager.createFreshTable();
     logging.info("Cleaned up the distance table");
+
+    clusterTableManager.createFreshTable();
+    logging.info("Cleaned up the cluster table")
 
     docKeys = list(docManager.getNewDocKeys(CLUSTERING_DOC_AGE_LIMIT));
     logging.info("Got docs for clustering");
@@ -96,10 +106,8 @@ def startIncrementalClustering():
     """
 
     clusterManager = ClusterManager()
-    distanceTableManager = DistanceTableManager()
     docManager = DocManager()
-    jobManager = JobManager()
-    shingleTableManager = ShingleTableManager()
+    jobManager = ClusterJobManager()
 
     docKeys = list(docManager.getNewDocKeys(CLUSTERING_DOC_AGE_LIMIT));
     logging.info("Got docs for clustering");
@@ -139,7 +147,7 @@ def isClusteringInProgress():
 if __name__ == '__main__':
     if len(sys.argv) > 1:
         try:
-            opts, args = getopt.getopt(sys.argv[1:], "i", ["incremental"])
+            opts, args = getopt.getopt(sys.argv[1:], "if", ["incremental"])
         except getopt.GetoptError as err:
             print str(err)
             sys.exit(2)
@@ -148,6 +156,9 @@ if __name__ == '__main__':
                 if not isClusteringInProgress():
                     startIncrementalClustering()
                 sys.exit()
+            if o in ["-f"]:
+                startClustering()
+                sys.exit()
 
-    if not isClusteringInProgress():
-        startClustering()
+    print("Unsupported option")
+    sys.exit(2)

@@ -57,7 +57,7 @@ class EntityTableManager:
         # delete existing table if it exists
         try:
             self.__getTable().delete();
-            time.sleep(5)
+            time.sleep(10)
         except:
             pass;# do nothing. Maybe there was no existing table
 
@@ -71,7 +71,7 @@ class EntityTableManager:
                 RangeKey('docId')
             ], throughput = {
                 'read': 1,
-                'write': 1,
+                'write': 4,
             }, global_indexes = [
                 GlobalAllIndex('docIdIndex', parts = [
                     HashKey('docId'),
@@ -79,7 +79,7 @@ class EntityTableManager:
                 ],
                 throughput = {
                     'read': 1,
-                    'write': 1,
+                    'write': 4,
                 })
             ],
             connection = getDbConnection(tableConnectionParams))

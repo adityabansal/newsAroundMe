@@ -4,6 +4,7 @@ import random
 import time
 
 from boto.s3.connection import S3Connection
+from boto.exception import S3ResponseError
 from boto.s3.key import Key
 
 from constants import *
@@ -12,7 +13,7 @@ from dbhelper import *
 from cluster import Cluster
 from clusterTableManager import ClusterTableManager
 from loggingHelper import *
-from jobManager import JobManager
+from clusterJobManager import ClusterJobManager
 from workerJob import WorkerJob
 
 #constants
@@ -103,9 +104,12 @@ class ClusterManager:
           return None;
 
     def __setMetadata(self, key, value):
-        metadata = eval(self.__getObject(NEW_CLUSTER_FOLDER + METADATA_FILE))
-        metadata[key] = value
+        try:
+            metadata = eval(self.__getObject(NEW_CLUSTER_FOLDER + METADATA_FILE))
+        except S3ResponseError:
+            metadata = {}
 
+        metadata[key] = value
         self.__putObject(NEW_CLUSTER_FOLDER + METADATA_FILE, str(metadata))
 
     def initNewClusters(self, docList):
@@ -193,7 +197,7 @@ class ClusterManager:
         return self.__constructQueryResponse(clusters, skip, top)
 
     def putClusters(self, clusters):
-        jobManager = JobManager()
+        jobManager = ClusterJobManager()
 
         existingClusters = self.getClusters()
         newClusters = [cluster for cluster in clusters
@@ -215,7 +219,10 @@ class ClusterManager:
         self.__putObject(NEW_CLUSTER_FOLDER + CLUSTERS_FILE, str(clusters))
 
     def getClusters(self):
-        return eval(self.__getObject(NEW_CLUSTER_FOLDER + CLUSTERS_FILE))
+        try:
+            return eval(self.__getObject(NEW_CLUSTER_FOLDER + CLUSTERS_FILE))
+        except S3ResponseError:
+            return []
 
     def setState(self, state):
         self.__setMetadata(METADATA_NAME_STATE, state)

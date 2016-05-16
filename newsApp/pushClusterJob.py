@@ -2,7 +2,7 @@ from constants import *
 from loggingHelper import *
 
 from clusterManager import ClusterManager
-from jobManager import JobManager
+from clusterJobManager import ClusterJobManager
 from workerJob import WorkerJob
 
 InitLogging()
@@ -12,7 +12,7 @@ def pushClusterJob():
     Push the cluster job to job queue once all pre-processing is done.
     """
 
-    jobManager = JobManager()
+    jobManager = ClusterJobManager()
     clusterManager = ClusterManager()
 
     jobCount = jobManager.count()

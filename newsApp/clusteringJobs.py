@@ -11,7 +11,7 @@ from distanceTableManager import DistanceTableManager
 from doc import Doc
 from docManager import DocManager
 from entityTableManager import EntityTableManager
-from jobManager import JobManager
+from clusterJobManager import ClusterJobManager
 from loggingHelper import *
 from shingleTableManager import ShingleTableManager
 from workerJob import WorkerJob
@@ -267,7 +267,7 @@ def getCandidateDocsUsingEntities(jobId, docId, docAndJobId):
     return matches
 
 def putComareDocJobs(docId, matches, docAndJobId):
-    jobManager = JobManager()
+    jobManager = ClusterJobManager()
 
     for match in matches:
         if match != docId:

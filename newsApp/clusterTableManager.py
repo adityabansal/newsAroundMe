@@ -37,6 +37,14 @@ class ClusterTableManager:
     Create a fresh empty clusters table.
     """
 
+    # delete existing table if it exists
+    try:
+        self.__getTable().delete();
+        time.sleep(10)
+    except:
+        pass;# do nothing. Maybe there was no existing table
+
+
     # create new table
     tableConnectionParams = parseConnectionString(self.tableConnString);
     return Table.create(
