@@ -97,7 +97,9 @@ class DbItemManager:
         """
 
         tagsTable = self.__getTables()
-        return tagsTable.scan(tagName__eq = tagName, max_page_size=25);
+        return tagsTable.query_2(
+            tagName__eq = tagName,
+            index = 'tagName-itemId-index');
 
     def delete(self, itemId):
         """
