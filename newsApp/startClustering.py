@@ -16,17 +16,6 @@ from workerJob import WorkerJob
 
 InitLogging()
 
-def putParseDocJobs(jobManager, docKeys):
-    for docKey in docKeys:
-        parseDocJob = WorkerJob(
-            JOB_PARSEDOC,
-            { JOBARG_PARSEDOC_DOCID : docKey})
-        jobManager.enqueueJob(parseDocJob)
-        logging.info(
-            "Parse doc job put for docId: %s. Job id: %s",
-            docKey,
-            parseDocJob.jobId)
-
 def putGetCandidateDocsJobs(jobManager, docKeys):
     for docKey in docKeys:
         job = WorkerJob(
@@ -79,11 +68,6 @@ def startClustering():
     logging.info("Initialized new cluster");
     logging.info("Number of docs to cluster are: %i", len(docKeys))
 
-    putParseDocJobs(jobManager, docKeys);
-
-    logging.info("Sleeping to ensure that all parse doc jobs are enqueued.")
-    time.sleep(60);
-
     putGetCandidateDocsJobs(jobManager, docKeys);
     clusterManager.setState(CLUSTER_STATE_NEW)
 
@@ -112,10 +96,8 @@ def startIncrementalClustering():
 
     putCleanUpDocJobs(jobManager, expiredDocs)
 
-    putParseDocJobs(jobManager, newDocs)
-
     logging.info("Sleeping to ensure shingles table is in good state before putting get candidate jobs.")
-    time.sleep(60);
+    time.sleep(30);
 
     putGetCandidateDocsJobs(jobManager, newDocs);
     clusterManager.setState(CLUSTER_STATE_NEW)

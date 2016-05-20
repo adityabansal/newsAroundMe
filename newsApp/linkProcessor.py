@@ -2,6 +2,7 @@ import json
 import logging
 import random
 
+from clusterJobManager import ClusterJobManager
 from constants import *
 from doc import Doc
 from docManager import DocManager
@@ -11,6 +12,7 @@ import htmlProcessor as hp
 from publisher import Publisher
 from publisherManager import PublisherManager
 from translation import translate
+from workerJob import WorkerJob
 
 logger = logging.getLogger('linkProcessor')
 
@@ -103,6 +105,15 @@ def processLink(jobId, linkId):
       "Document generated and saved for link. Doc key %s. %s.",
       doc.key,
       linkAndJobId)
+
+  # put parse doc job
+  parseDocJob = WorkerJob(JOB_PARSEDOC, { JOBARG_PARSEDOC_DOCID : doc.key})
+  jobManager = ClusterJobManager()
+  jobManager.enqueueJob(parseDocJob)
+  logger.info(
+    "Parse doc job with with jobId '%s' put. %s.",
+    parseDocJob.jobId,
+    linkAndJobId)
 
   # update the link
   link.tags[LINKTAG_ISPROCESSED] = 'true';
