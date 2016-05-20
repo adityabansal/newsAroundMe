@@ -38,25 +38,12 @@ def putGetCandidateDocsJobs(jobManager, docKeys):
             job.jobId,
             docKey)
 
-def putCleanUpDocShinglesJobs(jobManager, docKeys):
+def putCleanUpDocJobs(jobManager, docKeys):
     for docKey in docKeys:
-        job = WorkerJob(
-            JOB_CLEANUPDOCSHINGLES,
-            { JOBARG_CLEANUPDOCSHINGLES_DOCID : docKey})
+        job = WorkerJob(JOB_CLEANUPDOC, { JOBARG_CLEANUPDOC_DOCID : docKey})
         jobManager.enqueueJob(job)
         logging.info(
-            "Put cleanup doc shingles job for docId: %s. Job id: %s",
-            docKey,
-            job.jobId)
-
-def putCleanUpDocDistancesJobs(jobManager, docKeys):
-    for docKey in docKeys:
-        job = WorkerJob(
-            JOB_CLEANUPDOCDISTANCES,
-            { JOBARG_CLEANUPDOCDISTANCES_DOCID : docKey})
-        jobManager.enqueueJob(job)
-        logging.info(
-            "Put cleanup doc distances job for docId: %s. Job id: %s",
+            "Put cleanup doc job for docId: %s. Job id: %s",
             docKey,
             job.jobId)
 
@@ -123,11 +110,9 @@ def startIncrementalClustering():
         len(retainedDocs),
         len(expiredDocs))
 
-    putCleanUpDocShinglesJobs(jobManager, expiredDocs)
+    putCleanUpDocJobs(jobManager, expiredDocs)
 
     putParseDocJobs(jobManager, newDocs)
-
-    putCleanUpDocDistancesJobs(jobManager, expiredDocs)
 
     logging.info("Sleeping to ensure shingles table is in good state before putting get candidate jobs.")
     time.sleep(60);

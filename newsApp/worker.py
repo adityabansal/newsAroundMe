@@ -42,8 +42,12 @@ def RunJob(job):
                 job.jobParams[JOB_UPDATEDBTHROUGHPUT_READTHOUGHPUT],
                 job.jobParams[JOB_UPDATEDBTHROUGHPUT_WRITETHOUGHPUT],
                 job.jobParams[JOB_UPDATEDBTHROUGHPUT_INDEXNAME])
+        if job.jobName == JOB_CLEANUPDOC:
+            cj.cleanUpDoc(job.jobId, job.jobParams[JOBARG_CLEANUPDOC_DOCID])
         if job.jobName == JOB_CLEANUPDOCSHINGLES:
             cj.cleanUpDocShingles(job.jobId, job.jobParams[JOBARG_CLEANUPDOCSHINGLES_DOCID])
+        if job.jobName == JOB_CLEANUPDOCENTITIES:
+            cj.cleanUpDocEntities(job.jobId, job.jobParams[JOBARG_CLEANUPDOCENTITIES_DOCID])
         if job.jobName == JOB_CLEANUPDOCDISTANCES:
             cj.cleanUpDocDistances(job.jobId, job.jobParams[JOBARG_CLEANUPDOCDISTANCES_DOCID])
         if job.jobName == JOB_PROCESSNEWCLUSTER:

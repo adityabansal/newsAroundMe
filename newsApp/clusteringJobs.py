@@ -115,19 +115,47 @@ def compareDocs(jobId, doc1Key, doc2Key):
 
     logger.info("Completed comparing docs. %s", jobInfo);
 
+def cleanUpDoc(jobId, docId):
+    docAndJobId = "Doc id: " + docId + ". Job id: " + jobId;
+    logger.info("Started cleaning up doc. %s.", docAndJobId);
+
+    jobManager = ClusterJobManager();
+
+    job = WorkerJob(
+        JOB_CLEANUPDOCSHINGLES,
+        { JOBARG_CLEANUPDOCSHINGLES_DOCID : docId})
+    jobManager.enqueueJob(job)
+    logging.info("Put cleanup doc shingles job. %s.", docAndJobId)
+
+    job = WorkerJob(
+        JOB_CLEANUPDOCENTITIES,
+        { JOBARG_CLEANUPDOCENTITIES_DOCID : docId})
+    jobManager.enqueueJob(job)
+    logging.info("Put cleanup doc entities job. %s.", docAndJobId)
+
+    job = WorkerJob(
+        JOB_CLEANUPDOCDISTANCES,
+        { JOBARG_CLEANUPDOCDISTANCES_DOCID : docId})
+    jobManager.enqueueJob(job)
+    logging.info("Put cleanup doc distances job. %s.", docAndJobId)
+
 def cleanUpDocShingles(jobId, docId):
     docAndJobId = "Doc id: " + docId + ". Job id: " + jobId;
-    logger.info("Started cleaning up doc. %s.", docAndJobId)
+    logger.info("Started cleaning up doc shingles. %s.", docAndJobId)
 
     shingleTableManager = ShingleTableManager()
     shingleTableManager.cleanUpDocShingles(docId)
+
     logger.info("Completed cleaning up doc shingles. %s.", docAndJobId)
+
+def cleanUpDocEntities(jobId, docId):
+    docAndJobId = "Doc id: " + docId + ". Job id: " + jobId;
+    logger.info("Started cleaning up doc entities. %s.", docAndJobId)
 
     entityTableManager = EntityTableManager()
     entityTableManager.cleanUpDocEntities(docId)
-    logger.info("Completed cleaning up doc entities. %s.", docAndJobId)
 
-    logger.info("Completed cleaning up doc. %s.", docAndJobId)
+    logger.info("Completed cleaning up doc entities. %s.", docAndJobId)
 
 def cleanUpDocDistances(jobId, docId):
     docAndJobId = "Doc id: " + docId + ". Job id: " + jobId;
