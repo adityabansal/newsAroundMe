@@ -1,10 +1,23 @@
 import logging
 import urllib
+import urlparse
 
 from lxml.etree import XMLSyntaxError
 import lxml.html as lh
 
 logger = logging.getLogger('htmlProcessor')
+
+def _isAbsolute(url):
+    return bool(urlparse.urlparse(url).netloc)
+
+def _getCompleteUrl(url, baseUrl):
+    if not baseUrl:
+        return url
+
+    if _isAbsolute(url):
+        return url
+    else:
+        return urlparse.urljoin(baseUrl, url)
 
 def _extractText(html, textSelector):
     text = "";
@@ -13,9 +26,10 @@ def _extractText(html, textSelector):
         text += textDiv.text_content();
     return text;
 
-def _extractImages(html, imageSelector):
+def _extractImages(html, imageSelector, baseUrl):
     images = html.cssselect(imageSelector);
-    return [img.attrib['src'] for img in images if 'src' in img.attrib];
+    return [_getCompleteUrl(img.attrib['src'], baseUrl) \
+        for img in images if 'src' in img.attrib];
 
 def _getImageSize(jobId, url):
     jobInfo = "Image url: " + url + ". JobId: " + jobId
@@ -33,7 +47,7 @@ def _getImageSize(jobId, url):
     logger.info("Could not determine image size. %s", jobInfo)
     return 0
 
-def processHtml(jobId, rawHtml, textSelector, imageSelectors):
+def processHtml(jobId, rawHtml, textSelector, imageSelectors, baseUrl = None):
     """
     Process given html to extract out some text and images from it.
 
@@ -42,6 +56,7 @@ def processHtml(jobId, rawHtml, textSelector, imageSelectors):
         rawHtml: the raw html to be processed.
         textSelector: css selector of element containing text to extract.
         imageSelectors: list of css selectors of elements containing images.
+        baseUrl: the base url of page being parsed
     """
 
     # Parse html with lxml library
@@ -71,7 +86,7 @@ def processHtml(jobId, rawHtml, textSelector, imageSelectors):
     # Extract out images
     images = [];
     for imageSelector in imageSelectors:
-        images += _extractImages(parsedHtml, imageSelector);
+        images += _extractImages(parsedHtml, imageSelector, baseUrl);
     images = [img for img in images if _getImageSize(jobId, img) > 5000]
     logger.info("Extracted out %i images. JobId: %s", len(images), jobId);
 

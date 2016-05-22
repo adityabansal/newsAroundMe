@@ -89,7 +89,8 @@ def processLink(jobId, linkId):
       jobId,
       pageHtml,
       publisher.tags[PUBLISHERTAG_TEXTSELECTOR],
-      json.loads(publisher.tags[PUBLISHERTAG_IMAGESELECTORS]));
+      json.loads(publisher.tags[PUBLISHERTAG_IMAGESELECTORS]),
+      publisher.tags[PUBLISHERTAG_HOMEPAGE]);
 
   # generate corresponding doc
   doc = Doc(_getDocKey(link), processingResult[0], link.tags);
