@@ -2,12 +2,12 @@ import json
 import logging
 import random
 
-from clusterJobManager import ClusterJobManager
 from constants import *
 from doc import Doc
 from docManager import DocManager
 from link import Link
 from linkManager import LinkManager
+from minerJobManager import MinerJobManager
 import htmlProcessor as hp
 from publisher import Publisher
 from publisherManager import PublisherManager
@@ -109,7 +109,7 @@ def processLink(jobId, linkId):
 
   # put parse doc job
   parseDocJob = WorkerJob(JOB_PARSEDOC, { JOBARG_PARSEDOC_DOCID : doc.key})
-  jobManager = ClusterJobManager()
+  jobManager = MinerJobManager()
   jobManager.enqueueJob(parseDocJob)
   logger.info(
     "Parse doc job with with jobId '%s' put. %s.",
