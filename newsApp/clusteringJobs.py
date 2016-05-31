@@ -221,8 +221,7 @@ def parseDoc(jobId, docId):
 
     # compute and put entities
     entities = th.getEntities(__getDocEnglishTitle(doc)) + \
-        th.getEntities(__getDocEnglishSummaryText(doc)) + \
-        th.getEntities(__getDocEnglishContent(doc));
+        th.getEntities(__getDocEnglishSummaryText(doc));
     entities = list(set(entities))
     logger.info("Completed getting entities. %s.", docAndJobId)
     logger.info(
