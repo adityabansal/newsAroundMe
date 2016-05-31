@@ -16,17 +16,6 @@ from workerJob import WorkerJob
 
 InitLogging()
 
-def putGetCandidateDocsJobs(jobManager, docKeys):
-    for docKey in docKeys:
-        job = WorkerJob(
-            JOB_GETCANDIDATEDOCS,
-            { JOBARG_GETCANDIDATEDOCS_DOCID : docKey })
-        jobManager.enqueueJob(job)
-        logging.info(
-            "Put get candidate doc job with jobId: %s for docId: %s",
-            job.jobId,
-            docKey)
-
 def putCleanUpDocJobs(jobManager, docKeys):
     for docKey in docKeys:
         job = WorkerJob(JOB_CLEANUPDOC, { JOBARG_CLEANUPDOC_DOCID : docKey})
@@ -68,7 +57,6 @@ def startClustering():
     logging.info("Initialized new cluster");
     logging.info("Number of docs to cluster are: %i", len(docKeys))
 
-    putGetCandidateDocsJobs(jobManager, docKeys);
     clusterManager.setState(CLUSTER_STATE_NEW)
 
 def startIncrementalClustering():
@@ -96,10 +84,6 @@ def startIncrementalClustering():
 
     putCleanUpDocJobs(jobManager, expiredDocs)
 
-    logging.info("Sleeping to ensure shingles table is in good state before putting get candidate jobs.")
-    time.sleep(30);
-
-    putGetCandidateDocsJobs(jobManager, newDocs);
     clusterManager.setState(CLUSTER_STATE_NEW)
 
 def isClusteringInProgress():

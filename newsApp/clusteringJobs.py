@@ -12,6 +12,7 @@ from doc import Doc
 from docManager import DocManager
 from entityTableManager import EntityTableManager
 from clusterJobManager import ClusterJobManager
+from minerJobManager import MinerJobManager
 from loggingHelper import *
 from shingleTableManager import ShingleTableManager
 from workerJob import WorkerJob
@@ -233,6 +234,16 @@ def parseDoc(jobId, docId):
     entityTableManager.addEntries(docId, entities)
     logger.info("Added entities to entity table. %s.", docAndJobId)
 
+    job = WorkerJob(
+        JOB_GETCANDIDATEDOCS,
+        { JOBARG_GETCANDIDATEDOCS_DOCID : docId })
+    jobManager = MinerJobManager()
+    jobManager.enqueueJob(job)
+    logging.info(
+        "Put get candidate doc job with jobId: %s. %s",
+        job.jobId,
+        docAndJobId)
+
     logger.info("Completed parsing doc. %s.", docAndJobId)
 
 def __getDocShingles(shingle):
@@ -421,9 +432,3 @@ def clusterDocs(jobId):
 
     clusterManager.setState(CLUSTER_STATE_COMPLETED)
     logger.info("Set clustering state as completed. %s.", jobInfo)
-
-    logger.info("Starting post-clustering cleanup tasks. %s", jobInfo)
-    logger.info("Cleaning up distance table. %s.", jobInfo)
-    cleanUpDistanceTable(jobId)
-
-    logger.info("Completed post-clustering cleanup tasks. %s", jobInfo)
