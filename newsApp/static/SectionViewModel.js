@@ -80,7 +80,7 @@ $(function() {
       self.loadData(url);
     }
 
-    self.availableLocations = ko.observableArray(['bangalore', 'delhi'])
+    self.availableLocations = ko.observableArray(['bangalore', 'delhi', 'mumbai', 'chennai', 'hyderabad', 'pune', 'kolkata'])
     self.location = ko.observable('')
     self.location.subscribe(function(newValue) {
       self.loadData("/api/stories?locale=" + newValue)

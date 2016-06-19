@@ -20,7 +20,7 @@
     <!-- ko foreach: locations -->
       <li>
         <a href="#" data-bind="click: $parent.chooseSection">
-          <img class="section-dropdown-icon" data-bind="attr:{'src': icon}">
+          <img class="section-dropdown-icon" data-bind="visible: !!icon, attr:{'src': icon}">
           <span data-bind="text: displayName"></span>
         </a>
       </li>

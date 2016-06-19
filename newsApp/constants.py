@@ -80,6 +80,6 @@ CLUSTER_STATE_COMPLETED = 'completed'
 CLUSTERING_DOC_AGE_LIMIT = 1
 
 #allowed input parameter values
-ALLOWED_LOCALES = ['bangalore', 'delhi']
+ALLOWED_LOCALES = ['bangalore', 'delhi', 'mumbai', 'chennai', 'hyderabad', 'pune', 'kolkata']
 ALLOWED_CATEGORIES = ['sports', 'business', 'national', 'world']
 ALLOWED_COUNTRIES = ['India']
