@@ -116,6 +116,7 @@ def compareDocs(jobId, doc1Key, doc2Key):
 
     logger.info("Completed comparing docs. %s", jobInfo);
 
+@retry(stop_max_attempt_number=3)
 def cleanUpDoc(jobId, docId):
     docAndJobId = "Doc id: " + docId + ". Job id: " + jobId;
     logger.info("Started cleaning up doc. %s.", docAndJobId);
@@ -140,6 +141,7 @@ def cleanUpDoc(jobId, docId):
     jobManager.enqueueJob(job)
     logging.info("Put cleanup doc distances job. %s.", docAndJobId)
 
+@retry(stop_max_attempt_number=3)
 def cleanUpDocShingles(jobId, docId):
     docAndJobId = "Doc id: " + docId + ". Job id: " + jobId;
     logger.info("Started cleaning up doc shingles. %s.", docAndJobId)
@@ -149,6 +151,7 @@ def cleanUpDocShingles(jobId, docId):
 
     logger.info("Completed cleaning up doc shingles. %s.", docAndJobId)
 
+@retry(stop_max_attempt_number=3)
 def cleanUpDocEntities(jobId, docId):
     docAndJobId = "Doc id: " + docId + ". Job id: " + jobId;
     logger.info("Started cleaning up doc entities. %s.", docAndJobId)
@@ -158,6 +161,7 @@ def cleanUpDocEntities(jobId, docId):
 
     logger.info("Completed cleaning up doc entities. %s.", docAndJobId)
 
+@retry(stop_max_attempt_number=3)
 def cleanUpDocDistances(jobId, docId):
     docAndJobId = "Doc id: " + docId + ". Job id: " + jobId;
     logger.info("Started cleaning up doc distances. %s.", docAndJobId)
@@ -197,6 +201,7 @@ def processNewCluster(jobId, strCluster):
 
     logger.info("Completed processing new cluster. %s.", clusterAndJobId)
 
+@retry(stop_max_attempt_number=3)
 def parseDoc(jobId, docId):
     docAndJobId = "Doc id: " + docId + ". Job id: " + jobId;
     logger.info("Started parsing doc. %s.", docAndJobId)
