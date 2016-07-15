@@ -88,17 +88,6 @@ def get_stories():
 
   abort(400, "Invalid query")
 
-@app.route('/all')
-def show_all():
-  return render_template(
-    'all.html',
-    sections = [
-      {'id': 'localNews', 'title': 'Local'},
-      {'id': 'nationalNews', 'title': 'National'},
-      {'id': 'businessNews', 'title': 'Business'},
-      {'id': 'worldNews', 'title': 'World'},
-      {'id': 'sportsNews', 'title': 'Sports'}])
-
 @app.route('/')
 def home():
   return render_template(
