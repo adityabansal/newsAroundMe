@@ -40,11 +40,6 @@ body {
   max-width: 25em;
 }
 
-/* used in old site */
-.storyDiv {
-  padding: 0;
-  margin-bottom: 0;
-  border: 0;
+.story:nth-child(even) {
+  background-color: #f3f3f3;
 }
-
-
