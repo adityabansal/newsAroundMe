@@ -47,42 +47,22 @@
 <ul class="stories list-group" data-bind="foreach: stories">
   <li class="list-group-item row story">
     <div class="col-xs-12 col-sm-4" data-bind="if: images().length > 0">
-      <div class="carousel slide storyMedia center-block" data-bind="attr:{'id': carouselId}">
-        <ol class="carousel-indicators"   data-bind="foreach: images ">
-          <li data-bind="attr:{'data-slide-to': $index, 'data-target': '#' + $parent.carouselId}, css:{'active' : $index() == 0}"></li>
-        </ol>
-
-        <div class="carousel-inner" data-bind="foreach: images">
-          <div class="item" data-bind="css: {'active' : $index() == 0}" >
-            <a target="_blank" data-bind="attr:{'href': link}">
-              <img class="storyCarouselPic" data-bind="attr:{'src': src}">
-            </a>
-          </div>
-          <div class="carousel-caption">
-            <span>Image courtesy: </span>
-            <a class="publisher-link" target="_blank" data-bind="text: publisher.name, attr: {href:publisher.homepage}"></a>
-          </div>
-        </div>
-
-        <!-- Controls -->
-        <!-- ko if: images().length > 1 -->
-        <a class="left carousel-control" data-bind="attr:{'href': '#' + carouselId}" data-slide="prev">
-          <span class="icon-prev"></span>
-        </a>
-        <a class="right carousel-control" data-bind="attr:{'href': '#' + carouselId}" data-slide="next">
-          <span class="icon-next"></span>
-        </a>
-        <!-- /ko -->
+      <div data-bind="with: images()[0]">
+        <img class="img-responsive center-block" data-bind="attr:{'src': src}">
+        <p class="text-center small">
+            Image Source:
+            <a class="publisher-link" target="_blank" data-bind="text: publisher.name, attr: {href:link}"></a>
+        </p>
       </div>
     </div>
 
-
-
     <div class="col-xs-12" data-bind="css:{'col-sm-8' : images().length > 0}">
-      <h4><a target="_blank" data-bind="text : mainArticle.title, attr: {href:mainArticle.link}"></a></h4>
-      <small>
-        <a class="publisher-link" target="_blank" data-bind="text: mainArticle.publisher.name, attr: {href:mainArticle.publisher.homepage}"></a>
-      </small>
+      <h4>
+        <a target="_blank" data-bind="text : mainArticle.title, attr: {href:mainArticle.link}"></a>
+        <small>
+          <a class="publisher-link" target="_blank" data-bind="text: mainArticle.publisher.name, attr: {href:mainArticle.publisher.homepage}"></a>
+        </small>
+      </h4>
       <p data-bind="text : mainArticle.summaryTextToDisplay"></p>
 
       <div data-bind="if: relatedArticles">

@@ -30,16 +30,6 @@ body {
   color: #666666;
 }
 
-.storyCarouselPic {
-  max-height: 14em;
-  width: 100%
-}
-
-.storyMedia {
-  height: 14em;
-  max-width: 25em;
-}
-
 .story:nth-child(even) {
   background-color: #f3f3f3;
 }
