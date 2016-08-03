@@ -26,6 +26,10 @@ body {
     margin-right: 2px;
 }
 
+.storyPic {
+  max-height: 10em;
+}
+
 .publisher-link {
   color: #666666;
 }
