@@ -26,6 +26,16 @@ body {
     margin-right: 2px;
 }
 
+@media only screen and (min-width: 480px) and (max-width: 767px) {
+  .col-xsl-6 {
+    width: 50%;
+  }
+}
+
+#storyList {
+  max-width: 1024px
+}
+
 .storyPic {
   max-height: 10em;
 }

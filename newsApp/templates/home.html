@@ -43,10 +43,10 @@
 <!-- END: Section and Language filters -->
 
 <!-- BEGIN: News stories -->
-<div id="storyList">
+<div id="storyList" class="center-block">
 <ul class="stories list-group" data-bind="foreach: stories">
   <li class="list-group-item row story">
-    <div class="col-xs-12 col-sm-4" data-bind="if: images().length > 0">
+    <div class="col-xs-12 col-xsl-6 col-sm-3" data-bind="if: images().length > 0">
       <div data-bind="with: images()[0]">
         <img class="img-responsive center-block storyPic" data-bind="attr:{'src': src}">
         <p class="text-center small">
@@ -56,7 +56,7 @@
       </div>
     </div>
 
-    <div class="col-xs-12" data-bind="css:{'col-sm-8' : images().length > 0}">
+    <div class="col-xs-12" data-bind="css:{'col-sm-9 col-xsl-6' : images().length > 0}">
       <h4>
         <a target="_blank" data-bind="text : mainArticle.title, attr: {href:mainArticle.link}"></a>
         <small>
@@ -68,7 +68,7 @@
       <div data-bind="if: relatedArticles">
         <em>Related</em>
         <ul data-bind="foreach: relatedArticles">
-          <li>
+          <li data-bind="css:{'hidden-xs' : $index() > 0}">
             <a target="_blank" data-bind="text : title, attr: {href:link}"></a>
             <small><a class="publisher-link" target="_blank" data-bind="text: publisher.name, attr: {href:publisher.homepage}"></a></small>
           </li>
