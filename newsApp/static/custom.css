@@ -10,6 +10,7 @@ body {
     font-family: 'Comic Sans MS', cursive, sans-serif;
     font-size: 32px;
     font-style: italic;
+    color: lightyellow;
 }
 
 .body-content {
@@ -18,6 +19,8 @@ body {
 
 #section-dropdown-button {
   margin-bottom: 0.5em;
+  background-color: #333;
+  color: lightyellow;
 }
 
 .section-dropdown-icon {
@@ -40,10 +43,19 @@ body {
   max-height: 10em;
 }
 
-.publisher-link {
-  color: #666666;
+.story {
+  background-color: #333;
+  border-bottom: 5px solid white;
 }
 
-.story:nth-child(even) {
-  background-color: #f3f3f3;
+.story .headline {
+  color: lightyellow;
+}
+
+.story .publisher-link {
+  color: #e7e7e7;
+}
+
+.story p, .story em {
+  color: #d3d3d3;
 }
