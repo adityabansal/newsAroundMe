@@ -25,16 +25,6 @@
         </a>
       </li>
     <!-- /ko -->
-    <li role="separator" class="divider"></li>
-    <li class="dropdown-header">Non local sections</li>
-    <!-- ko foreach: otherSections -->
-      <li>
-        <a href="#" data-bind="click: $parent.chooseSection">
-          <img class="section-dropdown-icon" data-bind="attr:{'src': icon}">
-          <span data-bind="text: displayName"></span>
-        </a>
-      </li>
-    <!-- /ko -->
   </ul>
 </div>
 <!-- END: Section dropdown -->
@@ -87,4 +77,5 @@
   <script src="{{ url_for('static', filename='sectionDropdownViewModel.js') }}"></script>
   <script src="{{ url_for('static', filename='storyViewModel.js') }}"></script>
   <script src="{{ url_for('static', filename='storiesViewModel.js') }}"></script>
+  <script src="{{ url_for('static', filename='navigate.js') }}"></script>
 {% endblock %}

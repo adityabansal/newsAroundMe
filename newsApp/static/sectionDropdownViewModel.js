@@ -2,7 +2,7 @@ $(function() {
   function SectionDropdownViewModel() {
     var self = this;
     self.label = ko.observable("Loading");
-    self.disabled = ko.observable(true);
+    self.disabled = ko.observable(false);
     self.selection = ko.observable();
 
     self.locations = ko.observableArray(
@@ -14,69 +14,69 @@ $(function() {
          {displayName: "Hyderabad", icon: '', value: 'hyderabad'},
          {displayName: "Pune", icon: '', value: 'pune'}])
 
-    self.otherSections = ko.observableArray(
-    	[{displayName: "National", icon: "/static/national.svg", value: 'national'},
-    	 {displayName: "World", icon: "/static/world.svg", value: 'world'},
-    	 {displayName: "Business", icon: "/static/business.svg", value: 'business'},
-    	 {displayName: "Sports", icon: "/static/sports.svg", value: 'sports'}])
+    self.loadSection = function(section) {
+      var locationMatch, url;
 
-    self.selectSection = function(selectedSection) {
-    	var locationMatches, otherMatches;
+      locationMatch = self._getMatchingLocation(section);
 
-    	locationMatches = $.grep(self.locations(), function(location, index) {
-      	    return location.value === selectedSection;
-        })
+      if (!!locationMatch) {
+        self.selection(locationMatch);
+        self.label(locationMatch.displayName);
 
-        if (locationMatches.length > 0) {
-        	self.selection(selectedSection);
-        	self.label(locationMatches[0].displayName);
-        	window.StoriesViewModel.loadData("/api/stories?locale=" + selectedSection);
-        	return;
-        }
+        // update page title
+        document.title = locationMatch.displayName + " News - newsAroundMe";
+         // update meta description. Just replacing the value of the 'content' attribute will not work.
+        $('meta[name=description]').remove();
+        $('head').append("<meta name=\"description\" content=\"Latest local news from "+ locationMatch.displayName + ".\">");
 
-        otherMatches = $.grep(self.otherSections(), function(section, index) {
-      	    return section.value === selectedSection;
-        })
+        url = "/api/stories?locale=" + locationMatch.value;
+      }
 
-        if (otherMatches.length > 0) {
-        	self.selection(selectedSection);
-        	self.label(otherMatches[0].displayName);
-        	window.StoriesViewModel.loadData("/api/stories?category=" + selectedSection + "&country=india");
-        	return;
-        }
+      if (!!url) {
+        window.StoriesViewModel.loadData(url);
+      } else {
+        self.loadStoriesForUserLocation();
+      }
+
+      return;
     }
 
     self.chooseSection = function(section) {
-    	self.selectSection(section.value)
+      window.navigateTo(section.value)
     }
 
     self.loadStoriesForUserLocation = function() {
-    	self.disabled = ko.observable(true);
-        $.getJSON('http://ipinfo.io', function(data){
-            var city = data.city,
-                selectedLocation;
+      self.disabled(true);
+      $.getJSON('http://ipinfo.io', function(data){
+        var city = data.city || "",
+          match,
+          selectedLocation;
 
-            // handle synonyms
-            if (city.toLowerCase() === 'bengaluru') {
-      	        city = 'bangalore'
-            }
+        match = self._getMatchingLocation(city);
 
-            match = $.grep(self.locations(), function(location, index) {
-      	        return location.value.toLowerCase() === city.toLowerCase();
-            })
+        if (!!match) {
+          selectedLocation = match;
+        } else {
+          selectedLocation = self.locations()[0];
+        }
 
-            if (match.length > 0) {
-      	        selectedLocation = match[0]
-            } else {
-      	        selectedLocation = self.locations()[0];
-            }
-
-            self.selectSection(selectedLocation.value);
-            self.disabled(false)
-        });
+        self.chooseSection(selectedLocation);
+        self.disabled(false)
+      });
     }
 
-    self.loadStoriesForUserLocation();
+    self._getMatchingLocation = function(section) {
+      // handle synonyms
+      if (section.toLowerCase() === 'bengaluru') {
+        section = 'bangalore'
+      }
+
+       var match = $.grep(self.locations(), function(location, index) {
+        return location.value.toLowerCase() === section.toLowerCase();
+      })
+
+      return match[0];
+    }
   }
 
   // bind the viewModel
