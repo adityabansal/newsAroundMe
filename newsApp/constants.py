@@ -79,7 +79,17 @@ CLUSTER_STATE_COMPLETED = 'completed'
 # global parameters
 CLUSTERING_DOC_AGE_LIMIT = 1
 
-#allowed input parameter values
-ALLOWED_LOCALES = ['bangalore', 'delhi', 'mumbai', 'chennai', 'hyderabad', 'pune', 'kolkata']
+#UX metadata
 ALLOWED_CATEGORIES = ['sports', 'business', 'national', 'world']
 ALLOWED_COUNTRIES = ['India']
+LOCATION_METADATA = [
+  {'displayName': 'Delhi', 'icon': '/static/delhi.svg', 'value': 'delhi'},
+  {'displayName': 'Mumbai', 'icon': '', 'value': 'mumbai'},
+  {'displayName': 'Bangalore', 'icon': '/static/city.svg', 'value': 'bangalore'},
+  {'displayName': 'Chennai', 'icon': '', 'value': 'chennai'},
+  {'displayName': 'Kolkata', 'icon': '', 'value': 'kolkata'},
+  {'displayName': 'Hyderabad', 'icon': '', 'value': 'hyderabad'},
+  {'displayName': 'Pune', 'icon': '', 'value': 'pune'}]
+for location in LOCATION_METADATA:
+	location['title'] = location['displayName'] + ' News - newsAroundMe';
+	location['description'] = 'Latest local news from '+ location['displayName'] + '.';

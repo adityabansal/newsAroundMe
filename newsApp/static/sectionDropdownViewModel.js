@@ -5,14 +5,7 @@ $(function() {
     self.disabled = ko.observable(false);
     self.selection = ko.observable();
 
-    self.locations = ko.observableArray(
-        [{displayName: "Delhi", icon: "/static/delhi.svg", value: 'delhi'},
-         {displayName: "Mumbai", icon: '', value: 'mumbai'},
-         {displayName: "Bangalore", icon: "/static/city.svg", value: 'bangalore'},
-         {displayName: "Chennai", icon: '', value: 'chennai'},
-         {displayName: "Kolkata", icon: '', value: 'kolkata'},
-         {displayName: "Hyderabad", icon: '', value: 'hyderabad'},
-         {displayName: "Pune", icon: '', value: 'pune'}])
+    self.locations = ko.observableArray(JSON.parse($("#locationMetadata")[0].innerHTML))
 
     self.loadSection = function(section) {
       var locationMatch, url;
@@ -20,14 +13,19 @@ $(function() {
       locationMatch = self._getMatchingLocation(section);
 
       if (!!locationMatch) {
+        if (!!self.selection() && (locationMatch.value === self.selection().value)) {
+          // the section is already loaded.
+          return;
+        }
+
         self.selection(locationMatch);
         self.label(locationMatch.displayName);
 
         // update page title
-        document.title = locationMatch.displayName + " News - newsAroundMe";
+        document.title = locationMatch.title;
          // update meta description. Just replacing the value of the 'content' attribute will not work.
         $('meta[name=description]').remove();
-        $('head').append("<meta name=\"description\" content=\"Latest local news from "+ locationMatch.displayName + ".\">");
+        $('head').append("<meta name=\"description\" content=\"" + locationMatch.description + "\">");
 
         url = "/api/stories?locale=" + locationMatch.value;
       }
@@ -35,6 +33,8 @@ $(function() {
       if (!!url) {
         window.StoriesViewModel.loadData(url);
       } else {
+        // no or immproper location specified,
+        // try to automatically find user location
         self.loadStoriesForUserLocation();
       }
 
@@ -42,7 +42,7 @@ $(function() {
     }
 
     self.chooseSection = function(section) {
-      window.navigateTo(section.value)
+      window.navigateTo(section)
     }
 
     self.loadStoriesForUserLocation = function() {
@@ -66,12 +66,7 @@ $(function() {
     }
 
     self._getMatchingLocation = function(section) {
-      // handle synonyms
-      if (section.toLowerCase() === 'bengaluru') {
-        section = 'bangalore'
-      }
-
-       var match = $.grep(self.locations(), function(location, index) {
+      var match = $.grep(self.locations(), function(location, index) {
         return location.value.toLowerCase() === section.toLowerCase();
       })
 

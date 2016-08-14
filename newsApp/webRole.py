@@ -1,6 +1,7 @@
 import json
 
-from flask import Flask, abort, make_response, request, render_template
+from flask import Flask, abort, redirect, url_for
+from flask import make_response, request, render_template
 
 from constants import *
 from clusterManager import ClusterManager
@@ -21,9 +22,10 @@ def getJsonResponse(retValue):
 
 def validateLocale(value):
   try:
-    return next(x for x in ALLOWED_LOCALES if x.lower() == value.lower())
+    return next(x['value'] for x in LOCATION_METADATA if \
+      x['value'].lower() == value.lower())
   except StopIteration:
-    abort(400, "Allowed locale values are: " + str(ALLOWED_LOCALES))
+    abort(400, "Invalid location specified")
 
 def validateCategory(value):
   try:
@@ -91,7 +93,23 @@ def get_stories():
 @app.route('/')
 def home():
   return render_template(
-    'home.html')
+    'home.html',
+    title='newsAroundMe',
+    description='Latest local news from your location',
+    locationsMetadata=json.dumps(LOCATION_METADATA))
+
+@app.route('/<location>')
+def load(location):
+  matchingLocation = [x for x in LOCATION_METADATA if \
+    x['value'].lower() == location.lower()]
+
+  if not matchingLocation:
+    return redirect(url_for('home'))
+  return render_template(
+    'home.html',
+    title=matchingLocation[0]['title'],
+    description=matchingLocation[0]['description'],
+    locationsMetadata=json.dumps(LOCATION_METADATA))
 
 if __name__ == '__main__':
   app.run()
