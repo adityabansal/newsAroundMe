@@ -49,10 +49,20 @@ $(function() {
       self.disabled(true);
       $.getJSON('http://ipinfo.io', function(data){
         var city = data.city || "",
+          lat,
+          long,
           match,
           selectedLocation;
 
-        match = self._getMatchingLocation(city);
+        try {
+          lat = parseFloat(data.loc.split(",")[0]);
+          long = parseFloat(data.loc.split(",")[1]);
+        } catch(err) {
+          lat = null;
+          long = null;
+        }
+
+        match = self._getMatchingLocation(city, lat, long);
 
         if (!!match) {
           selectedLocation = match;
@@ -65,12 +75,27 @@ $(function() {
       });
     }
 
-    self._getMatchingLocation = function(section) {
+    self._getMatchingLocation = function(section, lat, long) {
       var match = $.grep(self.locations(), function(location, index) {
         return location.value.toLowerCase() === section.toLowerCase();
       })
 
-      return match[0];
+      if ((match.length === 0) && !!lat && !!long) {
+        var closest = self.locations()[0];
+
+        $.each(self.locations(), function(index, location) {
+          var distance = Math.pow(location.lat - lat, 2) + Math.pow(location.long - long, 2);
+          var closestDistance = Math.pow(closest.lat - lat, 2) + Math.pow(closest.long - long, 2);
+
+          if (distance < closestDistance) {
+            closest = location;
+          }
+        })
+
+        return closest;
+      } else {
+        return match[0];
+      }
     }
   }
 

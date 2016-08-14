@@ -83,13 +83,13 @@ CLUSTERING_DOC_AGE_LIMIT = 1
 ALLOWED_CATEGORIES = ['sports', 'business', 'national', 'world']
 ALLOWED_COUNTRIES = ['India']
 LOCATION_METADATA = [
-  {'displayName': 'Delhi', 'icon': '/static/delhi.svg', 'value': 'delhi'},
-  {'displayName': 'Mumbai', 'icon': '', 'value': 'mumbai'},
-  {'displayName': 'Bangalore', 'icon': '/static/city.svg', 'value': 'bangalore'},
-  {'displayName': 'Chennai', 'icon': '', 'value': 'chennai'},
-  {'displayName': 'Kolkata', 'icon': '', 'value': 'kolkata'},
-  {'displayName': 'Hyderabad', 'icon': '', 'value': 'hyderabad'},
-  {'displayName': 'Pune', 'icon': '', 'value': 'pune'}]
+  {'displayName': 'Delhi', 'icon': '/static/delhi.svg', 'value': 'delhi', 'lat': 28.70, 'long': 77.10},
+  {'displayName': 'Mumbai', 'icon': '', 'value': 'mumbai', 'lat': 19.08, 'long': 72.88},
+  {'displayName': 'Bangalore', 'icon': '/static/city.svg', 'value': 'bangalore', 'lat': 12.97, 'long': 77.59},
+  {'displayName': 'Chennai', 'icon': '', 'value': 'chennai', 'lat': 13.08, 'long': 80.27},
+  {'displayName': 'Kolkata', 'icon': '', 'value': 'kolkata', 'lat': 22.57, 'long': 88.36},
+  {'displayName': 'Hyderabad', 'icon': '', 'value': 'hyderabad', 'lat': 17.39, 'long': 78.49},
+  {'displayName': 'Pune', 'icon': '', 'value': 'pune', 'lat': 18.52, 'long': 73.86}]
 for location in LOCATION_METADATA:
 	location['title'] = location['displayName'] + ' News - newsAroundMe';
 	location['description'] = 'Latest local news from '+ location['displayName'] + '.';
