@@ -13,6 +13,9 @@ DOCTAG_TRANSLATED_TITLE = 'translatedTitle'
 DOCTAG_TRANSLATED_SUMMARYTEXT = 'translatedSummaryText'
 DOCTAG_TRANSLATED_CONTENT = 'translatedContent'
 
+FEEDTYPE_RSS = 'rss'
+FEEDTYPE_WEBPAGE = 'webPage'
+
 # feed tags
 FEEDTAG_TYPE = 'type'
 FEEDTAG_NEXTPOLLTIME = 'nextPollTime'
@@ -24,6 +27,7 @@ FEEDTAG_CATEGORY = 'category'
 FEEDTAG_COUNTRY = 'country'
 FEEDTAG_LANG = 'lang'
 FEEDTAG_LOCALE = 'locale'
+FEEDTAG_ENTRY_SELECTORS = 'entrySelectors'
 
 # link tags
 LINKTAG_ISPROCESSED = 'isProcessed'

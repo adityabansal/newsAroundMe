@@ -9,7 +9,7 @@ from constants import *
 from loggingHelper import *
 from jobManager import JobManager
 from workerJob import WorkerJob
-from rssProcessor import *
+from feedProcessor import *
 from linkProcessor import *
 import clusteringJobs as cj
 import dbJobs as dj

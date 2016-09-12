@@ -91,3 +91,30 @@ def processHtml(jobId, rawHtml, textSelector, imageSelectors, baseUrl = None):
     logger.info("Extracted out %i images. JobId: %s", len(images), jobId);
 
     return (text, images);
+
+def getSubHtmlEntries(jobId, fullHtml, selector):
+    try:
+        parsedHtml = lh.fromstring(fullHtml)
+    except XMLSyntaxError:
+        logger.warning(
+            "Could not parse page html. JobId: %s", jobId)
+        return []
+
+    subHtmlEntries = parsedHtml.cssselect(selector)
+    return [lh.tostring(entry) for entry in subHtmlEntries]
+
+def extractLink(jobId, html, selector):
+    try:
+        parsedHtml = lh.fromstring(html)
+    except XMLSyntaxError:
+        logger.warning("Could not parse page html. JobId: %s", jobId)
+        return None
+
+    titleElements = parsedHtml.cssselect(selector)
+    if len(titleElements) > 0:
+        titleElement = titleElements[0]
+        if 'href' in titleElement.attrib:
+            return (titleElement.attrib['href'], titleElement.text_content)
+
+    logger.warning("Could not extract link. JobId: %s", jobId)
+    return None

@@ -32,7 +32,8 @@ class FeedManager(DbItemManager):
 
         # add polling info tags and put into database
         feed.tags[FEEDTAG_NEXTPOLLTIME] = int(time.time())
-        feed.tags[FEEDTAG_POLLFREQUENCY] = DEFAULT_FEED_POLLING_FREQUENCY
+        if FEEDTAG_POLLFREQUENCY not in feed.tags:
+            feed.tags[FEEDTAG_POLLFREQUENCY] = DEFAULT_FEED_POLLING_FREQUENCY
         DbItemManager.put(self, feed)
 
     def getStaleFeeds(self):
