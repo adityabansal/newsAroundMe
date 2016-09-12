@@ -39,6 +39,16 @@ def _putNewLinks(jobId, linksToAdd):
   jobManager = MinerJobManager()
 
   for link in linksToAdd:
+    try:
+      existingLink = linkManager.get(link.id)
+      link[LINKTAG_PUBTIME] = existingLink[LINKTAG_PUBTIME]
+      logger.info(
+        "Link with id '%s' already exists. Not updating pubTime %s",
+        link.id,
+        feedAndJobId)
+    except:
+      pass
+
     linkManager.put(link)
     logger.info(
         "Put link with id '%s' in links database. %s.",
@@ -159,6 +169,8 @@ def _linkFromWebPageEntry(jobId, entry, feed, entrySelector):
   linkTags[LINKTAG_SUMMARY] = entry;
   linkTags[LINKTAG_SUMMARYTEXT] = processingResult[0];
   linkTags[LINKTAG_SUMMARYIMAGES] = processingResult[1];
+
+  newTags[LINKTAG_PUBTIME] = int(time.time())
 
   # Return the final link object
   return Link(link, linkTags)

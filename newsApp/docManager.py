@@ -6,6 +6,7 @@ import time
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 
+from constants import *
 from dbhelper import *
 from doc import Doc
 
@@ -46,6 +47,7 @@ class DocManager:
         # allowed there is only 2kb.
         tags = dict(doc.tags);
         tags['content'] = doc.content;
+        k.set_metadata(LINKTAG_PUBTIME, doc.tags[LINKTAG_PUBTIME])
         k.set_contents_from_string(json.dumps(tags))
 
     def getNewDocKeys(self, ageLimit):
