@@ -170,7 +170,7 @@ def _linkFromWebPageEntry(jobId, entry, feed, entrySelector):
   linkTags[LINKTAG_SUMMARYTEXT] = processingResult[0];
   linkTags[LINKTAG_SUMMARYIMAGES] = processingResult[1];
 
-  newTags[LINKTAG_PUBTIME] = int(time.time())
+  linkTags[LINKTAG_PUBTIME] = int(time.time())
 
   # Return the final link object
   return Link(link, linkTags)
