@@ -34,7 +34,7 @@ def _deleteUnecessaryFeedTags(feedTags):
     for tagName in UNECESSARY_FEED_TAGS:
         feedTags.pop(tagName, None)
 
-def _putNewLinks(jobId, linksToAdd):
+def _putNewLinks(feedAndJobId, linksToAdd):
   linkManager = LinkManager()
   jobManager = MinerJobManager()
 
@@ -45,7 +45,7 @@ def _putNewLinks(jobId, linksToAdd):
       logger.info(
         "Link with id '%s' already exists. Not updating pubTime. %s",
         link.id,
-        jobId)
+        feedAndJobId)
     except:
       pass
 
@@ -129,7 +129,7 @@ def processRssFeed(jobId, feed):
   for entry in newEntries:
     link = _linkFromFeedEntry(jobId, entry, feed)
     linksToAdd.append(link);
-  _putNewLinks(jobId, linksToAdd)
+  _putNewLinks(feedAndJobId, linksToAdd)
 
   # last step update the feed on successful completion of poll
   if len(newEntries) > 0:
@@ -207,7 +207,7 @@ def processWebFeed(jobId, feed):
 
   # put links and processLink jobs
   logger.info("Total number of links are %i. %s", len(linksToAdd), feedAndJobId)
-  _putNewLinks(jobId, linksToAdd)
+  _putNewLinks(feedAndJobId, linksToAdd)
 
   # update Feed on successfull poll
   feedManager = FeedManager()
