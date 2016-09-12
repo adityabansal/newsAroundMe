@@ -43,9 +43,9 @@ def _putNewLinks(jobId, linksToAdd):
       existingLink = linkManager.get(link.id)
       link[LINKTAG_PUBTIME] = existingLink[LINKTAG_PUBTIME]
       logger.info(
-        "Link with id '%s' already exists. Not updating pubTime %s",
+        "Link with id '%s' already exists. Not updating pubTime. %s",
         link.id,
-        feedAndJobId)
+        jobId)
     except:
       pass
 
