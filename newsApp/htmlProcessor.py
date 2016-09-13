@@ -4,6 +4,7 @@ import urlparse
 
 from lxml.etree import XMLSyntaxError
 import lxml.html as lh
+from lxml.html.clean import Cleaner
 
 logger = logging.getLogger('htmlProcessor')
 
@@ -18,6 +19,16 @@ def _getCompleteUrl(url, baseUrl):
         return url
     else:
         return urlparse.urljoin(baseUrl, url)
+
+def _parseAndCleanHtml(rawHtml):
+    # Parse html with lxml library
+    parsedHtml = lh.fromstring(rawHtml);
+
+    cleaner = Cleaner()
+    cleaner.javascript = True
+    cleaner.style = True
+
+    return cleaner.clean_html(parsedHtml)
 
 def _extractText(html, textSelector):
     text = "";
@@ -61,7 +72,7 @@ def processHtml(jobId, rawHtml, textSelector, imageSelectors, baseUrl = None):
 
     # Parse html with lxml library
     try:
-        parsedHtml = lh.fromstring(rawHtml);
+        parsedHtml = _parseAndCleanHtml(rawHtml);
     except XMLSyntaxError:
         logger.warning(
             "Could not parse page html. JobId: %s", jobId)
@@ -94,7 +105,7 @@ def processHtml(jobId, rawHtml, textSelector, imageSelectors, baseUrl = None):
 
 def getSubHtmlEntries(jobId, fullHtml, selector):
     try:
-        parsedHtml = lh.fromstring(fullHtml)
+        parsedHtml = _parseAndCleanHtml(fullHtml)
     except XMLSyntaxError:
         logger.warning(
             "Could not parse page html. JobId: %s", jobId)
@@ -105,7 +116,7 @@ def getSubHtmlEntries(jobId, fullHtml, selector):
 
 def extractLink(jobId, html, selector):
     try:
-        parsedHtml = lh.fromstring(html)
+        parsedHtml = _parseAndCleanHtml(html)
     except XMLSyntaxError:
         logger.warning("Could not parse page html. JobId: %s", jobId)
         return None
