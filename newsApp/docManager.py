@@ -6,6 +6,7 @@ import time
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 
+from cachingHelper import getCache
 from constants import *
 from dbhelper import *
 from doc import Doc
@@ -29,6 +30,8 @@ class DocManager:
         """
 
         self.bucketConnString = os.environ['DOCSBUCKET_CONNECTIONSTRING'];
+        self.cache = getCache();
+        self.__cacheExpiry= 900;
 
     def __getBucket(self):
         bucketConnParams = parseConnectionString(self.bucketConnString);
@@ -63,13 +66,18 @@ class DocManager:
         return (key.name for key in bucket if self.__isDocNew(key, timeLimit))
 
     def get(self, docKey):
-        k = Key(self.__getBucket());
-        k.key = docKey;
-        storedTags = json.loads(k.get_contents_as_string());
+        keyContents = self.cache.get(docKey)
+        if not keyContents:
+            k = Key(self.__getBucket());
+            k.key = docKey;
+            keyContents = k.get_contents_as_string()
+            self.cache.set(docKey, keyContents, self.__cacheExpiry)
+
+        storedTags = json.loads(keyContents);
         content = storedTags.pop('content', None);
         tags = storedTags;
 
-        return Doc(k.key, content, tags);
+        return Doc(docKey, content, tags);
 
     def delete(self, docKey):
         k = Key(self.__getBucket());
