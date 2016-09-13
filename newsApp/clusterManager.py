@@ -18,7 +18,6 @@ from workerJob import WorkerJob
 
 #constants
 NEW_CLUSTER_FOLDER = "new/"
-PROCESSED_CLUSTERS_FOLDER = "processedClusters/"
 DOCLIST_FILE = "docList"
 CLUSTERS_FILE = "clusters"
 METADATA_FILE = "metadata"
@@ -152,21 +151,12 @@ class ClusterManager:
 
     def processNewCluster(self, cluster):
         cluster.process()
-
         self.clusterTableManager.addCluster(cluster)
-        self.__putObject(
-            PROCESSED_CLUSTERS_FOLDER + cluster.id,
-            json.dumps(cluster.articles))
 
     def getProcessedCluster(self, clusterId):
-        key = PROCESSED_CLUSTERS_FOLDER + clusterId
-
-        value = self.cache.get(key)
-        if not value:
-          value = self.__getObject(PROCESSED_CLUSTERS_FOLDER + clusterId)
-          self.cache.set(key, value, time = 7200)
-
-        return json.loads(value)
+        cluster = self.clusterTableManager.getCluster(clusterId);
+        cluster.process();
+        return cluster.articles;
 
     def __computeClusterRankingScore(self, cluster):
         return len(cluster) - len(cluster.duplicates)
