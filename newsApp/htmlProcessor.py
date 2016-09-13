@@ -125,7 +125,7 @@ def extractLink(jobId, html, selector):
     if len(titleElements) > 0:
         titleElement = titleElements[0]
         if 'href' in titleElement.attrib:
-            return (titleElement.attrib['href'], titleElement.text_content)
+            return (titleElement.attrib['href'], titleElement.text_content())
 
     logger.warning("Could not extract link. JobId: %s", jobId)
     return None

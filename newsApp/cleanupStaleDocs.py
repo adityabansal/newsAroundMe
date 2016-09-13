@@ -19,7 +19,7 @@ def cleanupStaleDocs():
         docManager.delete(docKey);
         logging.info("Deleted doc with key: %s", docKey);
 
-    logging.info("Number of stale docs deleted were: %i", len(staleDocKeys))
+    logging.info("Number of stale docs deleted were: %i", len(list(staleDocKeys))
 
 if __name__ == '__main__':
     cleanupStaleDocs();
