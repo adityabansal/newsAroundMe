@@ -39,6 +39,13 @@ class DocManager:
 
         return conn.get_bucket(bucketConnParams['bucketName']);
 
+    def __isDocNew(self, key, timeLimit):
+        if _getEpochSecs(key.last_modified) < timeLimit:
+            return False;
+
+        doc = self.get(key.name);
+        return doc.tags[LINKTAG_PUBTIME] > timeLimit
+
     def put(self, doc):
         k = Key(self.__getBucket());
         k.key = doc.key;
@@ -47,15 +54,13 @@ class DocManager:
         # allowed there is only 2kb.
         tags = dict(doc.tags);
         tags['content'] = doc.content;
-        k.set_metadata(LINKTAG_PUBTIME, doc.tags[LINKTAG_PUBTIME])
         k.set_contents_from_string(json.dumps(tags))
 
     def getNewDocKeys(self, ageLimit):
         bucket = self.__getBucket();
         timeLimit = int(time.time()) - ageLimit * 60 * 60 * 24;
 
-        return (key.name for key in bucket
-            if _getEpochSecs(key.last_modified) > timeLimit)
+        return (key.name for key in bucket if self.__isDocNew(key, timeLimit))
 
     def get(self, docKey):
         k = Key(self.__getBucket());
