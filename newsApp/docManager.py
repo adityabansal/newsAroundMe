@@ -59,11 +59,18 @@ class DocManager:
         tags['content'] = doc.content;
         k.set_contents_from_string(json.dumps(tags))
 
-    def getNewDocKeys(self, ageLimit):
+    def getNewDocKeys(self):
         bucket = self.__getBucket();
-        timeLimit = int(time.time()) - ageLimit * 60 * 60 * 24;
+        timeLimit = int(time.time()) - CLUSTERING_DOC_AGE_LIMIT * 60 * 60 * 24;
 
         return (key.name for key in bucket if self.__isDocNew(key, timeLimit))
+
+    def getStaleDocKeys(self):
+        bucket = self.__getBucket();
+        staleAgeLimit = CLUSTERING_DOC_AGE_LIMIT + 1;
+        timeLimit = int(time.time()) - staleAgeLimit * 60 * 60 * 24;
+
+        return (key.name for key in bucket if not self.__isDocNew(key, timeLimit))
 
     def get(self, docKey):
         keyContents = self.cache.get(docKey)

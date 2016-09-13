@@ -50,7 +50,7 @@ def startClustering():
     clusterTableManager.createFreshTable();
     logging.info("Cleaned up the cluster table")
 
-    docKeys = list(docManager.getNewDocKeys(CLUSTERING_DOC_AGE_LIMIT));
+    docKeys = list(docManager.getNewDocKeys());
     logging.info("Got docs for clustering");
 
     clusterManager.initNewClusters(docKeys);
@@ -68,7 +68,7 @@ def startIncrementalClustering():
     docManager = DocManager()
     jobManager = ClusterJobManager()
 
-    docKeys = list(docManager.getNewDocKeys(CLUSTERING_DOC_AGE_LIMIT));
+    docKeys = list(docManager.getNewDocKeys());
     logging.info("Got docs for clustering");
 
     (newDocs, retainedDocs, expiredDocs) = \

@@ -22,7 +22,7 @@ class DocManagerTests(unittest.TestCase):
         self.failUnless(retrievedDoc.tags == testDoc.tags)
 
         # get new doc keys
-        retrievedDocKeys = testDocManager.getNewDocKeys(1)
+        retrievedDocKeys = testDocManager.getNewDocKeys()
         self.failUnless(len(list(retrievedDocKeys)) == 1)
 
         # delete doc
