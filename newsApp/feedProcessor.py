@@ -41,7 +41,7 @@ def _putNewLinks(feedAndJobId, linksToAdd):
   for link in linksToAdd:
     try:
       existingLink = linkManager.get(link.id)
-      link[LINKTAG_PUBTIME] = existingLink[LINKTAG_PUBTIME]
+      link.tags[LINKTAG_PUBTIME] = existingLink.tags[LINKTAG_PUBTIME]
       logger.info(
         "Link with id '%s' already exists. Not updating pubTime. %s",
         link.id,
