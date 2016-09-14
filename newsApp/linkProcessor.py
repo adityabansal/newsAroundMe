@@ -97,7 +97,7 @@ def processLink(jobId, linkId):
   doc.tags[TAG_IMAGES] = processingResult[1];
   doc.tags[DOCTAG_URL] = linkId;
   doc.tags[TAG_PUBLISHER_DETAILS] = _getPublisherDetails(publisher)
-  if not LINKTAG_SUMMARYTEXT in doc.tags:
+  if not doc.tags[LINKTAG_SUMMARYTEXT]:
     doc.tags[LINKTAG_SUMMARYTEXT] = doc.content[:200]
   doc = _addTranslationTags(jobId, doc)
 
