@@ -6,7 +6,7 @@ from dbhelper import *
 from dbItemManager import DbItemManager
 from link import Link
 
-LINK_EXPIRY_TIME_IN_DAYS = 30
+LINK_EXPIRY_TIME_IN_DAYS = 60
 
 class LinkManager(DbItemManager):
     """
