@@ -70,7 +70,8 @@ class DocManager:
         staleAgeLimit = CLUSTERING_DOC_AGE_LIMIT + 1;
         timeLimit = int(time.time()) - staleAgeLimit * 60 * 60 * 24;
 
-        return (key.name for key in bucket if not self.__isDocNew(key, timeLimit))
+        return (key.name for key in bucket
+ -            if _getEpochSecs(key.last_modified) > timeLimit)
 
     def get(self, docKey):
         keyContents = self.cache.get(docKey)
