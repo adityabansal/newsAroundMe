@@ -71,7 +71,7 @@ class DocManager:
         timeLimit = int(time.time()) - staleAgeLimit * 60 * 60 * 24;
 
         return (key.name for key in bucket
- -            if _getEpochSecs(key.last_modified) > timeLimit)
+            if _getEpochSecs(key.last_modified) < timeLimit)
 
     def get(self, docKey):
         keyContents = self.cache.get(docKey)
