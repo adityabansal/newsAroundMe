@@ -13,4 +13,6 @@ def InitLogging():
     # suppress all logs except critical ones from boto
     logging.getLogger('boto').setLevel(logging.CRITICAL)
 
+    logging.getLogger('protocol').setLevel(logging.ERROR)
+
     logging.captureWarnings(True)
