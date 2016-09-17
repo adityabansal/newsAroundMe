@@ -154,7 +154,11 @@ def _linkFromWebPageEntry(jobId, entry, feed, entrySelector):
   _deleteUnecessaryFeedTags(linkTags)
 
   # Try and extract the title. If unsuccessful, just return None.
-  extractTitleResult = hp.extractLink(jobId, entry, entrySelector['title'])
+  extractTitleResult = hp.extractLink(
+    jobId,
+    entry,
+    entrySelector['title'],
+    feed.tags[FEEDTAG_URL])
   if not extractTitleResult:
     return None;
   link = extractTitleResult[0];

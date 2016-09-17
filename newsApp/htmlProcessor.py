@@ -114,7 +114,7 @@ def getSubHtmlEntries(jobId, fullHtml, selector):
     subHtmlEntries = parsedHtml.cssselect(selector)
     return [lh.tostring(entry) for entry in subHtmlEntries]
 
-def extractLink(jobId, html, selector):
+def extractLink(jobId, html, selector, baseUrl):
     try:
         parsedHtml = _parseAndCleanHtml(html)
     except XMLSyntaxError:
@@ -125,7 +125,9 @@ def extractLink(jobId, html, selector):
     if len(titleElements) > 0:
         titleElement = titleElements[0]
         if 'href' in titleElement.attrib:
-            return (titleElement.attrib['href'], titleElement.text_content())
+            return (
+                _getCompleteUrl(titleElement.attrib['href'], baseUrl),
+                titleElement.text_content())
 
     logger.info("Could not extract link. JobId: %s", jobId)
     return None
