@@ -205,8 +205,12 @@ def processWebFeed(jobId, feed):
         linksToAdd.append(link);
         logger.info("Discovered link: %s. %s", link.id, feedAndJobId)
 
+  if len(linksToAdd) == 0:
+    logger.warning("No links found while processing webPage. %s", feedAndJobId)
+  else:
+    logger.info("Number of links found: %i. %s", len(linksToAdd), feedAndJobId)
+
   # put links and processLink jobs
-  logger.info("Total number of links are %i. %s", len(linksToAdd), feedAndJobId)
   _putNewLinks(feedAndJobId, linksToAdd)
 
   # update Feed on successfull poll
