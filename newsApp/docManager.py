@@ -47,7 +47,8 @@ class DocManager:
             return False;
 
         doc = self.get(key.name);
-        return doc.tags[LINKTAG_PUBTIME] > timeLimit
+        return (doc.tags[LINKTAG_PUBTIME] > timeLimit) and \
+            (FEEDTAG_DO_NOT_CLUSTER not in doc.tags)
 
     def put(self, doc):
         k = Key(self.__getBucket());
