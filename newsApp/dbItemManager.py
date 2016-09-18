@@ -3,6 +3,7 @@ import decimal
 
 from boto.dynamodb2.table import Table
 from boto.dynamodb2.fields import HashKey, RangeKey
+from retrying import retry
 
 from dbItem import DbItem
 from dbhelper import *
@@ -63,6 +64,7 @@ class DbItemManager:
             max_page_size=25);
         return self.__getTagsFromTagsTableRows(tagsTableRows)
 
+    @retry(stop_max_attempt_number=3)
     def put(self, item):
         """
         Put a new item.
