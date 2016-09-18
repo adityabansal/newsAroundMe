@@ -169,7 +169,8 @@ def _linkFromWebPageEntry(jobId, entry, feed, entrySelector):
       jobId,
       entry,
       entrySelector['summary'],
-      entrySelector['image']);
+      entrySelector['image'],
+      feed.tags[FEEDTAG_URL]);
   linkTags[LINKTAG_SUMMARY] = entry;
   linkTags[LINKTAG_SUMMARYTEXT] = processingResult[0];
   linkTags[LINKTAG_SUMMARYIMAGES] = processingResult[1];
