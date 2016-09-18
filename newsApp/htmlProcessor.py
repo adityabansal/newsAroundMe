@@ -81,14 +81,10 @@ def processHtml(jobId, rawHtml, textSelector, imageSelectors, baseUrl = None):
     # Extract out text
     text = _extractText(parsedHtml, textSelector)
     if (text == ""):
-        logger.warning(
-            "Did not find text element for selector: %s. JobId: %s",
+        logger.info(
+            "Did not find any text for selector: %s. JobId: %s",
             textSelector,
             jobId);
-        logger.info(
-            "Setting the text as empty. JobId: %s",
-            jobId);
-        text = "";
     else:
         logger.info(
             "Sucessfully extracted out text from html. JobId: %s",

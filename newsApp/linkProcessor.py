@@ -91,6 +91,8 @@ def processLink(jobId, linkId):
       publisher.tags[PUBLISHERTAG_TEXTSELECTOR],
       json.loads(publisher.tags[PUBLISHERTAG_IMAGESELECTORS]),
       publisher.tags[PUBLISHERTAG_HOMEPAGE]);
+  if not processingResult[0]:
+    logger.warning("No text extracted for the link. %s.", linkAndJobId)
 
   # generate corresponding doc
   doc = Doc(_getDocKey(link), processingResult[0], link.tags);
