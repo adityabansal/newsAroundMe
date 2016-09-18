@@ -251,33 +251,16 @@ def parseDoc(jobId, docId):
 
     logger.info("Completed parsing doc. %s.", docAndJobId)
 
-def __getDocShingles(shingle):
-    shingleTableManager = ShingleTableManager()
-    return list(shingleTableManager.queryByShingle(shingle))
-
-@retry(stop_max_attempt_number=3)
-def __queryShingles(shingles):
-    pool = Pool(8)
-    poolResults = [[]]
-    try:
-        poolResults = pool.map_async(__getDocShingles, list(shingles)).get(
-            timeout=300)
-    except:
-        logger.warning("Could not get shingles. %s.", docAndJobId)
-        raise
-    finally:
-        pool.terminate()
-
-    return poolResults
-
 def getCandidateDocsUsingShingles(jobId, docId, docAndJobId):
     matchFreq = {}
     shingleTableManager = ShingleTableManager()
 
-    shingles = shingleTableManager.queryByDocId(docId)
-    poolResults = __queryShingles(shingles)
+    shingles = list(shingleTableManager.queryByDocId(docId))
 
-    matchingDocs = [item for results in poolResults for item in results]
+    matchingDocs = []
+    for shingle in shingles:
+      logger.info("Querying docs for shingle %s. %s", shingle, docAndJobId)
+      matchingDocs = matchingDocs + list(shingleTableManager.queryByShingle(shingle))
 
     for match in matchingDocs:
         if match in matchFreq:
