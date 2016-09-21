@@ -10,7 +10,7 @@ from distanceTableManager import DistanceTableManager
 from entityTableManager import EntityTableManager
 from docManager import DocManager
 from loggingHelper import *
-from clusterJobManager import ClusterJobManager
+from minerJobManager import MinerJobManager
 from shingleTableManager import ShingleTableManager
 from workerJob import WorkerJob
 
@@ -35,7 +35,7 @@ def startClustering():
     distanceTableManager = DistanceTableManager()
     docManager = DocManager()
     entityTableManager = EntityTableManager()
-    jobManager = ClusterJobManager()
+    jobManager = MinerJobManager()
     shingleTableManager = ShingleTableManager()
 
     shingleTableManager.createFreshTable();
@@ -66,7 +66,7 @@ def startIncrementalClustering():
 
     clusterManager = ClusterManager()
     docManager = DocManager()
-    jobManager = ClusterJobManager()
+    jobManager = MinerJobManager()
 
     docKeys = list(docManager.getNewDocKeys());
     logging.info("Got docs for clustering");

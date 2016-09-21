@@ -11,7 +11,6 @@ from distanceTableManager import DistanceTableManager
 from doc import Doc
 from docManager import DocManager
 from entityTableManager import EntityTableManager
-from clusterJobManager import ClusterJobManager
 from minerJobManager import MinerJobManager
 from loggingHelper import *
 from shingleTableManager import ShingleTableManager
@@ -121,7 +120,7 @@ def cleanUpDoc(jobId, docId):
     docAndJobId = "Doc id: " + docId + ". Job id: " + jobId;
     logger.info("Started cleaning up doc. %s.", docAndJobId);
 
-    jobManager = ClusterJobManager();
+    jobManager = MinerJobManager();
 
     job = WorkerJob(
         JOB_CLEANUPDOCSHINGLES,
@@ -293,7 +292,7 @@ def getCandidateDocsUsingEntities(jobId, docId, docAndJobId):
     return matches
 
 def putComareDocJobs(docId, matches, docAndJobId):
-    jobManager = ClusterJobManager()
+    jobManager = MinerJobManager()
 
     for match in matches:
         if match != docId:
