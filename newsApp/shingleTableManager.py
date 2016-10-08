@@ -6,6 +6,8 @@ from boto.dynamodb2.fields import HashKey, RangeKey, GlobalAllIndex
 
 from dbhelper import *
 
+MAX_SHINGLES_PER_DOC = 350;
+
 class ShingleTableManager:
     """
     Manage shingle-docid pairs stored on AWS dynamo db database.
@@ -73,6 +75,9 @@ class ShingleTableManager:
         """
 
         shingles = list(set(shingles)) # remove duplicate shingles
+        shingles.sort()
+        shingles = shingles[:MAX_SHINGLES_PER_DOC]
+
         shingleTable = self.__getTable()
         with shingleTable.batch_write() as batch:
             for shingle in shingles:
