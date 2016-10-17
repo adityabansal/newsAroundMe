@@ -6,11 +6,12 @@ body {
 	padding-left: 4px;
 }
 
-.logo-text {
+a.logo-text, a.logo-text:hover, a.logo-text:focus {
     font-family: 'Comic Sans MS', cursive, sans-serif;
     font-size: 32px;
     font-style: italic;
     color: lightyellow;
+    text-decoration: none;
 }
 
 .body-content {
@@ -50,6 +51,7 @@ body {
 
 .story .headline {
   color: lightyellow;
+  font-weight: bold;
 }
 
 .story .publisher-link {
