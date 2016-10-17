@@ -15,13 +15,10 @@ def pushClusterJob():
     jobManager = ClusterJobManager()
     clusterManager = ClusterManager()
 
-    jobCount = jobManager.count()
-    logging.info("Got job count as: %i", jobCount)
-
     clusterState = clusterManager.getState()
     logging.info("Got cluster state as: %s", clusterState)
 
-    if (jobCount == 0) & (clusterState == CLUSTER_STATE_NEW):
+    if clusterState == CLUSTER_STATE_NEW:
         clusterJob = WorkerJob(JOB_CLUSTERDOCS, {})
         jobManager.enqueueJob(clusterJob)
         logging.info("Cluster job put. Job id: %s", clusterJob.jobId)
