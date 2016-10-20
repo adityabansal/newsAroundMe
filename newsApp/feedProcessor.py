@@ -121,8 +121,7 @@ def processRssFeed(jobId, feed):
 
   # get all feed entries since last poll time
   parsedFeed = feedparser.parse(feed.tags[FEEDTAG_URL])
-  newEntries = [entry for entry in parsedFeed.entries
-               if entry.published_parsed > time.gmtime(lastPubDate)]
+  newEntries = [entry for entry in parsedFeed.entries]
   logger.info("Got %i new entries. %s", len(newEntries), feedAndJobId)
 
   # for each entry add link in link database and a process link job
