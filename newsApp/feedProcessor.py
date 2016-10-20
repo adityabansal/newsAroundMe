@@ -137,8 +137,7 @@ def processRssFeed(jobId, feed):
 
   # last step update the feed on successful completion of poll
   if len(newEntries) > 0:
-    feed.tags[FEEDTAG_LASTPUBDATE] = calendar.timegm(
-      linksToAdd[0].tags[LINKTAG_PUBTIME])
+    feed.tags[FEEDTAG_LASTPUBDATE] = linksToAdd[0].tags[LINKTAG_PUBTIME]
 
   feedManager = FeedManager()
   feedManager.updateFeedOnSuccessfullPoll(feed)
