@@ -87,7 +87,10 @@ def _retrieveNewTagsFromFeedEntry(jobId, entry):
   newTags[LINKTAG_SUMMARYTEXT] = processingResult[0];
   newTags[LINKTAG_SUMMARYIMAGES] = processingResult[1];
 
-  newTags[LINKTAG_PUBTIME] = calendar.timegm(entry.published_parsed);
+  if entry.published_parsed:
+    newTags[LINKTAG_PUBTIME] = calendar.timegm(entry.published_parsed);
+  else:
+    newTags[LINKTAG_PUBTIME] = int(time.time())
 
   return newTags
 
