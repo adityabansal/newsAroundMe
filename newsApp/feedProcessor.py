@@ -107,8 +107,12 @@ def _linkFromFeedEntry(jobId, entry, feed):
   # Add new tags retrieved from the feed entry
   linkTags.update(_retrieveNewTagsFromFeedEntry(jobId, entry))
 
-  # Return the final link object
-  return Link(entry.link, linkTags)
+  try:
+    # Return the final link object
+    return Link(entry.link, linkTags)
+  except Exception as e:
+    logger.warning("Could not open link %s. Job id: %s", entry.link, jobId)
+    return None;
 
 def processRssFeed(jobId, feed):
   """
@@ -132,7 +136,8 @@ def processRssFeed(jobId, feed):
   linksToAdd = []
   for entry in newEntries:
     link = _linkFromFeedEntry(jobId, entry, feed)
-    linksToAdd.append(link);
+    if link:
+      linksToAdd.append(link);
   _putNewLinks(feedAndJobId, linksToAdd)
 
   # last step update the feed on successful completion of poll
