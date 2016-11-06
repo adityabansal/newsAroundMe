@@ -28,9 +28,9 @@ def _getDocKey(link):
 
 def _getPublisherDetails(publisher):
     return {
-        PUBLISHERTAG_FRIENDLYID: publisher.tags[PUBLISHERTAG_FRIENDLYID],
-        PUBLISHERTAG_NAME: publisher.tags[PUBLISHERTAG_NAME],
-        PUBLISHERTAG_HOMEPAGE: publisher.tags[PUBLISHERTAG_HOMEPAGE]}
+        PUBLISHER_DETAILS_FRIENDLYID: publisher.tags[PUBLISHERTAG_FRIENDLYID],
+        PUBLISHER_DETAILS_NAME: publisher.tags[PUBLISHERTAG_NAME],
+        PUBLISHER_DETAILS_HOMEPAGE: publisher.tags[PUBLISHERTAG_HOMEPAGE]}
 
 def _addTranslationTags(jobId, doc):
   docLang = doc.tags[FEEDTAG_LANG]

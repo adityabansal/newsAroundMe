@@ -78,8 +78,8 @@ class Cluster(set):
          self.countries.append(doc.tags[FEEDTAG_COUNTRY])
       if doc.tags.get(FEEDTAG_LOCALE):
          self.locales.append(doc.tags[FEEDTAG_LOCALE])
-      if doc.tags.get(PUBLISHERTAG_FRIENDLYID):
-         self.publishers.append(doc.tags[PUBLISHERTAG_FRIENDLYID])
+      if doc.tags.get(TAG_PUBLISHER):
+         self.publishers.append(doc.tags[TAG_PUBLISHER])
       if doc.tags.get(FEEDTAG_LANG):
          self.languages.append(doc.tags[FEEDTAG_LANG])
 

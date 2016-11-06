@@ -159,7 +159,8 @@ class ClusterManager:
         return cluster.articles;
 
     def __computeClusterRankingScore(self, cluster):
-        return len(cluster) - len(cluster.duplicates)
+        return len(cluster) - len(cluster.duplicates) + \
+            (0.1 * len(cluster.publishers))
 
     def __constructQueryResponse(self, clusters, skip, top):
         response = []
