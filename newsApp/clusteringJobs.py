@@ -113,8 +113,8 @@ def compareDocs(jobId, doc1Key, doc2Key):
         logger.info(
             "The two docs are from different locations. Adding penalty. %s",
             jobInfo);
-        score = score - 0.5;
-        if score > 0:
+        score = score - 0.4;
+        if score < 0:
             score = 0;
     logger.info("Comparision score: %s. %s", str(score), jobInfo);
 
