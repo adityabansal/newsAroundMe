@@ -106,6 +106,16 @@ def compareDocs(jobId, doc1Key, doc2Key):
     else:
         score = computeDocSimScoreUsingEntities(doc1, doc2)
         logger.info("Comparing using entities. %s", jobInfo)
+
+    if FEEDTAG_LOCALE in doc1.tags and FEEDTAG_LOCALE in doc2.tags and \
+        doc1.tags[FEEDTAG_LOCALE] != doc2.tags[FEEDTAG_LOCALE]:
+
+        logger.info(
+            "The two docs are from different locations. Adding penalty. %s",
+            jobInfo);
+        score = score - 0.5;
+        if score > 0:
+            score = 0;
     logger.info("Comparision score: %s. %s", str(score), jobInfo);
 
     if score > SIMSCORE_MIN_THRESHOLD:

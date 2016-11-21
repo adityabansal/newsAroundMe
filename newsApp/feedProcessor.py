@@ -141,7 +141,7 @@ def processRssFeed(jobId, feed):
   _putNewLinks(feedAndJobId, linksToAdd)
 
   # last step update the feed on successful completion of poll
-  if len(newEntries) > 0:
+  if len(linksToAdd) > 0:
     feed.tags[FEEDTAG_LASTPUBDATE] = int(linksToAdd[0].tags[LINKTAG_PUBTIME])
 
   feedManager = FeedManager()
