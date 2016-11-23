@@ -114,7 +114,7 @@ def extractLink(jobId, html, selector, baseUrl):
     try:
         parsedHtml = _parseAndCleanHtml(html)
     except XMLSyntaxError:
-        logger.warning("Could not parse page html. JobId: %s", jobId)
+        logger.warning("Could not parse html. JobId: %s", jobId)
         return None
 
     titleElements = parsedHtml.cssselect(selector)
@@ -127,3 +127,13 @@ def extractLink(jobId, html, selector, baseUrl):
 
     logger.info("Could not extract link. JobId: %s", jobId)
     return None
+
+def extractText(jobId, html, textSelector):
+    try:
+        parsedHtml = _parseAndCleanHtml(html)
+    except XMLSyntaxError:
+        logger.warning("Could not parse html. JobId: %s", jobId)
+        return None
+
+    # Extract out text
+    return _extractText(parsedHtml, textSelector)

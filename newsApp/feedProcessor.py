@@ -172,6 +172,13 @@ def _linkFromWebPageEntry(jobId, entry, feed, entrySelector):
   link = extractTitleResult[0];
   linkTags[LINKTAG_TITLE] = extractTitleResult[1];
 
+  if 'titleText' in entrySelector:
+    logger.info("titleText selector specified. Using it. %s", jobId)
+    linkTags[LINKTAG_TITLE] = hp.extractText(
+      jobId,
+      entry,
+      entrySelector['titleText'])
+
   # add summary and image tags
   processingResult = hp.processHtml(
       jobId,
