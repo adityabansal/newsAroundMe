@@ -109,3 +109,5 @@ def translate(jobId, text, fromLang, toLang = 'en'):
       return msResult
     else:
       return translateGoogle(jobInfo, text, fromLang, toLang)
+  elif fromLang in GOOGLE_LANGS:
+    return translateGoogle(jobInfo, text, fromLang, toLang)
