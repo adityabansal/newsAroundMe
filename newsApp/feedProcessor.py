@@ -192,8 +192,12 @@ def _linkFromWebPageEntry(jobId, entry, feed, entrySelector):
 
   linkTags[LINKTAG_PUBTIME] = int(time.time())
 
-  # Return the final link object
-  return Link(link, linkTags)
+  try:
+    # Return the final link object
+    return Link(link, linkTags)
+  except Exception as e:
+    logger.warning("Could not open link %s. Job id: %s", link, jobId)
+    return None;
 
 def processWebFeed(jobId, feed):
   feedAndJobId = "Feed id: " + feed.id + ". Job id: " + jobId;
