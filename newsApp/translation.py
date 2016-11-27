@@ -9,7 +9,7 @@ from googleapiclient.discovery import build
 logger = logging.getLogger('translation')
 
 MSTRANSLATE_LANGS = ['hi']
-GOOGLE_LANGS = ['hi']
+GOOGLE_LANGS = ['hi', 'mr']
 
 def translateGoogle(jobInfo, text, fromLang, toLang = 'en'):
   try:
@@ -28,11 +28,20 @@ def translateGoogle(jobInfo, text, fromLang, toLang = 'en'):
     logger.info("Google translation failed. %s", jobInfo)
     return ""
 
-def translateMicrosoft(jobInfo, text, fromLang, toLang = 'en'):
+def _getMicrosoftAccessToken(jobInfo):
   try:
-    logger.info("Started microsoft translation. %s", jobInfo);
+    auth_headers = {
+      'Ocp-Apim-Subscription-Key': os.environ['MSTRANSLATE_AZUREKEY']
+    }
 
-    # get the access token
+    auth_url = 'https://api.cognitive.microsoft.com/sts/v1.0/issueToken'
+    auth_token = requests.post(auth_url, headers = auth_headers).content
+
+    logger.info(
+      "Obtained MStranslate auth token through azure key. %s",
+      jobInfo)
+    return auth_token;
+  except:
     args = {
       'client_id': os.environ['MSTRANSLATE_CLIENT_ID'],
       'client_secret': os.environ['MSTRANSLATE_CLIENT_SECRET'],
@@ -42,6 +51,18 @@ def translateMicrosoft(jobInfo, text, fromLang, toLang = 'en'):
     oauth_url = 'https://datamarket.accesscontrol.windows.net/v2/OAuth2-13'
     oauth_response = json.loads(
       requests.post(oauth_url, data=urllib.urlencode(args)).content)
+
+    logger.info(
+      "Obtained MStranslate auth token through old method. %s",
+      jobInfo)
+    return oauth_response['access_token'];
+
+def translateMicrosoft(jobInfo, text, fromLang, toLang = 'en'):
+  try:
+    logger.info("Started microsoft translation. %s", jobInfo);
+
+    # get the access token
+    auth_token = _getMicrosoftAccessToken(jobInfo);
 
     # make the translate api call
     strText = text
@@ -54,7 +75,7 @@ def translateMicrosoft(jobInfo, text, fromLang, toLang = 'en'):
       'from': fromLang
     }
 
-    headers={'Authorization': 'Bearer '+ oauth_response['access_token']}
+    headers={'Authorization': 'Bearer '+ auth_token}
     translate_url = 'https://api.microsofttranslator.com/V2/Ajax.svc/Translate?'
     translation_result = requests.get(
       translate_url + urllib.urlencode(translation_args),
