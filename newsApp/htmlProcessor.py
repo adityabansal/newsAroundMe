@@ -1,5 +1,5 @@
 import logging
-import urllib
+import requests
 import urlparse
 
 from lxml.etree import XMLSyntaxError
@@ -47,7 +47,7 @@ def _getImageSize(jobId, url):
 
     try:
         logger.info("Fetching image. %s", jobInfo)
-        img = urllib.urlopen(url)
+        img = requests.get(url)
         size = img.headers.get("content-length")
         if size:
             logger.info("Image has size %s. %s", size, jobInfo)
@@ -55,7 +55,7 @@ def _getImageSize(jobId, url):
     except:
         pass;
 
-    logger.info("Could not determine image size. %s", jobInfo)
+    logger.warning("Could not determine image size. %s", jobInfo)
     return 0
 
 def processHtml(jobId, rawHtml, textSelector, imageSelectors, baseUrl = None):
