@@ -37,11 +37,11 @@ def _deleteUnecessaryFeedTags(feedTags):
 def _putNewLinks(feedAndJobId, linksToAdd):
   linkManager = LinkManager()
   jobManager = MinerJobManager()
+  latestPubTime = 0
 
   for link in linksToAdd:
     try:
       existingLink = linkManager.get(link.id)
-      link.tags[LINKTAG_PUBTIME] = existingLink.tags[LINKTAG_PUBTIME]
       logger.info(
         "Link with id '%s' already exists. Not processing it. %s",
         link.id,
@@ -65,6 +65,11 @@ def _putNewLinks(feedAndJobId, linksToAdd):
         processLinkJob.jobId,
         link.id,
         feedAndJobId)
+
+    if latestPubTime < link.tags[LINKTAG_PUBTIME]:
+      latestPubTime  = link.tags[LINKTAG_PUBTIME]
+
+  return latestPubTime;
 
 def _retrieveNewTagsFromFeedEntry(jobId, entry):
   """
@@ -138,11 +143,11 @@ def processRssFeed(jobId, feed):
     link = _linkFromFeedEntry(jobId, entry, feed)
     if link:
       linksToAdd.append(link);
-  _putNewLinks(feedAndJobId, linksToAdd)
+  latestPubTime = _putNewLinks(feedAndJobId, linksToAdd)
 
   # last step update the feed on successful completion of poll
-  if len(linksToAdd) > 0:
-    feed.tags[FEEDTAG_LASTPUBDATE] = int(linksToAdd[0].tags[LINKTAG_PUBTIME])
+  if latestPubTime > 0:
+    feed.tags[FEEDTAG_LASTPUBDATE] = latestPubTime
 
   feedManager = FeedManager()
   feedManager.updateFeedOnSuccessfullPoll(feed)
@@ -235,7 +240,9 @@ def processWebFeed(jobId, feed):
     logger.info("Number of links found: %i. %s", len(linksToAdd), feedAndJobId)
 
   # put links and processLink jobs
-  _putNewLinks(feedAndJobId, linksToAdd)
+  latestPubTime = _putNewLinks(feedAndJobId, linksToAdd)
+  if latestPubTime > 0:
+    feed.tags[FEEDTAG_LASTPUBDATE] = latestPubTime
 
   # update Feed on successfull poll
   feedManager = FeedManager()
