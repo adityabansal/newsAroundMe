@@ -92,7 +92,13 @@ $(function() {
           }
         })
 
-        return closest;
+        var closestDistance = Math.pow(closest.lat - lat, 2) + Math.pow(closest.long - long, 2);
+        if (closestDistance < 200) {
+          return closest;
+        } else {
+          // no nearby city found
+          return self.locations()[0];
+        }
       } else {
         return match[0];
       }
