@@ -25,6 +25,17 @@ def _isDuplicateArticle(docKey, docsAdded):
 
   return False
 
+def _getImagesForDoc(doc):
+  images = doc.tags.get(TAG_IMAGES, "[]")
+  if not images:
+    images = []
+
+  summaryImages = doc.tags.get(LINKTAG_SUMMARYIMAGES, "[]")
+  if not summaryImages:
+    summaryImages = []
+
+  return list(set(images + summaryImages))
+
 class Cluster(set):
   """
   Represents a cluster(set of similar documents)
@@ -66,7 +77,7 @@ class Cluster(set):
           'publisher': doc.tags.get(TAG_PUBLISHER_DETAILS, ""),
           'link': doc.tags.get(DOCTAG_URL, "#"),
           'summaryText': doc.tags.get(LINKTAG_SUMMARYTEXT, ""),
-          'images': doc.tags.get(TAG_IMAGES, "[]"),
+          'images': _getImagesForDoc(doc),
           'lang': doc.tags.get(FEEDTAG_LANG, "")})
         docsAdded.append(docKey)
       else:

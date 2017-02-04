@@ -8,7 +8,6 @@ from boto.exception import S3ResponseError
 from boto.s3.key import Key
 
 from constants import *
-from cachingHelper import getCache
 from dbhelper import *
 from cluster import Cluster
 from clusterTableManager import ClusterTableManager
@@ -39,7 +38,6 @@ class ClusterManager:
 
         self.bucketConnString = os.environ['CLUSTERSBUCKET_CONNECTIONSTRING'];
         self.clusterTableManager = ClusterTableManager()
-        self.cache = getCache()
 
     def __getBucket(self):
         bucketConnParams = parseConnectionString(self.bucketConnString);

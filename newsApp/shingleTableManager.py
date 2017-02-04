@@ -6,7 +6,7 @@ from boto.dynamodb2.fields import HashKey, RangeKey, GlobalAllIndex
 
 from dbhelper import *
 
-MAX_SHINGLES_PER_DOC = 350;
+MAX_SHINGLES_PER_DOC = 300;
 
 class ShingleTableManager:
     """
