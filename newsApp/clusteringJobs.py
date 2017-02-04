@@ -19,11 +19,6 @@ import textHelper as th
 
 logger = logging.getLogger('clusteringJobs')
 
-# weights. must add up to 1
-W_TITLE_SIM = 0.2
-W_SUMMARY_SIM = 0.3
-W_CONTENT_SIM = 0.5
-
 SIMSCORE_MIN_THRESHOLD = 0.05
 
 def __getDocEnglishTitle(doc):
@@ -55,6 +50,10 @@ def computeEnglishDocsSimScore(doc1, doc2):
         __getDocEnglishTitle(doc1),
         __getDocEnglishTitle(doc2))
 
+    titleSimEntities = th.compareTextEntities(
+        __getDocEnglishTitle(doc1),
+        __getDocEnglishTitle(doc2))
+
     summarySim = th.compareEnglishTexts(
         __getDocEnglishSummaryText(doc1),
         __getDocEnglishSummaryText(doc2))
@@ -63,9 +62,10 @@ def computeEnglishDocsSimScore(doc1, doc2):
         __getDocEnglishContent(doc1),
         __getDocEnglishContent(doc2))
 
-    return titleSim*W_TITLE_SIM \
-           + summarySim*W_SUMMARY_SIM \
-           + contentSim*W_CONTENT_SIM;
+    return titleSim*0.1 \
+           + titleSimEntities*0.15 \
+           + summarySim*0.3 \
+           + contentSim*0.45;
 
 def computeDocSimScoreUsingEntities(doc1, doc2):
     titleSim = th.compareEnglishTitles(
