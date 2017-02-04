@@ -47,7 +47,7 @@ $(function() {
 
     self.loadStoriesForUserLocation = function() {
       self.disabled(true);
-      $.getJSON('http://ipinfo.io', function(data){
+      $.getJSON('https://ipinfo.io', function(data){
         var city = data.city || "",
           lat,
           long,
