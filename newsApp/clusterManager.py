@@ -8,6 +8,7 @@ from boto.exception import S3ResponseError
 from boto.s3.key import Key
 
 from constants import *
+from docManager import DocManager
 from dbhelper import *
 from cluster import Cluster
 from clusterTableManager import ClusterTableManager
@@ -38,6 +39,7 @@ class ClusterManager:
 
         self.bucketConnString = os.environ['CLUSTERSBUCKET_CONNECTIONSTRING'];
         self.clusterTableManager = ClusterTableManager()
+        self.docManager = DocManager()
 
     def __getBucket(self):
         bucketConnParams = parseConnectionString(self.bucketConnString);
@@ -151,8 +153,7 @@ class ClusterManager:
         cluster.process()
         self.clusterTableManager.addCluster(cluster)
 
-    def getProcessedCluster(self, clusterId):
-        cluster = self.clusterTableManager.getCluster(clusterId);
+    def getProcessedCluster(self, cluster):
         cluster.process();
         return cluster.articles;
 
@@ -160,30 +161,61 @@ class ClusterManager:
         return (0.4 * (len(cluster) - len(cluster.duplicates))) + \
             (0.6 * len(cluster.publishers))
 
-    def __constructQueryResponse(self, clusters, skip, top):
+    def __filterClusters(self, clusterList, filters):
+        if not filters:
+            return clusterList
+
+        if CLUSTERS_FILTER_LANGUAGES in filters:
+            clusterList = [cluster for cluster in clusterList if not \
+                set(filters[CLUSTERS_FILTER_LANGUAGES]).isdisjoint(cluster.languages)]
+
+        return clusterList;
+
+    def __filterDocsInCluster(self, cluster, filters):
+        if not filters:
+            return cluster
+
+        filteredDocs = []
+
+        for docKey in cluster:
+            isDocAllowed = True;
+            doc = self.docManager.get(docKey)
+
+            if CLUSTERS_FILTER_LANGUAGES in filters:
+                if doc.tags[FEEDTAG_LANG] not in filters[CLUSTERS_FILTER_LANGUAGES]:
+                    isDocAllowed = False
+
+            if isDocAllowed:
+                filteredDocs.append(docKey)
+
+        return Cluster(filteredDocs)
+
+    def __constructQueryResponse(self, clusters, skip, top, filters=None):
         response = []
         clusterList = list(clusters)
+        clusterList = self.__filterClusters(clusterList, filters)
         clusterList.sort(key = self.__computeClusterRankingScore, reverse=True)
 
         for cluster in clusterList[skip:(skip + top)]:
             try:
-                response.append(self.getProcessedCluster(cluster.id))
+                response.append(self.getProcessedCluster(
+                    self.__filterDocsInCluster(cluster, filters)))
             except:
                 continue
 
         return response;
 
-    def queryByCategoryAndCountry(self, category, country, skip, top):
+    def queryByCategoryAndCountry(self, category, country, skip, top, filters=None):
         clusters = self.clusterTableManager.queryByCategoryAndCountry(
             category,
             country)
-        return self.__constructQueryResponse(clusters, skip, top)
+        return self.__constructQueryResponse(clusters, skip, top, filters)
 
-    def queryByLocale(self, locale, skip, top):
+    def queryByLocale(self, locale, skip, top, filters=None):
         clusters = self.clusterTableManager.queryByLocale(locale)
         response = []
 
-        return self.__constructQueryResponse(clusters, skip, top)
+        return self.__constructQueryResponse(clusters, skip, top, filters)
 
     def putClusters(self, clusters):
         jobManager = ClusterJobManager()

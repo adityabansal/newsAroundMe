@@ -61,6 +61,22 @@ def validateSkipAndTop(skip, top):
 
   return (parsedSkip, parsedTop)
 
+def validateFilters(requestArgs):
+  parsedFilters = {}
+
+  if CLUSTERS_FILTER_LANGUAGES in requestArgs:
+    parsedLangs = requestArgs.get(CLUSTERS_FILTER_LANGUAGES).split(",");
+
+    for lang in parsedLangs:
+      try:
+        next(x for x in AVAILABLE_LANGUAGES if x['id'].lower() == lang.lower())
+      except StopIteration:
+        abort(400, "Unsupported language code: " + lang)
+
+    parsedFilters[CLUSTERS_FILTER_LANGUAGES] = parsedLangs
+
+  return parsedFilters
+
 #end validations
 
 @app.route('/api/stories', methods=['GET'])
@@ -71,6 +87,7 @@ def get_stories():
   (skip, top) = validateSkipAndTop(
     request.args.get('skip'),
     request.args.get('top'))
+  filters = validateFilters(request.args)
 
   clusterManager = ClusterManager()
   if localeFilter and not (countryFilter or categoryFilter):
@@ -78,7 +95,8 @@ def get_stories():
     return getJsonResponse(clusterManager.queryByLocale(
       localeFilter,
       skip,
-      top))
+      top,
+      filters))
   elif (countryFilter and categoryFilter) and not localeFilter:
     countryFilter = validateCountry(countryFilter)
     categoryFilter = validateCategory(categoryFilter)
@@ -86,7 +104,8 @@ def get_stories():
       categoryFilter,
       countryFilter,
       skip,
-      top))
+      top,
+      filters))
 
   abort(400, "Invalid query")
 

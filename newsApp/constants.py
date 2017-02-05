@@ -1,6 +1,11 @@
 # define some constants used across modules.
 
 LANG_ENGLISH = 'en'
+LANG_ENGLISH_METADATA = {'id': LANG_ENGLISH, 'displayName': 'English'}
+LANG_HINDI = 'hi'
+LANG_HINDI_METADATA = {'id': LANG_HINDI, 'displayName': 'Hindi'}
+LANG_MARATHI = "mr"
+LANG_MARATHI_METADATA = {'id': LANG_MARATHI, 'displayName': 'Marathi'}
 
 # common tag names
 TAG_PUBLISHER = 'publisher'
@@ -85,20 +90,30 @@ CLUSTER_STATE_NEW = 'new'
 CLUSTER_STATE_STARTED = 'started'
 CLUSTER_STATE_COMPLETED = 'completed'
 
+#cluster filters
+CLUSTERS_FILTER_LANGUAGES = 'languages'
+
 # global parameters
 CLUSTERING_DOC_AGE_LIMIT = 1
 
 #UX metadata
 ALLOWED_CATEGORIES = ['sports', 'business', 'national', 'world']
 ALLOWED_COUNTRIES = ['India']
+AVAILABLE_LANGUAGES = [
+	LANG_ENGLISH_METADATA,
+	LANG_HINDI_METADATA,
+	LANG_MARATHI_METADATA
+]
+
+
 LOCATION_METADATA = [
-  {'displayName': 'Delhi', 'icon': '/static/delhi.svg', 'value': 'delhi', 'lat': 28.70, 'long': 77.10},
-  {'displayName': 'Mumbai', 'icon': '', 'value': 'mumbai', 'lat': 19.08, 'long': 72.88},
-  {'displayName': 'Bangalore', 'icon': '/static/city.svg', 'value': 'bangalore', 'lat': 12.97, 'long': 77.59},
-  {'displayName': 'Chennai', 'icon': '', 'value': 'chennai', 'lat': 13.08, 'long': 80.27},
-  {'displayName': 'Kolkata', 'icon': '', 'value': 'kolkata', 'lat': 22.57, 'long': 88.36},
-  {'displayName': 'Hyderabad', 'icon': '', 'value': 'hyderabad', 'lat': 17.39, 'long': 78.49},
-  {'displayName': 'Pune', 'icon': '', 'value': 'pune', 'lat': 18.52, 'long': 73.86}]
+  {'displayName': 'Delhi', 'icon': '/static/delhi.svg', 'value': 'delhi', 'lat': 28.70, 'long': 77.10, 'languages': [LANG_ENGLISH_METADATA, LANG_HINDI_METADATA]},
+  {'displayName': 'Mumbai', 'icon': '', 'value': 'mumbai', 'lat': 19.08, 'long': 72.88, 'languages': [LANG_ENGLISH_METADATA]},
+  {'displayName': 'Bangalore', 'icon': '/static/city.svg', 'value': 'bangalore', 'lat': 12.97, 'long': 77.59, 'languages': [LANG_ENGLISH_METADATA]},
+  {'displayName': 'Chennai', 'icon': '', 'value': 'chennai', 'lat': 13.08, 'long': 80.27, 'languages': [LANG_ENGLISH_METADATA]},
+  {'displayName': 'Kolkata', 'icon': '', 'value': 'kolkata', 'lat': 22.57, 'long': 88.36, 'languages': [LANG_ENGLISH_METADATA]},
+  {'displayName': 'Hyderabad', 'icon': '', 'value': 'hyderabad', 'lat': 17.39, 'long': 78.49, 'languages': [LANG_ENGLISH_METADATA]},
+  {'displayName': 'Pune', 'icon': '', 'value': 'pune', 'lat': 18.52, 'long': 73.86, 'languages': [LANG_ENGLISH_METADATA, LANG_MARATHI_METADATA]}]
 for location in LOCATION_METADATA:
 	location['title'] = location['displayName'] + ' News - newsAroundMe';
 	location['description'] = 'Latest local news from '+ location['displayName'] + '.';
