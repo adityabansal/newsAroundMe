@@ -93,14 +93,18 @@ def RunWorker(connectionStringKey):
             #subtracting 1 because current parent thread is also counted
             nThreads = threading.activeCount() - 1
             logging.info("No of threads are: %i", nThreads)
+            jobThreads = []
 
             while nThreads < eval(os.environ['MAX_JOB_THREADS']):
                 jobThread = JobThread(connectionStringKey)
                 jobThread.start()
                 nThreads = nThreads + 1;
+                jobThreads.append(jobThread)
 
-            logging.info("Too many threads. Sleeping")
-            time.sleep(1)
+            logging.info("Thread limit reached")
+
+            for thread in jobThreads:
+                thread.join(150)
         else:
             logging.info("No job found in queue. Sleeping")
             time.sleep(5)

@@ -1,25 +1,84 @@
 $(function() {
   function SectionDropdownViewModel() {
     var self = this;
-    self.label = ko.observable("Loading");
+    self.cityLabel = ko.observable("Loading");
     self.disabled = ko.observable(false);
-    self.selection = ko.observable();
 
-    self.locations = ko.observableArray(JSON.parse($("#locationMetadata")[0].innerHTML))
+    self.location = ko.observable();
+    self.locations = ko.observableArray(JSON.parse($("#locationMetadata")[0].innerHTML));
+
+
+    self.languages = ko.observableArray([]);
+    // The label to be shown in language dropdown
+    self.langLabel = ko.computed(function() {
+      var languageNames = [], allLanguageNames = [];
+
+      self.languages().forEach(function(language) {
+        if (language.selected()) {
+          languageNames.push(language.displayName);
+        }
+        allLanguageNames.push(language.displayName);
+      })
+
+      // in case user unselects all languages, select all of them back
+      if (languageNames.length === 0) {
+        self.languages().forEach(function(language) {
+          language.selected(true);
+        });
+
+        return allLanguageNames.join(",");
+      } else {
+        return languageNames.join(",");
+      }
+    });
+
+    self.languageFilter = ko.computed(function() {
+      var languageCodes = [];
+
+      self.languages().forEach(function(language) {
+        if (language.selected()) {
+          languageCodes.push(language.id);
+        }
+      })
+
+      if ((languageCodes.length === 0) ||
+          (languageCodes.length === self.languages().length)) {
+
+        return ""; // no language filter needed
+      } else {
+        return "languages=" + languageCodes.join(",");
+      }
+    })
+    self.languageFilter.subscribe(function(newValue) {
+      var newUrl = "/api/stories?locale=" + self.location().value;
+      if (!!newValue) {
+        newUrl = newUrl + "&" + newValue;
+      }
+
+      console.log("Loading data for url" + newUrl);
+      window.StoriesViewModel.loadData(newUrl);
+    })
 
     self.loadSection = function(section) {
-      var locationMatch, url;
+      var locationMatch, url, section;
 
       locationMatch = self._getMatchingLocation(section);
 
       if (!!locationMatch) {
-        if (!!self.selection() && (locationMatch.value === self.selection().value)) {
+        if (!!self.location() && (locationMatch.value === self.location().value)) {
           // the section is already loaded.
           return;
         }
 
-        self.selection(locationMatch);
-        self.label(locationMatch.displayName);
+        self.location(locationMatch);
+        self.cityLabel(locationMatch.displayName);
+        self.languages([]);
+        $.each(locationMatch.languages, function(index, language) {
+          self.languages.push(
+            $.extend({}, language, {
+              "selected" : ko.observable(true)
+            }));
+        });
 
         // update page title
         document.title = locationMatch.title;
@@ -41,8 +100,8 @@ $(function() {
       return;
     }
 
-    self.chooseSection = function(section) {
-      window.navigateTo(section)
+    self.chooseLocation = function(location) {
+      window.navigateTo(location);
     }
 
     self.loadStoriesForUserLocation = function() {
@@ -70,7 +129,7 @@ $(function() {
           selectedLocation = self.locations()[0];
         }
 
-        self.chooseSection(selectedLocation);
+        self.chooseLocation(selectedLocation);
         self.disabled(false)
       });
     }

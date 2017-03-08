@@ -2,32 +2,39 @@ $(function() {
   function StoriesViewModel() {
     var self = this;
     self.stories = ko.observableArray([]);
-    self.isDataLoading = ko.observable(false);
+    self.lastRequest = null;
+    self.isDataLoading = ko.observable(false)
+
+    self.loadStoriesInternal = function(url) {
+
+      if(!!self.lastRequest && self.isDataLoading()) {
+        self.lastRequest.abort();
+      }
+
+      self.isDataLoading(true);
+      self.lastRequest = $.getJSON(url, function( stories ) {
+        $.each( stories, function( index, story ) {
+          self.stories.push(new window.StoryViewModel(story));
+        });
+        self.loadMoreStoriesIfAtEnd();
+      });
+
+      self.lastRequest.always(function() {
+        self.isDataLoading(false);
+      });
+    }
 
     self.loadData = function(url) {
       self.url = ko.observable(url);
       self.stories([]);
 
-      self.isDataLoading(true);
-      $.getJSON(url, function( stories ) {
-        $.each( stories, function( index, story ) {
-          self.stories.push(new window.StoryViewModel(story));
-        });
-        self.isDataLoading(false);
-        self.loadMoreStoriesIfAtEnd();
-      });
+      self.loadStoriesInternal(url);
     }
 
     self.loadMoreStories = function() {
       var urlWithSkipAndTop = self.url() + "&skip=" + self.stories().length + "&top=5";
 
-      self.isDataLoading(true);
-      $.getJSON(urlWithSkipAndTop, function(stories) {
-        $.each( stories, function( index, story ) {
-          self.stories.push(new StoryViewModel(story));
-        });
-        self.isDataLoading(false);
-      });
+      self.loadStoriesInternal(urlWithSkipAndTop);
     }
 
     self.loadMoreStoriesIfAtEnd = function() {

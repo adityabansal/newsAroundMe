@@ -9,27 +9,56 @@
 
 <!-- BEGIN: Section dropdown -->
 <div id="section-dropdown" class="dropdown pull-right">
-  <span> Show news for: </span>
-  <button id="section-dropdown-button"
-    class="btn btn-primary dropdown-toggle"
-    type="button"
-    data-toggle="dropdown"
-    aria-haspopup="true"
-    aria-expanded="true"
-    data-bind="disable: disabled" >
-    <span data-bind="text: label"></span>
-    <span class="caret"></span>
-  </button>
-  <ul class="dropdown-menu pull-right" aria-labelledby="section-dropdown-button">
-    <!-- ko foreach: locations -->
-      <li>
-        <a href="#" data-bind="click: $parent.chooseSection">
-          <img class="section-dropdown-icon" data-bind="visible: !!icon, attr:{'src': icon}">
-          <span data-bind="text: displayName"></span>
-        </a>
-      </li>
-    <!-- /ko -->
-  </ul>
+  <span>Your city and language: </span>
+  
+  <div class="btn-group">
+    <button id="location-dropdown-button"
+      class="btn btn-primary dropdown-toggle section-dropdown-button"
+      type="button"
+      data-toggle="dropdown"
+      aria-haspopup="true"
+      aria-expanded="true"
+      data-bind="disable: disabled" >
+      <span data-bind="text: cityLabel"></span>
+      <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu pull-right" aria-labelledby="location-dropdown-button">
+      <!-- ko foreach: locations -->
+        <li>
+          <a href="#" data-bind="click: $parent.chooseLocation">
+            <img class="section-dropdown-icon" data-bind="visible: !!icon, attr:{'src': icon}">
+            <span data-bind="text: displayName"></span>
+          </a>
+        </li>
+      <!-- /ko -->
+    </ul>
+  </div>
+
+  <div class="btn-group">
+    <button id="language-dropdown-button"
+      class="btn btn-primary dropdown-toggle section-dropdown-button"
+      type="button"
+      data-toggle="dropdown"
+      aria-haspopup="true"
+      aria-expanded="true"
+      data-bind="disable: disabled" >
+      <span data-bind="text: langLabel"></span>
+      <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu pull-right" aria-labelledby="language-dropdown-button">
+      <!-- ko foreach: languages -->
+        <li>
+          <a href="#">
+            <div class="checkbox-inline">
+              <input type="checkbox" data-bind="checked: selected" />
+              <span data-bind="text: displayName"></span>
+            </div>
+          </a>
+        </li>
+      <!-- /ko -->
+    </ul>
+  </div>
+
 </div>
 <!-- END: Section dropdown -->
 

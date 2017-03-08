@@ -105,7 +105,6 @@ AVAILABLE_LANGUAGES = [
 	LANG_MARATHI_METADATA
 ]
 
-
 LOCATION_METADATA = [
   {'displayName': 'Delhi', 'icon': '/static/delhi.svg', 'value': 'delhi', 'lat': 28.70, 'long': 77.10, 'languages': [LANG_ENGLISH_METADATA, LANG_HINDI_METADATA]},
   {'displayName': 'Mumbai', 'icon': '', 'value': 'mumbai', 'lat': 19.08, 'long': 72.88, 'languages': [LANG_ENGLISH_METADATA]},

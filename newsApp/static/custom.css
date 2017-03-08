@@ -18,7 +18,7 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
   padding: 40px 0 0 0;
 }
 
-#section-dropdown-button {
+.section-dropdown-button {
   margin-bottom: 0.5em;
   background-color: #333;
   color: lightyellow;
