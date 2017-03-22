@@ -2,8 +2,14 @@ body {
   padding-top: 1em;
 }
 
+.navbar-header {
+  background-color: #6b0000;
+  padding-right: 1em;
+}
+
 .logo-img {
 	padding-left: 4px;
+  padding-right: 4px;
 }
 
 a.logo-text, a.logo-text:hover, a.logo-text:focus {
@@ -20,7 +26,7 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
 
 .section-dropdown-button {
   margin-bottom: 0.5em;
-  background-color: #333;
+  background-color: #6b0000;
   color: lightyellow;
 }
 
