@@ -13,6 +13,10 @@ def pushFeedJobs():
 
     jobManager = MinerJobManager()
     feedManager = FeedManager()
+
+    if jobManager.count() > 50:
+        logging.info("Skipping. Too many jobs queued already!!")
+        return;
     
     logging.info("Getting stale  feeds.")
     staleFeeds = feedManager.getStaleFeeds();
