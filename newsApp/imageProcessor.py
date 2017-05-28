@@ -20,16 +20,20 @@ class ImageProcessor:
   Processing steps:
   1. Ensure image is not blacklisted.
   2. Dowload the image.
-  3. Downsize it  if necessary
+  3. Downsize it if necessary
   4. Save to S3 bucket
   """
 
   def __init__(self):
-  	self.tableConnString = os.environ['BLACKLISTEDIMAGESTABLE_CONNECTIONSTRING'];
-  	self.bucketConnString = os.environ['IMAGESBUCKET_CONNECTIONSTRING'];
+    self.blacklistTableConnString = os.environ['BLACKLISTEDIMAGESTABLE_CONNECTIONSTRING'];
+    self.mappingTableConnString = os.environ['IMAGEMAPPINGSTABLE_CONNECTIONSTRING']
+    self.bucketConnString = os.environ['IMAGESBUCKET_CONNECTIONSTRING'];
 
-  def __getTable(self):
-    return getDbTable(self.tableConnString);
+  def __getBlacklistTable(self):
+    return getDbTable(self.blacklistTableConnString);
+
+  def __getMappingTable(self):
+    return getDbTable(self.mappingTableConnString)
 
   def __getBucket(self):
     conn = getS3Connection(self.bucketConnString);
@@ -51,7 +55,7 @@ class ImageProcessor:
 
     # create new table
     logger.info("Creating the new table ...")
-    tableConnectionParams = parseConnectionString(self.tableConnString);
+    tableConnectionParams = parseConnectionString(self.blacklistTableConnString);
     return Table.create(
       tableConnectionParams['name'],
       schema = [HashKey('url')],
@@ -82,8 +86,23 @@ class ImageProcessor:
     self.__setupBucket();
 
   def __isImageBlackListed(self, imageUrl):
-    table = self.__getTable();
+    table = self.__getBlacklistTable();
     return (table.query_count(url__eq = imageUrl) != 0)
+
+  def __getImageMapping(self, imageUrl):
+    table = self.__getMappingTable();
+    mappings = list(table.query(url__eq = imageUrl))
+
+    if not mappings:
+      return;
+    else:
+      return mappings[0]['imageKey']
+
+  def __addImageMapping(self, imageUrl, imageKey):
+    self.__getMappingTable().put_item(data={
+      'url': imageUrl,
+      'imageKey': imageKey
+    })
 
   def getImageContent(self, imageKey):
     try:
@@ -96,6 +115,14 @@ class ImageProcessor:
 
   def processImage(self, jobId, imageUrl):
     jobIdLog = "JobId: " + jobId;
+
+    imageMapping = self.__getImageMapping(imageUrl)
+    if imageMapping:
+      logger.info(
+        "Image url %s has already been processed. %s. Not reprocessing it.",
+        imageUrl,
+        jobIdLog)
+      return imageMapping;
 
     if self.__isImageBlackListed(imageUrl):
       logger.info(
@@ -136,7 +163,11 @@ class ImageProcessor:
       k = bucket.new_key(imageKey);
       k.set_contents_from_string(outImage.getvalue())
       logger.info("Saved image in the bucket with key %s. %s", imageKey, jobIdLog)
+
+      self.__addImageMapping(imageUrl, imageKey);
+      logger.info("Added entry in image mappings table");
+
       return imageKey;
     except Exception, e:
-      logger.exception("Could not process image");
+      logger.exception("Could not process image. %s", jobIdLog);
       pass;
