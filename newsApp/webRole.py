@@ -5,6 +5,7 @@ from flask import make_response, request, render_template
 
 from constants import *
 from clusterManager import ClusterManager
+from imageProcessor import ImageProcessor
 
 app = Flask(__name__)
 
@@ -108,6 +109,18 @@ def get_stories():
       filters))
 
   abort(400, "Invalid query")
+
+@app.route('/images/<imageKey>')
+def getImage(imageKey):
+  imageProcessor = ImageProcessor()
+  imageContent = imageProcessor.getImageContent(imageKey)
+
+  if not imageContent:
+    return abort(404);
+  else:
+    response = make_response(imageContent)
+    response.headers['Content-Type'] = 'image/jpeg'
+    return response
 
 @app.route('/')
 def home():

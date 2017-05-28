@@ -1,6 +1,7 @@
 # helper db functions
 import boto.dynamodb2
 from boto.dynamodb2.table import Table
+from boto.s3.connection import S3Connection
 
 def parseConnectionString(connectionString):
     """
@@ -31,3 +32,12 @@ def getDbTable(connectionString):
     return Table(
             connectionParams['name'],
             connection = getDbConnection(connectionParams));
+
+def getS3Connection(connectionString):
+    connectionParams = parseConnectionString(connectionString);
+
+    connection = S3Connection(
+        connectionParams['accessKeyId'],
+        connectionParams['secretAccessKey']);
+
+    return connection

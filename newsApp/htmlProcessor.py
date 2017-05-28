@@ -6,6 +6,8 @@ from lxml.etree import XMLSyntaxError
 import lxml.html as lh
 from lxml.html.clean import Cleaner
 
+from imageProcessor import ImageProcessor
+
 logger = logging.getLogger('htmlProcessor')
 
 def _isAbsolute(url):
@@ -42,21 +44,14 @@ def _extractImages(html, imageSelector, baseUrl):
     return [_getCompleteUrl(img.attrib['src'], baseUrl) \
         for img in images if 'src' in img.attrib];
 
-def _getImageSize(jobId, url):
-    jobInfo = "Image url: " + url + ". JobId: " + jobId
+def _processImage(jobId, url):
+    imageProcessor = ImageProcessor()
+    imageKey = imageProcessor.processImage(jobId, url)
 
-    try:
-        logger.info("Fetching image. %s", jobInfo)
-        img = requests.get(url)
-        size = img.headers.get("content-length")
-        if size:
-            logger.info("Image has size %s. %s", size, jobInfo)
-            return int(size)
-    except:
-        pass;
-
-    logger.warning("Could not determine image size. %s", jobInfo)
-    return 0
+    if not imageKey:
+      return "";
+    else:
+      return "images/" + imageKey;
 
 def processHtml(jobId, rawHtml, textSelector, imageSelectors, baseUrl = None):
     """
@@ -94,7 +89,9 @@ def processHtml(jobId, rawHtml, textSelector, imageSelectors, baseUrl = None):
     images = [];
     for imageSelector in imageSelectors:
         images += _extractImages(parsedHtml, imageSelector, baseUrl);
-    images = [img for img in images if _getImageSize(jobId, img) > 5000]
+    images = list(set(images)) # remove duplicates
+    images = [_processImage(jobId, img) for img in images] #process images
+    images = filter(None, images) #filter out unprocessed images
     logger.info("Extracted out %i images. JobId: %s", len(images), jobId);
 
     return (text, images);

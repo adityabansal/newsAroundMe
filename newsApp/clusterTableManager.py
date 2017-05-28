@@ -25,12 +25,7 @@ class ClusterTableManager:
     Get the clusters table.
     """
 
-    tableConnectionParams = parseConnectionString(
-      self.tableConnString);
-
-    return Table(
-      tableConnectionParams['name'],
-      connection = getDbConnection(tableConnectionParams));
+    return getDbTable(self.tableConnString);
 
   def createFreshTable(self):
     """
