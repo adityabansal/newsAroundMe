@@ -112,24 +112,31 @@ class ImageProcessor:
       logger.info("Could not fetch the image url %s. %s", imageUrl, jobIdLog)
       return;
 
-    #Load the URL data into an image
-    imageIO = cStringIO.StringIO(imageRaw.read())
-    image = Image.open(imageIO)
+    try:
+      #Load the URL data into an image
+      imageIO = cStringIO.StringIO(imageRaw.read())
+      image = Image.open(imageIO)
 
-    #Resize the image
-    size = 200, 140
-    image.thumbnail(size, Image.ANTIALIAS)
-    logger.info("Image successfully resized. %s", jobIdLog)
+      #Resize the image
+      size = 200, 140
+      image.thumbnail(size, Image.ANTIALIAS)
+      logger.info("Image successfully resized. %s", jobIdLog)
 
-    #NOTE, we're saving the image into a cStringIO object to avoid writing to disk
-    outImage = cStringIO.StringIO()
-    #You MUST specify the file type because there is no file name to discern it from
-    image.save(outImage, 'JPEG')
+      #NOTE, we're saving the image into a cStringIO object to avoid writing to disk
+      outImage = cStringIO.StringIO()
+      #You MUST specify the file type because there is no file name to discern it from
+      try:
+        image.save(outImage, 'JPEG')
+      except IOError:
+        image.convert('RGB').save(outImage, 'JPEG')
 
-    logger.info("Saving the image in the bucket %s", jobIdLog)
-    imageKey = ''.join(random.choice('0123456789ABCDEF') for i in range(16)) + ".jpg"
-    bucket = self.__getBucket();
-    k = bucket.new_key(imageKey);
-    k.set_contents_from_string(outImage.getvalue())
-    logger.info("Saved image in the bucket with key %s. %s", imageKey, jobIdLog)
-    return imageKey
+      logger.info("Saving the image in the bucket %s", jobIdLog)
+      imageKey = ''.join(random.choice('0123456789ABCDEF') for i in range(16)) + ".jpg"
+      bucket = self.__getBucket();
+      k = bucket.new_key(imageKey);
+      k.set_contents_from_string(outImage.getvalue())
+      logger.info("Saved image in the bucket with key %s. %s", imageKey, jobIdLog)
+      return imageKey;
+    except Exception, e:
+      logger.exception("Could not process image");
+      pass;
