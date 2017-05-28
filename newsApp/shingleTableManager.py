@@ -115,3 +115,13 @@ class ShingleTableManager:
         with shingleTable.batch_write() as batch:
             for shingle in shingles:
                 batch.delete_item(docId=docId, shingle=shingle)
+
+    def scan(self):
+        """
+        List all the shingle entries currently present.
+        """
+
+        shingleTable = self.__getTable()
+        scanResults = ((row['docId'], row['shingle']) for row in shingleTable.scan())
+
+        return scanResults
