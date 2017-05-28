@@ -144,9 +144,19 @@ class ImageProcessor:
       imageIO = cStringIO.StringIO(imageRaw.read())
       image = Image.open(imageIO)
 
+      #See if the image is too small
+      width, height = image.size
+      if width < 10 or height < 10:
+        logger.info(
+          "Image size is too small. Not processing it. Size %ix%i. %s",
+          width,
+          height,
+          jobIdLog)
+        return;
+
       #Resize the image
-      size = 200, 140
-      image.thumbnail(size, Image.ANTIALIAS)
+      newSize = 200, 140
+      image.thumbnail(newSize, Image.ANTIALIAS)
       logger.info("Image successfully resized. %s", jobIdLog)
 
       #NOTE, we're saving the image into a cStringIO object to avoid writing to disk
