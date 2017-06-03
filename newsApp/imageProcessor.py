@@ -115,6 +115,10 @@ class ImageProcessor:
 
   def processImage(self, jobId, imageUrl):
     jobIdLog = "JobId: " + jobId;
+    logger.info(
+        "Started processing image with ur; %s. %s",
+        imageUrl,
+        jobIdLog)
 
     imageMapping = self.__getImageMapping(imageUrl)
     if imageMapping:
@@ -179,5 +183,9 @@ class ImageProcessor:
 
       return imageKey;
     except Exception, e:
-      logger.exception("Could not process image. %s", jobIdLog);
+      logger.warning(
+        "Could not process image. Error %s:%s %s",
+        e.errno,
+        e.strerror,
+        jobIdLog);
       pass;
