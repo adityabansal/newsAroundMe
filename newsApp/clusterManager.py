@@ -153,7 +153,7 @@ class ClusterManager:
         cluster.process()
         self.clusterTableManager.addCluster(cluster)
 
-    def getProcessedCluster(self, cluster):
+    def getProcessedClusterArticles(self, cluster):
         cluster.process();
         return cluster.articles;
 
@@ -198,9 +198,16 @@ class ClusterManager:
 
         for cluster in clusterList[skip:(skip + top)]:
             try:
-                response.append(self.getProcessedCluster(
-                    self.__filterDocsInCluster(cluster, filters)))
-            except:
+                response.append({
+                    "articles" : self.getProcessedClusterArticles(
+                        self.__filterDocsInCluster(cluster, filters)),
+                    "importance" : self.__computeClusterRankingScore(cluster)
+                    })
+
+            except Exception, e:
+                logging.exception(
+                    "Could not construct query response for cluster id %s",
+                    cluster.id);
                 continue
 
         return response;

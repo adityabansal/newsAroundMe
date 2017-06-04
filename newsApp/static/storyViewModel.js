@@ -15,17 +15,17 @@ $(function() {
 
   function StoryViewModel(story) {
     var self = this;
-    self.mainArticle = story[0];
+    self.mainArticle = story.articles[0];
     self.mainArticle.summaryTextToDisplay = cropText(self.mainArticle.summaryText, 100)
 
     self.relatedArticles = null;
-    if (story.length > 1) {
-      self.relatedArticles = ko.observableArray(story.slice(1, 6));
+    if (story.articles.length > 1) {
+      self.relatedArticles = ko.observableArray(story.articles.slice(1, 6));
     }
 
     self.carouselId = guidGenerator();
     self.images = ko.observableArray();
-    $.each(story, function(index, article) {
+    $.each(story.articles, function(index, article) {
       if ($.isArray(article.images)) {
         $.each(article.images, function(index, image) {
           var added = false;
