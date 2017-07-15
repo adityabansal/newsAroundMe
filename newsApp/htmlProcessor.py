@@ -13,12 +13,18 @@ logger = logging.getLogger('htmlProcessor')
 def _isAbsolute(url):
     return bool(urlparse.urlparse(url).netloc)
 
+def _addHttpToUrlIfNeeded(url):
+    if not bool(urlparse.urlparse(url).scheme):
+        return "http:" + url
+    else:
+        return url
+
 def _getCompleteUrl(url, baseUrl):
     if not baseUrl:
         return url
 
     if _isAbsolute(url):
-        return url
+        return _addHttpToUrlIfNeeded(url)
     else:
         return urlparse.urljoin(baseUrl, url)
 

@@ -184,7 +184,8 @@ class ImageProcessor:
       return imageKey;
     except Exception, e:
       logger.warning(
-        "Could not process image. Error %s:%s %s",
+        "Could not process image with url %s. Error %s:%s %s",
+        imageUrl,
         e.errno,
         e.strerror,
         jobIdLog);
