@@ -107,8 +107,7 @@
 
 {% endblock %}
 {% block childScripts %}
-  <script src="{{ url_for('static', filename='sectionDropdownViewModel.js') }}"></script>
-  <script src="{{ url_for('static', filename='storyViewModel.js') }}"></script>
-  <script src="{{ url_for('static', filename='storiesViewModel.js') }}"></script>
-  <script src="{{ url_for('static', filename='navigate.js') }}"></script>
+  {% assets "home_js" %}
+    <script type="text/javascript" src="{{ url_for('static', filename='gen/home_packed.js') }}"></script>
+  {% endassets %}
 {% endblock %}

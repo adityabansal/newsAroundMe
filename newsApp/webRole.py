@@ -2,12 +2,19 @@ import json
 
 from flask import Flask, abort, redirect, url_for
 from flask import make_response, request, render_template
+from flask_assets import Environment, Bundle
 
 from constants import *
 from clusterManager import ClusterManager
 from imageProcessor import ImageProcessor
 
 app = Flask(__name__)
+assets = Environment(app)
+
+home_js = Bundle('sectionDropdownViewModel.js', 'storyViewModel.js',
+            'storiesViewModel.js', 'navigate.js',
+            filters='jsmin', output='gen/home_packed.js')
+assets.register('home_js', home_js)
 
 #start helper functions
 

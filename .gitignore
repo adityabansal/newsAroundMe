@@ -8,5 +8,7 @@
 *.html~
 *.js~
 *.css~
+/newsApp/static/gen
+/newsApp/static/.webassets-cache
 
 /venv
