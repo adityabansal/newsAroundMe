@@ -12,7 +12,7 @@ app = Flask(__name__)
 assets = Environment(app)
 
 home_js = Bundle('sectionDropdownViewModel.js', 'storyViewModel.js',
-            'storiesViewModel.js', 'navigate.js',
+            'storiesViewModel.js', 'navigate.js', 'app.js',
             filters='jsmin', output='gen/home_packed.js')
 assets.register('home_js', home_js)
 
@@ -86,6 +86,10 @@ def validateFilters(requestArgs):
   return parsedFilters
 
 #end validations
+
+@app.route('/service-worker.js')
+def static_file():
+    return app.send_static_file('service-worker.js')
 
 @app.route('/api/stories', methods=['GET'])
 def get_stories():

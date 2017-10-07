@@ -106,9 +106,9 @@ AVAILABLE_LANGUAGES = [
 ]
 
 LOCATION_METADATA = [
-  {'displayName': 'Delhi', 'icon': '/static/delhi.svg', 'value': 'delhi', 'lat': 28.70, 'long': 77.10, 'languages': [LANG_ENGLISH_METADATA, LANG_HINDI_METADATA]},
+  {'displayName': 'Delhi', 'icon': '', 'value': 'delhi', 'lat': 28.70, 'long': 77.10, 'languages': [LANG_ENGLISH_METADATA, LANG_HINDI_METADATA]},
   {'displayName': 'Mumbai', 'icon': '', 'value': 'mumbai', 'lat': 19.08, 'long': 72.88, 'languages': [LANG_ENGLISH_METADATA]},
-  {'displayName': 'Bangalore', 'icon': '/static/city.svg', 'value': 'bangalore', 'lat': 12.97, 'long': 77.59, 'languages': [LANG_ENGLISH_METADATA]},
+  {'displayName': 'Bangalore', 'icon': '', 'value': 'bangalore', 'lat': 12.97, 'long': 77.59, 'languages': [LANG_ENGLISH_METADATA]},
   {'displayName': 'Chennai', 'icon': '', 'value': 'chennai', 'lat': 13.08, 'long': 80.27, 'languages': [LANG_ENGLISH_METADATA]},
   {'displayName': 'Kolkata', 'icon': '', 'value': 'kolkata', 'lat': 22.57, 'long': 88.36, 'languages': [LANG_ENGLISH_METADATA]},
   {'displayName': 'Hyderabad', 'icon': '', 'value': 'hyderabad', 'lat': 17.39, 'long': 78.49, 'languages': [LANG_ENGLISH_METADATA]},
