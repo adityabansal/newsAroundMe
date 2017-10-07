@@ -1,12 +1,12 @@
 from dbItem import DbItem
 import time
-import urllib2
+import requests
 
 def _openUrlWithRetries(url, max_retries = 3):
     nRetries = 0;
     while (True):
         try:
-            response = urllib2.urlopen(url, timeout = 10);
+            response = requests.get(url, timeout = 10);
             return response;
         except Exception as e:
             if (nRetries >= max_retries):
@@ -23,7 +23,7 @@ def getIdentifierUrl(url):
   """
 
   result = _openUrlWithRetries(url);
-  return result.geturl();
+  return result.url;
 
 class Link(DbItem):
   """
@@ -42,7 +42,6 @@ class Link(DbItem):
 
   def getHtml(self):
     response = _openUrlWithRetries(self.id);
-    html = response.read();
-    response.close();
+    html = response.content;
 
     return html;
