@@ -116,7 +116,7 @@ def _linkFromFeedEntry(jobId, entry, feed):
     # Return the final link object
     return Link(entry.link, linkTags)
   except Exception as e:
-    logger.warning("Could not open link %s. Job id: %s", entry.link, jobId)
+    logger.info("Could not open link %s. Job id: %s", entry.link, jobId)
     return None;
 
 def processRssFeed(jobId, feed):
@@ -201,7 +201,7 @@ def _linkFromWebPageEntry(jobId, entry, feed, entrySelector):
     # Return the final link object
     return Link(link, linkTags)
   except Exception as e:
-    logger.warning("Could not open link %s. Job id: %s", link, jobId)
+    logger.info("Could not open link %s. Job id: %s", link, jobId)
     return None;
 
 def processWebFeed(jobId, feed):
