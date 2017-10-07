@@ -1,4 +1,4 @@
-var appCacheName = 'shellCache-v1';
+var appCacheName = 'shellCache-v2';
 var filesToCache = [
   '/',
   '/static/ie10-viewport-bug-workaround.css',
@@ -10,7 +10,7 @@ var filesToCache = [
   '/static/favicon.ico'
 ];
 
-var storiesCacheName = 'dataStories-v1';
+var storiesCacheName = 'dataStories-v2';
 
 self.addEventListener('install', function(e) {
   console.log('[ServiceWorker] Install');
@@ -41,9 +41,12 @@ self.addEventListener('fetch', function(e) {
   console.log('[ServiceWorker] Fetch', e.request.url);
 
   var relativeUrl = e.request.url.replace(/^(?:\/\/|[^\/]+)*\//, "");
-  console.log('[ServiceWorker] Relative url is: ', relativeUrl)
 
-  if (relativeUrl.indexOf("api/stories") === 0) {
+  if (relativeUrl.indexOf("api/stories") === 0 &&
+    relativeUrl.indexOf("skip") === -1 &&
+    relativeUrl.indexOf("top") === -1) {
+    console.log('[ServiceWorker] Adding to storiesCache: ', e.request.url)
+
     // cache then network
     e.respondWith(
       caches.open(storiesCacheName).then(function(cache) {

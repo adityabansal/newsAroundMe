@@ -30,6 +30,11 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
   color: lightyellow;
 }
 
+.section-dropdown-button:hover, .section-dropdown-button:focus {
+  background-color: #5a0000;
+  color: lightyellow;
+}
+
 .section-dropdown-icon {
     height: 1.5em;
     width: 2em;
@@ -66,4 +71,15 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
 
 .story p, .story em {
   color: #d3d3d3;
+}
+
+.show-more-button {
+  width: 50%;
+  background-color: #333;
+  color: lightyellow;
+}
+
+.show-more-button:hover, .show-more-button:focus {
+  background-color: #222;
+  color: lightyellow;
 }

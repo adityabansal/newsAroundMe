@@ -13,7 +13,7 @@
   
   <div class="btn-group">
     <button id="location-dropdown-button"
-      class="btn btn-primary dropdown-toggle section-dropdown-button"
+      class="btn btn-default dropdown-toggle section-dropdown-button"
       type="button"
       data-toggle="dropdown"
       aria-haspopup="true"
@@ -36,7 +36,7 @@
 
   <div class="btn-group">
     <button id="language-dropdown-button"
-      class="btn btn-primary dropdown-toggle section-dropdown-button"
+      class="btn btn-default dropdown-toggle section-dropdown-button"
       type="button"
       data-toggle="dropdown"
       aria-haspopup="true"
@@ -101,7 +101,11 @@
     </div>
   </li>
 </ul>
-<button class="btn btn-default center-block" data-bind="click: loadMoreStories, visible: !isDataLoading()">Show more</button>
+<button class="btn btn-default center-block show-more-button" data-bind="click: loadMoreStories, visible: !isDataLoading()">
+  <span class="glyphicon glyphicon-menu-down pull-left" aria-hidden="true"></span>
+  <span>Show more</span>
+  <span class="glyphicon glyphicon-menu-down pull-right" aria-hidden="true"></span>
+</button>
 <img  class="center-block" data-bind="visible: isDataLoading" src="{{ url_for('static', filename='loading.gif') }}">
 </div>
 <!-- END: News stories -->
