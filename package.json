@@ -1,0 +1,8 @@
+{
+  "name": "newsapp",
+  "version": "0.1.0",
+  "description": "News aggregator website to show you local news from your city",
+  "dependencies": {
+    "phantomjs-prebuilt": "^2.1.15"
+  }
+}

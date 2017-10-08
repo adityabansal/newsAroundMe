@@ -12,3 +12,6 @@
 /newsApp/static/.webassets-cache
 
 /venv
+
+/node_modules
+ghostdriver.log
