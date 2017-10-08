@@ -1,5 +1,5 @@
 from dbItem import DbItem
-from selenium import webdriver
+from webPageLoader import *
 import time
 import requests
 
@@ -42,15 +42,4 @@ class Link(DbItem):
     DbItem.__init__(self, getIdentifierUrl(id), tags);
 
   def getHtml(self):
-    response = _openUrlWithRetries(self.id);
-    html = response.content;
-
-    return html;
-
-  def getHtmlThroughBrowser(self):
-    driver = webdriver.PhantomJS(executable_path='node_modules/phantomjs-prebuilt/bin/phantomjs')
-    driver.get(self.id)
-    html = driver.page_source
-    driver.quit()
-
-    return html;
+    return loadPageAndGetHtml(self.id)

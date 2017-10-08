@@ -9,6 +9,7 @@ import requests
 from constants import *
 from feed import Feed
 from feedManager import FeedManager
+from webPageLoader import *
 import htmlProcessor as hp
 from minerJobManager import MinerJobManager
 from link import Link
@@ -208,7 +209,7 @@ def processWebFeed(jobId, feed):
   feedAndJobId = "Feed id: " + feed.id + ". Job id: " + jobId;
 
   # get page html
-  pageHtml = requests.get(feed.tags[FEEDTAG_URL]).text
+  pageHtml = loadPageAndGetHtml(feed.tags[FEEDTAG_URL])
   logger.info("Got html for web page. %s.", feedAndJobId)
 
   # load entry selectors
