@@ -116,7 +116,7 @@ class ImageProcessor:
   def processImage(self, jobId, imageUrl):
     jobIdLog = "JobId: " + jobId;
     logger.info(
-        "Started processing image with ur; %s. %s",
+        "Started processing image with url %s. %s",
         imageUrl,
         jobIdLog)
 

@@ -90,7 +90,7 @@ def processLink(jobId, linkId):
       pageHtml,
       publisher.tags[PUBLISHERTAG_TEXTSELECTOR],
       json.loads(publisher.tags[PUBLISHERTAG_IMAGESELECTORS]),
-      publisher.tags[PUBLISHERTAG_HOMEPAGE]);
+      linkId);
   if not processingResult[0]:
     logger.warning("No text extracted for the link. %s.", linkAndJobId)
 
