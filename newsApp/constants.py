@@ -34,6 +34,7 @@ FEEDTAG_LANG = 'lang'
 FEEDTAG_LOCALE = 'locale'
 FEEDTAG_ENTRY_SELECTORS = 'entrySelectors'
 FEEDTAG_DO_NOT_CLUSTER = 'doNotCluster'
+FEEDTAG_IS_FEEDPAGE_STATIC = 'isFeedpageStatic'
 
 # link tags
 LINKTAG_ISPROCESSED = 'isProcessed'

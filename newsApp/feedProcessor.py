@@ -209,7 +209,11 @@ def processWebFeed(jobId, feed):
   feedAndJobId = "Feed id: " + feed.id + ". Job id: " + jobId;
 
   # get page html
-  pageHtml = loadPageAndGetHtml(feed.tags[FEEDTAG_URL])
+  pageHtml = "";
+  if FEEDTAG_IS_FEEDPAGE_STATIC in feed.tags:
+    pageHtml = getHtmlStatic(feed.tags[FEEDTAG_URL])
+  else:
+    pageHtml = loadPageAndGetHtml(feed.tags[FEEDTAG_URL])
   logger.info("Got html for web page. %s.", feedAndJobId)
 
   # load entry selectors
