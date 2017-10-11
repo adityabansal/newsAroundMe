@@ -1,6 +1,7 @@
 import requests
 import logging
 import signal
+import time
 from selenium import webdriver
 
 logger = logging.getLogger('webPageLoader')
