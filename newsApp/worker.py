@@ -53,7 +53,7 @@ def RunJob(job):
         if job.jobName == JOB_PROCESSNEWCLUSTER:
             cj.processNewCluster(job.jobId, job.jobParams[JOBARG_PROCESSNEWCLUSTER_CLUSTER])
     except:
-        logging.exception('')
+        logging.exception('Failed to execute worker job')
 
 def DequeueAndStartJob(connectionStringKey):
     """

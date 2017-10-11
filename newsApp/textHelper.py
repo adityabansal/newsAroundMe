@@ -97,7 +97,7 @@ def getEntities(text):
 
         return list(set(entities))
     except Exception as e:
-        logging.exception("Could not extract entities for text: '%s'", text)
+        logging.warning("Could not extract entities for text: '%s'", text)
         return []
 
 def compareEntities(entity1, entity2):

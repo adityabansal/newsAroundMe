@@ -5,8 +5,17 @@ from selenium import webdriver
 
 logger = logging.getLogger('webPageLoader')
 
-def getHtmlStatic(url):
-	return requests.get(url).text;
+def getHtmlStatic(url, max_retries = 3):
+    nRetries = 0;
+    while (True):
+        try:
+            return requests.get(url, timeout = 10).text
+        except Exception as e:
+            if (nRetries >= max_retries):
+                raise e;
+            else:
+                time.sleep(10);
+                nRetries = nRetries + 1;
 
 def loadPageAndGetHtml(url):
   pageHtml = "";
