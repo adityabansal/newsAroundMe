@@ -3,11 +3,11 @@ import time
 
 from constants import *
 from feed import Feed
-from dbItemManager import DbItemManager
+from dbItemManagerV2 import DbItemManagerV2
 
 DEFAULT_FEED_POLLING_FREQUENCY = 10
 
-class FeedManager(DbItemManager):
+class FeedManager(DbItemManagerV2):
     """
     Manage feeds stored on AWS dynamo db database.
 
@@ -22,7 +22,7 @@ class FeedManager(DbItemManager):
         Instantiates the feedManager.
         """
 
-        DbItemManager.__init__(self,
+        DbItemManagerV2.__init__(self,
             os.environ['FEEDTAGSTABLE_CONNECTIONSTRING'])
 
     def put(self, feed):
@@ -34,7 +34,7 @@ class FeedManager(DbItemManager):
         feed.tags[FEEDTAG_NEXTPOLLTIME] = int(time.time())
         if FEEDTAG_POLLFREQUENCY not in feed.tags:
             feed.tags[FEEDTAG_POLLFREQUENCY] = DEFAULT_FEED_POLLING_FREQUENCY
-        DbItemManager.put(self, feed)
+        DbItemManagerV2.put(self, feed)
 
     def getStaleFeeds(self):
         """
@@ -42,10 +42,9 @@ class FeedManager(DbItemManager):
         is less than current time.
         """
 
-        scanResults = DbItemManager.getEntriesWithTag(self,
-            FEEDTAG_NEXTPOLLTIME)
-        return (result['itemId'] for result in scanResults
-            if result['tagValue'] < int(time.time()))
+        currentTime = int(time.time())
+        scanResults = DbItemManagerV2.scan(self, nextPollTime__lte = currentTime)
+        return (result.id for result in scanResults)
 
     def updateFeedOnSuccessfullPoll(self, feed):
         """
@@ -55,4 +54,4 @@ class FeedManager(DbItemManager):
         feed.tags[FEEDTAG_LASTPOLLTIME] = int(time.time())
         feed.tags[FEEDTAG_NEXTPOLLTIME] = (feed.tags[FEEDTAG_LASTPOLLTIME] +
             feed.tags[FEEDTAG_POLLFREQUENCY]*60)
-        DbItemManager.put(self, feed)
+        DbItemManagerV2.put(self, feed)
