@@ -26,11 +26,11 @@ def _isDuplicateArticle(docKey, docsAdded):
   return False
 
 def _getImagesForDoc(doc):
-  images = doc.tags.get(TAG_IMAGES, "[]")
+  images = doc.tags.get(TAG_IMAGES, [])
   if not images:
     images = []
 
-  summaryImages = doc.tags.get(LINKTAG_SUMMARYIMAGES, "[]")
+  summaryImages = doc.tags.get(LINKTAG_SUMMARYIMAGES, [])
   if not summaryImages:
     summaryImages = []
 
