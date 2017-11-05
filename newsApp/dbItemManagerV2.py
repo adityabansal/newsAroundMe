@@ -23,19 +23,23 @@ class DbItemManagerV2:
         """
 
         self.tableConnString = tableConnString;
+        self.__table = None
 
     def __getTable(self):
         """
         Get the table.
         """
 
-        tableConnectionParams = parseConnectionString(
-            self.tableConnString);
+        if not self.__table:
+            tableConnectionParams = parseConnectionString(
+                self.tableConnString);
 
-        return Table(
-            tableConnectionParams['name'],
-            schema = [HashKey('itemId')],
-            connection = getDbConnection(tableConnectionParams))
+            self.__table = Table(
+                tableConnectionParams['name'],
+                schema = [HashKey('itemId')],
+                connection = getDbConnection(tableConnectionParams))
+
+        return self.__table
 
     def __getItemFromTableRow(self, tableRow):
         tags  = {}

@@ -24,18 +24,19 @@ class DbItemManager:
 
         self.tableConnString = tableConnString;
 
+        tagsTableConnectionParams = parseConnectionString(
+            self.tableConnString);
+        self.table = Table(
+            tagsTableConnectionParams['name'],
+            schema = [HashKey('itemId'), RangeKey('tagName')],
+            connection = getDbConnection(tagsTableConnectionParams))
+
     def __getTables(self):
         """
         Get the tables.
         """
 
-        tagsTableConnectionParams = parseConnectionString(
-            self.tableConnString);
-
-        return Table(
-            tagsTableConnectionParams['name'],
-            schema = [HashKey('itemId'), RangeKey('tagName')],
-            connection = getDbConnection(tagsTableConnectionParams))
+        return self.table
 
     def __getTagsFromTagsTableRows(self, tagsTableRows):
         """

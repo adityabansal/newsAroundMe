@@ -3,12 +3,12 @@ import time
 
 from constants import *
 from dbhelper import *
-from dbItemManager import DbItemManager
+from dbItemManagerV2 import DbItemManagerV2
 from link import Link
 
 LINK_EXPIRY_TIME_IN_DAYS = 80
 
-class LinkManager(DbItemManager):
+class LinkManager(DbItemManagerV2):
     """
     Manage links stored on AWS dynamo db database.
 
@@ -23,7 +23,7 @@ class LinkManager(DbItemManager):
         Instantiates the linkManager.
         """
 
-        DbItemManager.__init__(self,
+        DbItemManagerV2.__init__(self,
             os.environ['LINKTAGSTABLE_CONNECTIONSTRING'])
 
     def get(self, linkId):
@@ -31,7 +31,7 @@ class LinkManager(DbItemManager):
         Put a new link.
         """
 
-        dbItem = DbItemManager.get(self, linkId);
+        dbItem = DbItemManagerV2.get(self, linkId);
         return Link(linkId, dbItem.tags)
 
     def getStaleLinks(self):
@@ -39,7 +39,6 @@ class LinkManager(DbItemManager):
         Returns a list of linkIds of stale links.
         """
 
-        scanResults = DbItemManager.getEntriesWithTag(self, LINKTAG_PUBTIME)
-        return (result['itemId'] for result in scanResults
-            if result['tagValue'] + LINK_EXPIRY_TIME_IN_DAYS*24*60*60 \
-                < int(time.time()))
+        linkExpiryCutoff = int(time.time()) - LINK_EXPIRY_TIME_IN_DAYS*24*60*60;
+        scanResults = DbItemManagerV2.scan(self, pubtime__lte = linkExpiryCutoff)
+        return (result.id for result in scanResults)
