@@ -87,6 +87,13 @@ def validateFilters(requestArgs):
 
 #end validations
 
+@app.before_request
+def enforceHttpsInHeroku():
+  if request.headers.get('X-Forwarded-Proto') == 'http':
+    url = request.url.replace('http://', 'https://', 1)
+    code = 301
+    return redirect(url, code=code)
+
 @app.route('/service-worker.js')
 def static_file():
     return app.send_static_file('service-worker.js')
