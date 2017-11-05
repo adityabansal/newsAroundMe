@@ -42,3 +42,7 @@ class LinkManager(DbItemManagerV2):
         linkExpiryCutoff = int(time.time()) - LINK_EXPIRY_TIME_IN_DAYS*24*60*60;
         scanResults = DbItemManagerV2.scan(self, pubtime__lte = linkExpiryCutoff)
         return (result.id for result in scanResults)
+
+    def getUnprocessedLinks(self):
+        scanResults = DbItemManagerV2.scan(self, isProcessed__ne = 'true')
+        return (result.id for result in scanResults)
