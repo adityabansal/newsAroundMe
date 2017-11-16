@@ -44,5 +44,7 @@ class LinkManager(DbItemManagerV2):
         return (result.id for result in scanResults)
 
     def getUnprocessedLinks(self):
-        scanResults = DbItemManagerV2.scan(self, isProcessed__ne = 'true')
-        return (result.id for result in scanResults)
+        return DbItemManagerV2.query_2(
+            self,
+            isProcessed__eq = 'false',
+            index = 'isProcessed-itemId-index')

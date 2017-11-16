@@ -36,7 +36,6 @@ class DbItemManagerV2:
 
             self.__table = Table(
                 tableConnectionParams['name'],
-                schema = [HashKey('itemId')],
                 connection = getDbConnection(tableConnectionParams))
 
         return self.__table
@@ -86,6 +85,11 @@ class DbItemManagerV2:
         table = self.__getTable()
         scanResults = table.scan(**filters);
         return (self.__getItemFromTableRow(row) for row in scanResults)
+
+    def query_2(self, **filters):
+        table = self.__getTable()
+        results = table.query_2(**filters);
+        return (row['itemId'] for row in results)
 
     def delete(self, itemId):
         """

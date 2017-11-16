@@ -57,16 +57,6 @@ def _putNewLinks(feedAndJobId, linksToAdd):
         link.id,
         feedAndJobId)
 
-    processLinkJob = WorkerJob(
-        JOB_PROCESSLINK,
-        { JOBARG_PROCESSLINK_LINKID : link.id})
-    jobManager.enqueueJob(processLinkJob)
-    logging.info(
-        "Process link job with jobId '%s' put for linkId: %s. %s.",
-        processLinkJob.jobId,
-        link.id,
-        feedAndJobId)
-
     if latestPubTime < link.tags[LINKTAG_PUBTIME]:
       latestPubTime  = link.tags[LINKTAG_PUBTIME]
 
@@ -98,6 +88,7 @@ def _retrieveNewTagsFromFeedEntry(jobId, entry):
   else:
     newTags[LINKTAG_PUBTIME] = int(time.time())
 
+  newTags[LINKTAG_ISPROCESSED] = 'false'
   return newTags
 
 
@@ -197,6 +188,7 @@ def _linkFromWebPageEntry(jobId, entry, feed, entrySelector):
   linkTags[LINKTAG_SUMMARYIMAGES] = processingResult[1];
 
   linkTags[LINKTAG_PUBTIME] = int(time.time())
+  linkTags[LINKTAG_ISPROCESSED] = 'false'
 
   try:
     # Return the final link object
