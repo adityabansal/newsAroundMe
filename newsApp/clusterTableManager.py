@@ -19,6 +19,7 @@ class ClusterTableManager:
     """
 
     self.tableConnString = os.environ['CLUSTERTABLE_CONNECTIONSTRING'];
+    self.docClusterMappingTable = os.environ['DOCCLUSTERMAPPINGTABLE_CONNECTIONSTRING']
 
   def __getTable(self):
     """
@@ -26,6 +27,9 @@ class ClusterTableManager:
     """
 
     return getDbTable(self.tableConnString);
+
+  def __getMappingsTable(self):
+    return getDbTable(self.docClusterMappingTable)
 
   def createFreshTable(self):
     """
@@ -59,7 +63,6 @@ class ClusterTableManager:
 
   def addClusters(self, clusters):
     table = self.__getTable();
-
     with table.batch_write() as batch:
       for cluster in clusters:
         batch.put_item(data={
@@ -70,7 +73,18 @@ class ClusterTableManager:
           'locales': str(cluster.locales),
           'publishers': str(cluster.publishers),
           'languages': str(cluster.languages),
-          'duplicates': str(cluster.duplicates)})
+          'duplicates': str(cluster.duplicates),
+          'isCurrent': cluster.isCurrent
+        })
+
+    mappingsTable = self.__getMappingsTable()
+    with mappingsTable.batch_write() as batch:
+      for cluster in clusters:
+        for doc in cluster:
+          batch.put_item(data={
+            'clusterId': cluster.id,
+            'docId': doc
+          })
 
   def addCluster(self, cluster):
     self.addClusters([cluster])
@@ -98,8 +112,13 @@ class ClusterTableManager:
       locales__contains = locale))
 
   def deleteClusters(self, clusters):
-    table = self.__getTable()
+    mappingsTable = self.__getMappingsTable()
+    with mappingsTable.batch_write() as batch:
+      for cluster in clusters:
+        for doc in cluster:
+          batch.delete_item(clusterId = cluster.id, docId = doc)
 
+    table = self.__getTable()
     with table.batch_write() as batch:
       for cluster in clusters:
         batch.delete_item(clusterId = cluster.id)
@@ -115,5 +134,6 @@ class ClusterTableManager:
     cluster.publishers = eval(row['publishers'])
     cluster.languages = eval(row['languages'])
     cluster.duplicates = eval(row['duplicates'])
+    cluster.isCurrent = row.get('isCurrent', 'unknown')
 
     return cluster

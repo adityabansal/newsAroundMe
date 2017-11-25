@@ -51,6 +51,7 @@ class Cluster(set):
 
     docList.sort();
     self.id = hashlib.md5(str(docList)).hexdigest().upper()
+    self.isCurrent = 'unknown'
 
   def process(self):
     """

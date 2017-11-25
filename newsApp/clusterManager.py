@@ -151,6 +151,7 @@ class ClusterManager:
 
     def processNewCluster(self, cluster):
         cluster.process()
+        cluster.isCurrent = 'true'
         self.clusterTableManager.addCluster(cluster)
 
     def getProcessedClusterArticles(self, cluster):
