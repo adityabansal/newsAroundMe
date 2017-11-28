@@ -74,7 +74,8 @@ class ClusterTableManager:
           'publishers': str(cluster.publishers),
           'languages': str(cluster.languages),
           'duplicates': str(cluster.duplicates),
-          'isCurrent': cluster.isCurrent
+          'isCurrent': cluster.isCurrent,
+          'lastPubTime': cluster.lastPubTime
         })
 
     mappingsTable = self.__getMappingsTable()
@@ -97,6 +98,12 @@ class ClusterTableManager:
       return self.__getClusterFromTableRow(queryResult[0])
     else:
       return None
+
+  def getAllClusters(self):
+    table = self.__getTable()
+    scanResult = table.scan()
+
+    return (self.__getClusterFromTableRow(row) for row in scanResult)
 
   def queryByCategoryAndCountry(self, category, country):
     table = self.__getTable()
@@ -135,5 +142,6 @@ class ClusterTableManager:
     cluster.languages = eval(row['languages'])
     cluster.duplicates = eval(row['duplicates'])
     cluster.isCurrent = row.get('isCurrent', 'unknown')
+    cluster.lastPubTime = float(row.get('lastPubTime', 0))
 
     return cluster

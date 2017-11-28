@@ -66,6 +66,7 @@ class Cluster(set):
     self.languages = []
     self.articles = [] # contains non-duplicate articles
     self.duplicates = []
+    self.lastPubTime = 0
 
     docManager = DocManager()
     docsAdded = []
@@ -79,21 +80,25 @@ class Cluster(set):
           'link': doc.tags.get(DOCTAG_URL, "#"),
           'summaryText': doc.tags.get(LINKTAG_SUMMARYTEXT, ""),
           'images': _getImagesForDoc(doc),
-          'lang': doc.tags.get(FEEDTAG_LANG, "")})
+          'lang': doc.tags.get(FEEDTAG_LANG, ""),
+          'publishedOn': doc.tags.get(LINKTAG_PUBTIME, 0)
+        })
         docsAdded.append(docKey)
       else:
         self.duplicates.append(docKey)
 
       if doc.tags.get(FEEDTAG_CATEGORY):
-         self.categories.append(doc.tags[FEEDTAG_CATEGORY])
+        self.categories.append(doc.tags[FEEDTAG_CATEGORY])
       if doc.tags.get(FEEDTAG_COUNTRY):
-         self.countries.append(doc.tags[FEEDTAG_COUNTRY])
+        self.countries.append(doc.tags[FEEDTAG_COUNTRY])
       if doc.tags.get(FEEDTAG_LOCALE):
-         self.locales.append(doc.tags[FEEDTAG_LOCALE])
+        self.locales.append(doc.tags[FEEDTAG_LOCALE])
       if doc.tags.get(TAG_PUBLISHER):
-         self.publishers.append(doc.tags[TAG_PUBLISHER])
+        self.publishers.append(doc.tags[TAG_PUBLISHER])
       if doc.tags.get(FEEDTAG_LANG):
-         self.languages.append(doc.tags[FEEDTAG_LANG])
+        self.languages.append(doc.tags[FEEDTAG_LANG])
+      if doc.tags.get(LINKTAG_PUBTIME, 0) > self.lastPubTime:
+        self.lastPubTime =  doc.tags.get(LINKTAG_PUBTIME)
 
     nArticles = len(self.articles) + len(self.duplicates)
     #remove duplicates
