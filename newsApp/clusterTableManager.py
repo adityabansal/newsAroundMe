@@ -1,10 +1,12 @@
 import os
+import time
 
 from boto.dynamodb2.table import Table
 from boto.dynamodb2.fields import HashKey, RangeKey
 
 from cluster import Cluster
 from dbhelper import *
+from constants import *
 
 class ClusterTableManager:
   """
@@ -61,6 +63,19 @@ class ClusterTableManager:
 
     self.__getTable().delete();
 
+  def archiveOldClusters(self):
+    currentClusters = self.getCurrentClusters()
+    table = self.__getTable();
+    timeLimit = int(time.time()) - CLUSTERING_DOC_AGE_LIMIT * 60 * 60 * 24;
+
+    clustersToArchive = [cluster for cluster in currentClusters if \
+      cluster.lastPubTime < timeLimit]
+    for cluster in clustersToArchive:
+      cluster.isCurrent = 'false';
+    self.addClusters(clustersToArchive);
+
+    return clustersToArchive;
+
   def addClusters(self, clusters):
     table = self.__getTable();
     with table.batch_write() as batch:
@@ -105,18 +120,34 @@ class ClusterTableManager:
 
     return (self.__getClusterFromTableRow(row) for row in scanResult)
 
+  def getCurrentClusters(self):
+    table = self.__getTable()
+
+    return (self.__getClusterFromTableRow(row) for row in table.query_2(
+      isCurrent__eq = 'true',
+      index = 'isCurrent-clusterId-index'))
+
   def queryByCategoryAndCountry(self, category, country):
     table = self.__getTable()
 
-    return (self.__getClusterFromTableRow(row) for row in table.scan(
-      categories__contains = category,
-      countries__contains = country))
+    return (cluster for cluster in self.getCurrentClusters() \
+      if category in cluster.categories and country in cluster.countries)
 
   def queryByLocale(self, locale):
     table = self.__getTable()
 
-    return (self.__getClusterFromTableRow(row) for row in table.scan(
-      locales__contains = locale))
+    return (cluster for cluster in self.getCurrentClusters() \
+      if locale in cluster.locales)
+
+  def queryByDocId(self, docId):
+    mappingsTable = self.__getMappingsTable()
+    mappingQueryResult = list(mappingsTable.query_2(
+      docId__eq = docId, index = 'docId-clusterId-index'))
+
+    if mappingQueryResult:
+      return self.getCluster(mappingQueryResult[0]['clusterId'])
+    else:
+      return None
 
   def deleteClusters(self, clusters):
     mappingsTable = self.__getMappingsTable()

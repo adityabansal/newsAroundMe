@@ -4,10 +4,9 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 
 from pushFeedJobs import pushFeedJobs
 from pushLinkJobs import pushLinkJobs
-from startClustering import startIncrementalClustering
-from pushClusterJob import pushClusterJob
-from cleanupStaleLinks import cleanupStaleLinks
-from cleanupStaleDocs import cleanupStaleDocs
+from clusterDocsJob import clusterDocsJob
+from archiveStaleDocs import archiveStaleDocs
+from reprocessCurrentClusters import reprocessCurrentClusters
 
 now = datetime.datetime.now()
 clusteringInterval = 10
@@ -24,20 +23,23 @@ def pushLinkJobs_job():
 
 @sched.scheduled_job(
 	'interval',
-	minutes =clusteringInterval,
-	start_date = now + datetime.timedelta(minutes = 3))
-def startClustering_job():
-	startIncrementalClustering()
+	minutes = clusteringInterval,
+	start_date = now + datetime.timedelta(minutes = 5))
+def clusterDocsJob_job():
+	clusterDocsJob()
 
 @sched.scheduled_job(
 	'interval',
 	minutes = clusteringInterval,
-	start_date = now + datetime.timedelta(minutes = 5))
-def pushClusterJob_job():
-	pushClusterJob()
+	start_date = now + datetime.timedelta(minutes = 4))
+def archiveStaleDocs_job():
+    archiveStaleDocs()
 
-@sched.scheduled_job('interval', minutes = 60, start_date = now)
-def cleanupStaleDocs_job():
-    cleanupStaleDocs()
+@sched.scheduled_job(
+	'interval',
+	minutes = clusteringInterval,
+	start_date = now + datetime.timedelta(minutes = 7))
+def reprocessCurrentClusters_job():
+    reprocessCurrentClusters()
 
 sched.start()

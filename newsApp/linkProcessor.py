@@ -8,6 +8,8 @@ from docManager import DocManager
 from link import Link
 from linkManager import LinkManager
 from minerJobManager import MinerJobManager
+from clusterJobManager import ClusterJobManager
+from cluster import Cluster
 import htmlProcessor as hp
 from publisher import Publisher
 from publisherManager import PublisherManager
@@ -111,6 +113,10 @@ def processLink(jobId, linkId):
       doc.key,
       linkAndJobId)
 
+  #update the doc key in links table
+  link.tags[LINKTAG_DOCKEY] = doc.key;
+  linkManager.put(link);
+
   # put parse doc job
   parseDocJob = WorkerJob(JOB_PARSEDOC, { JOBARG_PARSEDOC_DOCID : doc.key})
   jobManager = MinerJobManager()
@@ -120,9 +126,20 @@ def processLink(jobId, linkId):
     parseDocJob.jobId,
     linkAndJobId)
 
+  if FEEDTAG_DO_NOT_CLUSTER not in doc.tags:
+    newCluster = Cluster([doc.key])
+    processNewClusterJob = WorkerJob(
+      JOB_PROCESSNEWCLUSTER,
+      { JOBARG_PROCESSNEWCLUSTER_CLUSTER : str(newCluster)})
+    clusterJobManager = ClusterJobManager()
+    clusterJobManager.enqueueJob(processNewClusterJob)
+    logging.info(
+      "Put process new cluster job for new doc. Cluster id: %s. %s",
+      newCluster.id,
+      linkAndJobId)
+
   # update the link
   link.tags[LINKTAG_ISPROCESSED] = 'true';
-  link.tags[LINKTAG_DOCKEY] = doc.key;
   linkManager.put(link);
   logger.info(
     "Link updated after being successfully processed. %s.",

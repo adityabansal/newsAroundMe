@@ -185,7 +185,7 @@ def cleanUpDistanceTable(jobId):
     distanceTableManager = DistanceTableManager()
     clusterManager = ClusterManager()
 
-    docList = clusterManager.getDocList()
+    docList = clusterManager.getCurrentDocs()
     distances = list(distanceTableManager.getEntries())
 
     nStaleEntries = 0
@@ -411,21 +411,15 @@ def clusterDocs(jobId):
     distanceTableManager = DistanceTableManager()
     clusterManager = ClusterManager()
 
-    clusterManager.setState(CLUSTER_STATE_STARTED)
-    logger.info("Set clustering state as started. %s.", jobInfo)
-
     distances = distanceTableManager.getDistanceMatrix()
     logger.info("Got the distance matrix. %s.", jobInfo)
 
-    clusters = clusterManager.getClusters()
+    clusters = list(clusterManager.getCurrentClusters())
     logger.info("Got the clusters. %s.", jobInfo)
 
     logger.info("Started clustering. %s.", jobInfo)
     clusterHierarchical(jobInfo, clusters, distances)
     logger.info("Finished clustering. %s.", jobInfo)
 
-    clusterManager.putClusters(clusters)
+    clusterManager.putCurrentClusters(clusters)
     logger.info("Put the computed clusters. %s.", jobInfo)
-
-    clusterManager.setState(CLUSTER_STATE_COMPLETED)
-    logger.info("Set clustering state as completed. %s.", jobInfo)
