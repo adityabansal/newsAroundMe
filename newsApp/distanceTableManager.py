@@ -1,5 +1,6 @@
 import os
 import time
+import json
 
 from boto.dynamodb2.table import Table
 from boto.dynamodb2.fields import HashKey, RangeKey, GlobalAllIndex
@@ -76,7 +77,7 @@ class DistanceTableManager:
         table.put_item(data = {
             'from' : min(docId1, docId2),
             'to' : max(docId1, docId2),
-            'distance' : str(distance)},
+            'distance' : json.dumps(distance)},
             overwrite = True)
 
     def getDistance(self, docId1, docId2):
@@ -93,7 +94,7 @@ class DistanceTableManager:
         if not entry:
           return 0
         else:
-          return eval(entry[0]['distance'])
+          return json.loads(entry[0]['distance'])
 
     def getEntries(self):
         """
@@ -103,7 +104,7 @@ class DistanceTableManager:
 
         table = self.__getTable();
         scanResults = table.scan();
-        return ((result['from'], result['to'], eval(result['distance']))
+        return ((result['from'], result['to'], json.loads(result['distance']))
                 for result in scanResults)
 
     def getDistanceMatrix(self):

@@ -39,13 +39,13 @@ def validateCategory(value):
   try:
     return next(x for x in ALLOWED_CATEGORIES if x.lower() == value.lower())
   except StopIteration:
-    abort(400, "Allowed category values are: " + str(ALLOWED_CATEGORIES))
+    abort(400, "Allowed category values are: " + json.dumps(ALLOWED_CATEGORIES))
 
 def validateCountry(value):
   try:
     return next(x for x in ALLOWED_COUNTRIES if x.lower() == value.lower())
   except StopIteration:
-    abort(400, "Allowed country values are: " + str(ALLOWED_COUNTRIES))
+    abort(400, "Allowed country values are: " + json.dumps(ALLOWED_COUNTRIES))
 
 def validateSkipAndTop(skip, top):
   # if not specified return default values"

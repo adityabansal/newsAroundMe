@@ -130,7 +130,7 @@ def processLink(jobId, linkId):
     newCluster = Cluster([doc.key])
     processNewClusterJob = WorkerJob(
       JOB_PROCESSNEWCLUSTER,
-      { JOBARG_PROCESSNEWCLUSTER_CLUSTER : str(newCluster)})
+      { JOBARG_PROCESSNEWCLUSTER_CLUSTER : list(newCluster)})
     clusterJobManager = ClusterJobManager()
     clusterJobManager.enqueueJob(processNewClusterJob)
     logging.info(

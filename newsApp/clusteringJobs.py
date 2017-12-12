@@ -200,8 +200,8 @@ def cleanUpDistanceTable(jobId):
         nStaleEntries,
         jobInfo)
 
-def processNewCluster(jobId, strCluster):
-    cluster = eval(strCluster)
+def processNewCluster(jobId, clusterDocs):
+    cluster = Cluster(clusterDocs)
     clusterAndJobId = "Cluster id: " + cluster.id + ". Job id: " + jobId;
     logger.info("Started processing new cluster. %s.", clusterAndJobId)
 

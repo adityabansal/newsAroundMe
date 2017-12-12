@@ -95,7 +95,7 @@ def RunWorker(connectionStringKey):
             logging.info("No of threads are: %i", nThreads)
             jobThreads = []
 
-            while nThreads < eval(os.environ['MAX_JOB_THREADS']):
+            while nThreads < int(os.environ['MAX_JOB_THREADS']):
                 jobThread = JobThread(connectionStringKey)
                 jobThread.start()
                 nThreads = nThreads + 1;

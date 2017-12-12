@@ -118,7 +118,7 @@ class ClusterManager:
         for cluster in newClusters:
             job = WorkerJob(
                 JOB_PROCESSNEWCLUSTER,
-                { JOBARG_PROCESSNEWCLUSTER_CLUSTER : str(cluster)})
+                { JOBARG_PROCESSNEWCLUSTER_CLUSTER : list(cluster)})
             jobManager.enqueueJob(job)
             logging.info(
                 "Put process new cluster job. Cluster id: %s.",

@@ -1,5 +1,6 @@
 import os
 import time
+import json
 
 from boto.dynamodb2.table import Table
 from boto.dynamodb2.fields import HashKey, RangeKey
@@ -33,36 +34,6 @@ class ClusterTableManager:
   def __getMappingsTable(self):
     return getDbTable(self.docClusterMappingTable)
 
-  def createFreshTable(self):
-    """
-    Create a fresh empty clusters table.
-    """
-
-    # delete existing table if it exists
-    try:
-        self.__getTable().delete();
-        time.sleep(10)
-    except:
-        pass;# do nothing. Maybe there was no existing table
-
-
-    # create new table
-    tableConnectionParams = parseConnectionString(self.tableConnString);
-    return Table.create(
-      tableConnectionParams['name'],
-      schema = [HashKey('clusterId')],
-      throughput = {
-          'read': 1,
-          'write': 1,
-      }, connection = getDbConnection(tableConnectionParams))
-
-  def deleteTable(self):
-    """
-    Delete table
-    """
-
-    self.__getTable().delete();
-
   def archiveOldClusters(self):
     currentClusters = self.getCurrentClusters()
     table = self.__getTable();
@@ -82,13 +53,13 @@ class ClusterTableManager:
       for cluster in clusters:
         batch.put_item(data={
           'clusterId': cluster.id,
-          'docKeys': str(list(cluster)),
-          'categories': str(cluster.categories),
-          'countries': str(cluster.countries),
-          'locales': str(cluster.locales),
-          'publishers': str(cluster.publishers),
-          'languages': str(cluster.languages),
-          'duplicates': str(cluster.duplicates),
+          'docKeys': json.dumps(list(cluster)),
+          'categories': json.dumps(cluster.categories),
+          'countries': json.dumps(cluster.countries),
+          'locales': json.dumps(cluster.locales),
+          'publishers': json.dumps(cluster.publishers),
+          'languages': json.dumps(cluster.languages),
+          'duplicates': json.dumps(cluster.duplicates),
           'isCurrent': cluster.isCurrent,
           'lastPubTime': cluster.lastPubTime
         })
@@ -165,13 +136,13 @@ class ClusterTableManager:
     self.deleteClusters([cluster])
 
   def __getClusterFromTableRow(self, row):
-    cluster = Cluster(eval(row['docKeys']))
-    cluster.categories = eval(row['categories'])
-    cluster.countries = eval(row['countries'])
-    cluster.locales = eval(row['locales'])
-    cluster.publishers = eval(row['publishers'])
-    cluster.languages = eval(row['languages'])
-    cluster.duplicates = eval(row['duplicates'])
+    cluster = Cluster(json.loads(row['docKeys']))
+    cluster.categories = json.loads(row['categories'])
+    cluster.countries = json.loads(row['countries'])
+    cluster.locales = json.loads(row['locales'])
+    cluster.publishers = json.loads(row['publishers'])
+    cluster.languages = json.loads(row['languages'])
+    cluster.duplicates = json.loads(row['duplicates'])
     cluster.isCurrent = row.get('isCurrent', 'unknown')
     cluster.lastPubTime = float(row.get('lastPubTime', 0))
 

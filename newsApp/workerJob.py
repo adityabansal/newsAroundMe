@@ -1,4 +1,5 @@
 import random
+import json
 
 def _generateRandomJobId():
     return ''.join(random.choice('0123456789ABCDEF') for i in range(32));
@@ -32,7 +33,7 @@ class WorkerJob:
         representation.
         """
 
-        tempDict = eval(serializedJob)
+        tempDict = json.loads(serializedJob)
         jobName = tempDict.pop('jobName', None)
         jobId = tempDict.pop('jobId', None)
         self.__init__(jobName, tempDict, jobId)
@@ -45,4 +46,4 @@ class WorkerJob:
         tempDict = dict(self.jobParams)
         tempDict['jobName'] = self.jobName
         tempDict['jobId'] = self.jobId
-        return str(tempDict)
+        return json.dumps(tempDict)
