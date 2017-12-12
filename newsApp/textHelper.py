@@ -7,6 +7,7 @@ from nltk.corpus import stopwords
 from nltk.stem.porter import *
 
 from encodedEntity import EncodedEntity
+from entityTableManager import EntityTableManager
 
 nltk.download('punkt');
 nltk.download('stopwords');
@@ -23,6 +24,15 @@ def _removePuntuation(text):
 
 def _removeNonAsciiChars(text):
     return "".join([ch for ch in text if ord(ch)<= 128]);
+
+def __getEncodedEntityWeight(encodedEntity):
+    entityTableManager = EntityTableManager()
+
+    docCount = len(list(entityTableManager.queryByEntity(encodedEntity.encoded)))
+    if docCount > 50:
+        return 0.0;
+    else:
+        return (50.0 - docCount)/50
 
 def getTokens(text):
     lowers = text.lower()
@@ -102,17 +112,20 @@ def getEntities(text):
 
 def compareEntities(entity1, entity2):
     entity1 = EncodedEntity(entity1)
+    entity1Weigth = __getEncodedEntityWeight(entity1)
     entity2 = EncodedEntity(entity2)
+    entity2Weigth = __getEncodedEntityWeight(entity2)
+    combinedWeight = entity1Weigth * entity2Weigth;
 
     if entity1.encoded == entity2.encoded:
-        return 1.0
+        return 1.0 * combinedWeight
     else:
         entity1Words = set(entity1.encoded.split())
         entity2Words = set(entity2.encoded.split())
         commonWords = entity1Words.intersection(entity2Words)
 
         if len(commonWords) > 0:
-            return float(len(commonWords))/(len(entity1Words) + len(entity2Words))
+            return combinedWeight * float(len(commonWords))/(len(entity1Words) + len(entity2Words))
         else:
             return 0.0
 
