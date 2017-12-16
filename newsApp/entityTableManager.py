@@ -94,11 +94,12 @@ class EntityTableManager:
         with table.batch_write() as batch:
             for entity in entities:
                 encodedEntity = EncodedEntity(entity)
-                batch.put_item(data={
-                    'docId': docId,
-                    'entity': encodedEntity.encoded,
-                    'plain': encodedEntity.plain},
-                    overwrite = True)
+                if encodedEntity.encoded:
+                    batch.put_item(data={
+                        'docId': docId,
+                        'entity': encodedEntity.encoded,
+                        'plain': encodedEntity.plain},
+                        overwrite = True)
 
     def queryByEntity(self, entity):
         """

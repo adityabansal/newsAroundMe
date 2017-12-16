@@ -26,8 +26,10 @@ def _removeNonAsciiChars(text):
     return "".join([ch for ch in text if ord(ch)<= 128]);
 
 def __getEncodedEntityWeight(encodedEntity):
-    entityTableManager = EntityTableManager()
+    if not encodedEntity.encoded:
+        return 0.0
 
+    entityTableManager = EntityTableManager()
     docCount = len(list(entityTableManager.queryByEntity(encodedEntity.encoded)))
     if docCount > 50:
         return 0.0;
