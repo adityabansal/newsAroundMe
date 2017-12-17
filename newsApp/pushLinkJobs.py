@@ -15,6 +15,10 @@ def pushLinkJobs():
     jobManager = MinerJobManager()
     linkManager = LinkManager()
 
+    if jobManager.count() > 100:
+        logging.info("Skipping. Too many jobs queued already!!")
+        return;
+
     logging.info("Getting unprocessed links.")
     links = linkManager.getUnprocessedLinks()
 

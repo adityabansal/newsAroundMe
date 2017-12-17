@@ -184,20 +184,32 @@ def cleanUpDistanceTable(jobId):
     jobInfo = "Job id: " + jobId
     distanceTableManager = DistanceTableManager()
     clusterManager = ClusterManager()
+    jobManager = MinerJobManager()
 
-    docList = clusterManager.getCurrentDocs()
+    docList = list(clusterManager.getCurrentDocs())
     distances = list(distanceTableManager.getEntries())
 
-    nStaleEntries = 0
+    staleDocs = []
     for entry in distances:
-        if entry[0] not in docList or entry[1] not in docList:
-            nStaleEntries = nStaleEntries + 1
-            distanceTableManager.deleteEntry(entry[0], entry[1])
-            logging.info("Deleted stale entry %s. %s", str(entry), jobInfo)
+        staleDoc = ""
+        if entry[0] not in docList:
+            staleDocs.append(entry[0])
+        elif entry[1] not in docList:
+            staleDocs.append(entry[1])
+    staleDocs = list(set(staleDocs))
+
+    for docKey in staleDocs:
+        job = WorkerJob(JOB_CLEANUPDOC, { JOBARG_CLEANUPDOC_DOCID : docKey})
+        jobManager.enqueueJob(job)
+        logging.info(
+            "Put cleanup doc job with id %s for docId: %s. %s",
+            job.jobId,
+            docKey,
+            jobInfo)
 
     logging.info(
         "Number of stale entries in distances table: %i. %s",
-        nStaleEntries,
+        len(staleDocs),
         jobInfo)
 
 def processNewCluster(jobId, clusterDocs):
@@ -335,22 +347,67 @@ def getCandidateDocs(jobId, docId):
 
     logger.info("Completed get candidate docs job. %s.", docAndJobId)
 
+def getCandidateDocsThroughClusters(jobId):
+    jobInfo = "Job id: " + jobId
+    distanceTableManager = DistanceTableManager()
+    clusterManager = ClusterManager()
+    jobManager = MinerJobManager()
+
+    distances = distanceTableManager.getDistanceMatrix()
+    logger.info("Got the distance matrix. %s.", jobInfo)
+
+    clusters = list(clusterManager.getCurrentClusters())
+    logger.info("Got the clusters. %s.", jobInfo)
+
+    for cluster in clusters:
+        if len(cluster) > 1:
+            closeDocs = []
+            for doc in cluster:
+                closeDocs = closeDocs + distanceTableManager.getCloseDocs(doc)
+            closeDocs = list(set(closeDocs))
+
+            for (doc1, doc2) in itertools.product(cluster, closeDocs):
+                try:
+                    _tryGetDocDistance(distances, doc1, doc2)
+                    logging.info(
+                        "Docs %s and %s already compared. %s",
+                        doc1,
+                        doc2,
+                        jobInfo)
+                except KeyError:
+                    if doc1 != doc2:
+                        job = WorkerJob(
+                            JOB_COMPAREDOCS,
+                            {
+                                JOBARG_COMPAREDOCS_DOC1ID : doc1,
+                                JOBARG_COMPAREDOCS_DOC2ID : doc2
+                            })
+                        jobManager.enqueueJob(job)
+                        logging.info(
+                            "Put compare docs job with jobid: %s. doc1: %s. doc2: %s. %s",
+                            job.jobId,
+                            doc1,
+                            doc2,
+                            jobInfo)
+
 ## Agglomerative clustering logic ##
 MIN_CLUSTER_SIMILARITY = 0.15
 
-def _getDocDistance(distances, docId1, docId2):
+def _tryGetDocDistance(distances, docId1, docId2):
     first = min(docId1, docId2)
     second = max(docId1, docId2)
 
+    return distances[first][second]
+
+def _getDocDistance(distances, docId1, docId2):
     try:
-        return distances[first][second]
+        return _tryGetDocDistance(distances, docId1, docId2)
     except KeyError:
         return 0
 
 def _getClusterDistance(distances, cluster1, cluster2):
     dPairs = [_getDocDistance(distances, x[0], x[1])
                  for x in itertools.product(cluster1, cluster2)]
-
     return sum(dPairs)/len(dPairs)
 
 def _getCloseClusters(clusters, distances):

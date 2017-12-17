@@ -122,6 +122,23 @@ class DistanceTableManager:
 
         return dMatrix
 
+    def getCloseDocs(self, docId):
+        """
+        Get the documents closest to a particular doc
+        """
+
+        docEntries = self.__queryByDocId(docId)
+        closeDocs = []
+
+        for entry in docEntries:
+            if json.loads(entry['distance']) > 0.1:
+                if entry['from'] == docId:
+                    closeDocs.append(entry['to'])
+                else:
+                    closeDocs.append(entry['from'])
+
+        return closeDocs;
+
     def cleanUpDoc(self, docId):
         """
         Cleanup a document from the distance table
