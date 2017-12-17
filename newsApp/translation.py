@@ -8,8 +8,8 @@ from googleapiclient.discovery import build
 
 logger = logging.getLogger('translation')
 
-MSTRANSLATE_LANGS = ['hi']
-GOOGLE_LANGS = ['hi', 'mr']
+MSTRANSLATE_LANGS = ['hi', 'bn', 'ta']
+GOOGLE_LANGS = ['hi', 'bn', 'ta', 'mr']
 
 def translateGoogle(jobInfo, text, fromLang, toLang = 'en'):
   try:
@@ -29,33 +29,17 @@ def translateGoogle(jobInfo, text, fromLang, toLang = 'en'):
     return ""
 
 def _getMicrosoftAccessToken(jobInfo):
-  try:
-    auth_headers = {
-      'Ocp-Apim-Subscription-Key': os.environ['MSTRANSLATE_AZUREKEY']
-    }
+  auth_headers = {
+    'Ocp-Apim-Subscription-Key': os.environ['MSTRANSLATE_AZUREKEY']
+  }
 
-    auth_url = 'https://api.cognitive.microsoft.com/sts/v1.0/issueToken'
-    auth_token = requests.post(auth_url, headers = auth_headers).content
+  auth_url = 'https://api.cognitive.microsoft.com/sts/v1.0/issueToken'
+  auth_token = requests.post(auth_url, headers = auth_headers).content
 
-    logger.info(
-      "Obtained MStranslate auth token through azure key. %s",
-      jobInfo)
-    return auth_token;
-  except:
-    args = {
-      'client_id': os.environ['MSTRANSLATE_CLIENT_ID'],
-      'client_secret': os.environ['MSTRANSLATE_CLIENT_SECRET'],
-      'scope': 'http://api.microsofttranslator.com',
-      'grant_type': 'client_credentials'
-    }
-    oauth_url = 'https://datamarket.accesscontrol.windows.net/v2/OAuth2-13'
-    oauth_response = json.loads(
-      requests.post(oauth_url, data=urllib.urlencode(args)).content)
-
-    logger.info(
-      "Obtained MStranslate auth token through old method. %s",
-      jobInfo)
-    return oauth_response['access_token'];
+  logger.info(
+    "Obtained MStranslate auth token through azure key. %s",
+    jobInfo)
+  return auth_token;
 
 def translateMicrosoft(jobInfo, text, fromLang, toLang = 'en'):
   try:
