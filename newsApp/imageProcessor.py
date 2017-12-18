@@ -1,7 +1,7 @@
 import logging
 import os
 import random
-import urllib2
+import requests
 import cStringIO
 
 from PIL import Image
@@ -137,16 +137,16 @@ class ImageProcessor:
 
     try:
       #Retrieve our source image from a URL
-      imageRaw = urllib2.urlopen(imageUrl)
+      r = requests.get(imageUrl, stream=True, timeout = 10)
+      r.raw.decode_content = True
+      imageRaw = r.raw
       logger.info("Feteched image using url. %s.", jobIdLog);
-    except urllib2.HTTPError:
+    except Exception:
       logger.info("Could not fetch the image url %s. %s", imageUrl, jobIdLog)
       return;
 
     try:
-      #Load the URL data into an image
-      imageIO = cStringIO.StringIO(imageRaw.read())
-      image = Image.open(imageIO)
+      image = Image.open(imageRaw)
 
       #See if the image is too small
       width, height = image.size

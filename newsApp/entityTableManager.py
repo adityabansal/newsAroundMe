@@ -20,18 +20,22 @@ class EntityTableManager:
         """
 
         self.tableConnString = os.environ['ENTITYTABLE_CONNECTIONSTRING'];
+        self.__table = None
 
     def __getTable(self):
         """
         Get the entity table.
         """
 
-        tableConnectionParams = parseConnectionString(
-            self.tableConnString);
+        if not self.__table:
+            tableConnectionParams = parseConnectionString(
+                self.tableConnString);
 
-        return Table(
-            tableConnectionParams['name'],
-            connection = getDbConnection(tableConnectionParams));
+            self.__table = Table(
+                tableConnectionParams['name'],
+                connection = getDbConnection(tableConnectionParams));
+
+        return self.__table;
 
     def __removeDuplicateEntities(self, entities):
         """

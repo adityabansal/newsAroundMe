@@ -21,18 +21,22 @@ class ShingleTableManager:
         """
 
         self.tableConnString = os.environ['SHINGLETABLE_CONNECTIONSTRING'];
+        self.__table = None
 
     def __getTable(self):
         """
         Get the shingle table.
         """
 
-        shingleTableConnectionParams = parseConnectionString(
-            self.tableConnString);
+        if not self.__table:
+            shingleTableConnectionParams = parseConnectionString(
+                self.tableConnString);
 
-        return Table(
-            shingleTableConnectionParams['name'],
-            connection = getDbConnection(shingleTableConnectionParams));
+            self.__table = Table(
+                shingleTableConnectionParams['name'],
+                connection = getDbConnection(shingleTableConnectionParams));
+
+        return self.__table;
 
     def createFreshTable(self):
         """
