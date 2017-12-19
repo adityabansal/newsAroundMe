@@ -225,7 +225,8 @@ def processWebFeed(jobId, feed):
       entrySelector['overall'],
       feedAndJobId)
 
-    for entry in entries:
+    # considering only the top 30 entries to reduce load
+    for entry in entries[:30]:
       link = _linkFromWebPageEntry(jobId, entry, feed, entrySelector)
       if link:
         linksToAdd.append(link);

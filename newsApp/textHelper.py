@@ -25,11 +25,10 @@ def _removePuntuation(text):
 def _removeNonAsciiChars(text):
     return "".join([ch for ch in text if ord(ch)<= 128]);
 
-def __getEncodedEntityWeight(encodedEntity):
+def __getEncodedEntityWeight(encodedEntity, entityTableManager):
     if not encodedEntity.encoded:
         return 0.0
 
-    entityTableManager = EntityTableManager()
     docCount = len(list(entityTableManager.queryByEntity(encodedEntity.encoded)))
     if docCount > 50:
         return 0.0;
@@ -113,10 +112,11 @@ def getEntities(text):
         return []
 
 def compareEntities(entity1, entity2):
+    entityTableManager = EntityTableManager()
     entity1 = EncodedEntity(entity1)
-    entity1Weigth = __getEncodedEntityWeight(entity1)
+    entity1Weigth = __getEncodedEntityWeight(entity1, entityTableManager)
     entity2 = EncodedEntity(entity2)
-    entity2Weigth = __getEncodedEntityWeight(entity2)
+    entity2Weigth = __getEncodedEntityWeight(entity2, entityTableManager)
     combinedWeight = entity1Weigth * entity2Weigth;
 
     if entity1.encoded == entity2.encoded:
