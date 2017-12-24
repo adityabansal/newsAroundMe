@@ -2,4 +2,5 @@ punkt
 stopwords
 maxent_treebank_pos_tagger
 maxent_ne_chunker
+averaged_perceptron_tagger
 words

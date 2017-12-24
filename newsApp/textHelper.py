@@ -13,6 +13,7 @@ nltk.download('punkt');
 nltk.download('stopwords');
 nltk.download('maxent_treebank_pos_tagger');
 nltk.download('maxent_ne_chunker');
+nltk.download('averaged_perceptron_tagger')
 nltk.download('words')
 
 def _removePuntuation(text):
@@ -108,7 +109,7 @@ def getEntities(text):
 
         return list(set(entities))
     except Exception as e:
-        logging.warning("Could not extract entities for text: '%s'", text)
+        logging.exception("Could not extract entities for text: '%s'", text)
         return []
 
 def compareEntities(entity1, entity2):
