@@ -24,7 +24,7 @@ def _removePuntuation(text):
         return text.translate(remove_punctuation_map)
 
 def _removeNonAsciiChars(text):
-    return "".join([ch for ch in text if ord(ch)<= 128]);
+    return text.encode('ascii', 'ignore').decode('ascii');
 
 def __getEncodedEntityWeight(encodedEntity, entityTableManager):
     if not encodedEntity.encoded:
