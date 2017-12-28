@@ -58,7 +58,9 @@ class DocManager:
         # allowed there is only 2kb.
         tags = dict(doc.tags);
         tags['content'] = doc.content;
-        k.set_contents_from_string(json.dumps(tags))
+        keyContents = json.dumps(tags)
+        k.set_contents_from_string(keyContents)
+        self.cache.set(k.key, keyContents, self.__cacheExpiry)
 
     def get(self, docKey):
         keyContents = self.cache.get(docKey)

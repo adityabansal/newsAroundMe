@@ -1,6 +1,6 @@
 import itertools
 import logging
-from multiprocessing import Pool
+import json
 
 from retrying import retry
 
@@ -46,13 +46,18 @@ def __getDocEnglishContent(doc):
     return doc.content
 
 def computeEnglishDocsSimScore(doc1, doc2):
+    doc1EntityWeights = json.loads(doc1.tags.get(DOCTAG_ENTITY_WEIGHTS, "{}"))
+    doc2EntityWeights = json.loads(doc2.tags.get(DOCTAG_ENTITY_WEIGHTS, "{}"))
+
     titleSim = th.compareEnglishTitles(
         __getDocEnglishTitle(doc1),
         __getDocEnglishTitle(doc2))
 
     titleSimEntities = th.compareTextEntities(
         __getDocEnglishTitle(doc1),
-        __getDocEnglishTitle(doc2))
+        __getDocEnglishTitle(doc2),
+        doc1EntityWeights,
+        doc2EntityWeights)
 
     summarySim = th.compareEnglishTexts(
         __getDocEnglishSummaryText(doc1),
@@ -68,21 +73,30 @@ def computeEnglishDocsSimScore(doc1, doc2):
            + contentSim*0.45;
 
 def computeDocSimScoreUsingEntities(doc1, doc2):
+    doc1EntityWeights = json.loads(doc1.tags.get(DOCTAG_ENTITY_WEIGHTS, "{}"))
+    doc2EntityWeights = json.loads(doc2.tags.get(DOCTAG_ENTITY_WEIGHTS, "{}"))
+
     titleSim = th.compareEnglishTitles(
         __getDocEnglishTitle(doc1),
         __getDocEnglishTitle(doc2))
 
     titleSimEntities = th.compareTextEntities(
         __getDocEnglishTitle(doc1),
-        __getDocEnglishTitle(doc2))
+        __getDocEnglishTitle(doc2),
+        doc1EntityWeights,
+        doc2EntityWeights)
 
     summarySim = th.compareTextEntities(
         __getDocEnglishSummaryText(doc1),
-        __getDocEnglishSummaryText(doc2))
+        __getDocEnglishSummaryText(doc2),
+        doc1EntityWeights,
+        doc2EntityWeights)
 
     contentSim = th.compareTextEntities(
         __getDocEnglishContent(doc1),
-        __getDocEnglishContent(doc2))
+        __getDocEnglishContent(doc2),
+        doc1EntityWeights,
+        doc2EntityWeights)
 
     return titleSim*0.3 \
            + titleSimEntities*0.3 \
@@ -248,7 +262,8 @@ def parseDoc(jobId, docId):
 
     # compute and put entities
     entities = th.getEntities(__getDocEnglishTitle(doc)) + \
-        th.getEntities(__getDocEnglishSummaryText(doc));
+        th.getEntities(__getDocEnglishSummaryText(doc)) + \
+        th.getEntities(__getDocEnglishContent(doc));
     entities = list(set(entities))
     logger.info("Completed getting entities. %s.", docAndJobId)
     logger.info(
@@ -259,6 +274,15 @@ def parseDoc(jobId, docId):
     entityTableManager = EntityTableManager()
     entityTableManager.addEntries(docId, entities)
     logger.info("Added entities to entity table. %s.", docAndJobId)
+
+    #store entity weights in the doc
+    entityWeights = {};
+    for entity in entities:
+        entityWeight = entityTableManager.getEntityWeight(entity)
+        entityWeights[entity] = entityWeight
+    doc.tags[DOCTAG_ENTITY_WEIGHTS] = json.dumps(entityWeights)
+    docManager.put(doc)
+    logger.info("Added entity weights to doc. %s.", docAndJobId)
 
     job = WorkerJob(
         JOB_GETCANDIDATEDOCS,

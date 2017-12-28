@@ -105,6 +105,18 @@ class EntityTableManager:
                         'plain': encodedEntity.plain},
                         overwrite = True)
 
+    def getEntityWeight(self, entity):
+        encodedEntity = EncodedEntity(entity)
+        if not encodedEntity.encoded:
+            return 0.0
+
+        docCount = len(list(
+            self.queryByEntity(encodedEntity.encoded)))
+        if docCount > 50:
+           return 0.0;
+        else:
+           return (50.0 - docCount)/50
+
     def queryByEntity(self, entity):
         """
         Retrieve list of docId's for the passed entity.

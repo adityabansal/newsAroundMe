@@ -7,7 +7,6 @@ from nltk.corpus import stopwords
 from nltk.stem.porter import *
 
 from encodedEntity import EncodedEntity
-from entityTableManager import EntityTableManager
 
 nltk.download('punkt');
 nltk.download('stopwords');
@@ -25,16 +24,6 @@ def _removePuntuation(text):
 
 def _removeNonAsciiChars(text):
     return text.encode('ascii', 'ignore').decode('ascii');
-
-def __getEncodedEntityWeight(encodedEntity, entityTableManager):
-    if not encodedEntity.encoded:
-        return 0.0
-
-    docCount = len(list(entityTableManager.queryByEntity(encodedEntity.encoded)))
-    if docCount > 50:
-        return 0.0;
-    else:
-        return (50.0 - docCount)/50
 
 def getTokens(text):
     lowers = text.lower()
@@ -112,12 +101,11 @@ def getEntities(text):
         logging.exception("Could not extract entities for text: '%s'", text)
         return []
 
-def compareEntities(entity1, entity2):
-    entityTableManager = EntityTableManager()
+def compareEntities(entity1, entity2, doc1EntityWeights, doc2EntityWeights):
     entity1 = EncodedEntity(entity1)
-    entity1Weigth = __getEncodedEntityWeight(entity1, entityTableManager)
+    entity1Weigth = doc1EntityWeights.get(entity1, 0.8)
     entity2 = EncodedEntity(entity2)
-    entity2Weigth = __getEncodedEntityWeight(entity2, entityTableManager)
+    entity2Weigth = doc2EntityWeights.get(entity2, 0.8)
     combinedWeight = entity1Weigth * entity2Weigth;
 
     if entity1.encoded == entity2.encoded:
@@ -132,11 +120,11 @@ def compareEntities(entity1, entity2):
         else:
             return 0.0
 
-def compareTextEntities(text1, text2):
+def compareTextEntities(text1, text2, doc1EntityWeights, doc2EntityWeights):
     text1Entities = set(getEntities(text1))
     text2Entities = set(getEntities(text2))
 
-    entityPairSimilarities = [compareEntities(x[0], x[1])
+    entityPairSimilarities = [compareEntities(x[0], x[1], doc1EntityWeights, doc2EntityWeights)
                  for x in itertools.product(text1Entities, text2Entities)]
 
     if len(entityPairSimilarities) == 0:
