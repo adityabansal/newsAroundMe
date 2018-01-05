@@ -4,6 +4,7 @@ import os
 import sys
 import time
 import threading
+from multiprocessing import Process
 
 from constants import *
 from loggingHelper import *
@@ -90,21 +91,20 @@ def RunWorker(connectionStringKey):
         # not spawning new thread for unless queue has a job
         # otherwise lot of SQS calls are made and bill is high
         if jobCount > 0:
-            #subtracting 1 because current parent thread is also counted
-            nThreads = threading.activeCount() - 1
-            logging.info("No of threads are: %i", nThreads)
-            jobThreads = []
+            jobProcesses = []
 
-            while nThreads < int(os.environ['MAX_JOB_THREADS']):
-                jobThread = JobThread(connectionStringKey)
-                jobThread.start()
-                nThreads = nThreads + 1;
-                jobThreads.append(jobThread)
+            while len(jobProcesses) < int(os.environ['MAX_JOB_THREADS']):
+                jobProcess = Process(target=DequeueAndStartJob, args=(connectionStringKey,))
+                jobProcess.start()
+                jobProcesses.append(jobProcess)
 
-            logging.info("Thread limit reached")
+            logging.info("Process limit reached")
 
-            for thread in jobThreads:
-                thread.join(150)
+            for jobProcess in jobProcesses:
+                jobProcess.join(150)
+                if jobProcess.is_alive():
+                    logging.warning("Process timed out. Terminating it")
+                    jobProcess.terminate()
         else:
             logging.info("No job found in queue. Sleeping")
             time.sleep(5)
