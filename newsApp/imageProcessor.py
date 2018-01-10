@@ -26,14 +26,22 @@ class ImageProcessor:
 
   def __init__(self):
     self.blacklistTableConnString = os.environ['BLACKLISTEDIMAGESTABLE_CONNECTIONSTRING'];
+    self.__blacklistTable = None
     self.mappingTableConnString = os.environ['IMAGEMAPPINGSTABLE_CONNECTIONSTRING']
+    self.__mappingTable = None
     self.bucketConnString = os.environ['IMAGESBUCKET_CONNECTIONSTRING'];
 
   def __getBlacklistTable(self):
-    return getDbTable(self.blacklistTableConnString);
+    if not self.__blacklistTable:
+      self.__blacklistTable = getDbTable(self.blacklistTableConnString);
+
+    return self.__blacklistTable
 
   def __getMappingTable(self):
-    return getDbTable(self.mappingTableConnString)
+    if not self.__mappingTable:
+      self.__mappingTable = getDbTable(self.mappingTableConnString)
+
+    return self.__mappingTable
 
   def __getBucket(self):
     conn = getS3Connection(self.bucketConnString);

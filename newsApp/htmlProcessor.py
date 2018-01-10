@@ -9,6 +9,7 @@ from lxml.html.clean import Cleaner
 from imageProcessor import ImageProcessor
 
 logger = logging.getLogger('htmlProcessor')
+__imageProcessor = ImageProcessor()
 
 def _isAbsolute(url):
     return bool(urlparse.urlparse(url).netloc)
@@ -51,8 +52,7 @@ def _extractImages(html, imageSelector, baseUrl):
         for img in images if 'src' in img.attrib];
 
 def _processImage(jobId, url):
-    imageProcessor = ImageProcessor()
-    imageKey = imageProcessor.processImage(jobId, url)
+    imageKey = __imageProcessor.processImage(jobId, url)
 
     if not imageKey:
       return "";

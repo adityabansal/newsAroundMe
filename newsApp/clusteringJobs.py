@@ -332,7 +332,7 @@ def getCandidateDocsUsingEntities(jobId, docId, docAndJobId):
             else:
                 matchFreq[match] = 1
 
-    matches = [match for match in matchFreq.keys() if matchFreq[match] > 1]
+    matches = [match for match in matchFreq.keys() if matchFreq[match] > 2]
 
     logger.info("%i matching docs found using entities. %s.", len(matches), docAndJobId)
     return matches
