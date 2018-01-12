@@ -32,7 +32,14 @@ class LinkManager(DbItemManagerV2):
         """
 
         dbItem = DbItemManagerV2.get(self, linkId);
-        return Link(linkId, dbItem.tags)
+        link = Link(linkId, dbItem.tags)
+
+        #handle the case when link starts gettting redirected to new url
+        if link.id != linkId:
+            self.delete(linkId)
+            self.put(link)
+
+        return link
 
     def getStaleLinks(self):
         """
