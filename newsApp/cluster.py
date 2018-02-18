@@ -75,6 +75,7 @@ class Cluster(set):
 
       if not _isDuplicateArticle(docKey, docsAdded):
         self.articles.append({
+          'id': docKey,
           'title': doc.tags.get(LINKTAG_TITLE, ""),
           'publisher': doc.tags.get(TAG_PUBLISHER_DETAILS, ""),
           'link': doc.tags.get(DOCTAG_URL, "#"),

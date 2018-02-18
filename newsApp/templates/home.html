@@ -1,114 +1,116 @@
 {% extends "layout.html" %}
 {% block childHtml %}
+
+{% from 'languageFilterMacro.html' import languageFilterMacro %}
+
 <!-- BEGIN: Section and Language filters -->
-<div class="filters row">
+<div id="section-filters" class="center-block row">
 
-<script type="application/json" id="locationMetadata">
-    {{ locationsMetadata|safe }}
-</script>
+  <script type="application/json" id="locationMetadata">
+      {{ locationsMetadata|safe }}
+  </script>
 
-<!-- BEGIN: Section dropdown -->
-<div id="section-dropdown" class="dropdown pull-right">
-  <span>Your city and language: </span>
-  
-  <div class="btn-group">
-    <button id="location-dropdown-button"
-      class="btn btn-default dropdown-toggle section-dropdown-button"
-      type="button"
-      data-toggle="dropdown"
-      aria-haspopup="true"
-      aria-expanded="true"
-      data-bind="disable: disabled" >
-      <span data-bind="text: cityLabel"></span>
-      <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu pull-right" aria-labelledby="location-dropdown-button">
-      <!-- ko foreach: locations -->
-        <li>
-          <a href="#" data-bind="click: $parent.chooseLocation">
-            <img class="section-dropdown-icon" data-bind="visible: !!icon, attr:{'src': icon}">
-            <span data-bind="text: displayName"></span>
-          </a>
-        </li>
-      <!-- /ko -->
-    </ul>
-  </div>
-
-  <div class="btn-group">
-    <button id="language-dropdown-button"
-      class="btn btn-default dropdown-toggle section-dropdown-button"
-      type="button"
-      data-toggle="dropdown"
-      aria-haspopup="true"
-      aria-expanded="true"
-      data-bind="disable: disabled" >
-      <span data-bind="text: langLabel"></span>
-      <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu pull-right" aria-labelledby="language-dropdown-button">
-      <!-- ko foreach: languages -->
-        <li>
-          <a href="#">
-            <div class="checkbox-inline">
-              <input type="checkbox" data-bind="checked: selected" />
+  <!-- BEGIN: Section dropdown -->
+  <div id="section-dropdown" class="dropdown upper-control">
+    <div class="btn-group">
+      <button id="location-dropdown-button"
+        class="btn btn-default dropdown-toggle section-dropdown-button"
+        type="button"
+        data-toggle="dropdown"
+        aria-haspopup="true"
+        aria-expanded="true"
+        data-bind="disable: disabled" >
+        <span data-bind="text: cityLabel"></span>
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="location-dropdown-button">
+        <!-- ko foreach: locations -->
+          <li>
+            <a href="#" data-bind="click: $parent.chooseLocation">
+              <img class="section-dropdown-icon" data-bind="visible: !!icon, attr:{'src': icon}">
               <span data-bind="text: displayName"></span>
-            </div>
-          </a>
-        </li>
-      <!-- /ko -->
-    </ul>
+            </a>
+          </li>
+        <!-- /ko -->
+      </ul>
+    </div>
   </div>
+  <!-- END: Section dropdown -->
 
-</div>
-<!-- END: Section dropdown -->
-
+  {{ languageFilterMacro() }}
 </div>
 <!-- END: Section and Language filters -->
 
 <!-- BEGIN: News stories -->
 <div id="storyList" class="center-block">
-<ul class="stories list-group" data-bind="foreach: stories">
-  <li class="list-group-item row story">
-    <div class="col-xs-12 col-xsl-6 col-sm-3" data-bind="if: images().length > 0">
-      <div data-bind="with: images()[0]">
-        <img class="img-responsive center-block storyPic" data-bind="attr:{'src': src}">
-        <p class="text-center small">
-            Image Source:
-            <a class="publisher-link" target="_blank" data-bind="text: publisher.name, attr: {href:link}"></a>
-        </p>
-      </div>
-    </div>
-
-    <div class="col-xs-12" data-bind="css:{'col-sm-9 col-xsl-6' : images().length > 0}">
-      <h4>
-        <a class="headline" target="_blank" data-bind="text : mainArticle.title, attr: {href:mainArticle.link}"></a>
-        <small>
-          <a class="publisher-link" target="_blank" data-bind="text: mainArticle.publisher.name, attr: {href:mainArticle.publisher.homepage}"></a>
-        </small>
-      </h4>
-      <p data-bind="text : mainArticle.summaryTextToDisplay"></p>
-
-      <div data-bind="if: relatedArticles">
-        <em>Related</em>
-        <ul data-bind="foreach: relatedArticles">
-          <li data-bind="css:{'hidden-xs' : $index() > 0}">
-            <a class="headline" target="_blank" data-bind="text : title, attr: {href:link}"></a>
-            <small><a class="publisher-link" target="_blank" data-bind="text: publisher.name, attr: {href:publisher.homepage}"></a></small>
-          </li>
-        </ul>
+  <ul class="list-group" data-bind="foreach: stories">
+    <li class="list-group-item row baseCard">
+      <div class="col-xs-12 col-xsl-6 col-sm-3" data-bind="if: images().length > 0">
+        <div data-bind="with: images()[0]">
+          <a target="_blank" data-bind="attr: {href:link}">
+            <img class="img-responsive center-block storyPic" data-bind="attr:{'src': src}">
+          </a>
+          <p class="text-center small">
+              Image Source:
+              <a class="publisher-link" target="_blank" data-bind="text: publisher.name, attr: {href:link}"></a>
+          </p>
+        </div>
       </div>
 
-    </div>
-  </li>
-</ul>
-<button class="btn btn-default center-block show-more-button" data-bind="click: loadMoreStories, visible: !isDataLoading()">
-  <span class="glyphicon glyphicon-menu-down pull-left" aria-hidden="true"></span>
-  <span>Show more</span>
-  <span class="glyphicon glyphicon-menu-down pull-right" aria-hidden="true"></span>
-</button>
-<img  class="center-block" data-bind="visible: isDataLoading" src="{{ url_for('static', filename='loading.gif') }}">
+      <div class="col-xs-12" data-bind="css:{'col-sm-9 col-xsl-6' : images().length > 0}">
+        <h4>
+          <a class="headline" target="_blank" data-bind="text : mainArticle.title, attr: {href:mainArticle.link}"></a>
+          <small>
+            <a class="publisher-link" target="_blank" data-bind="text: mainArticle.publisher.name, attr: {href:mainArticle.publisher.homepage}"></a>
+          </small>
+        </h4>
+        <p data-bind="text : mainArticle.summaryTextToDisplay"></p>
+
+        <div data-bind="if: relatedArticles">
+          <ul data-bind="foreach: relatedArticles">
+            <li data-bind="css:{'hidden-xs' : $index() > 0}">
+              <a class="headline" target="_blank" data-bind="text : title, attr: {href:link}"></a>
+              <small><a class="publisher-link" target="_blank" data-bind="text: publisher.name, attr: {href:publisher.homepage}"></a></small>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="col-xs-12">
+        <a href="#" class="pull-right" data-bind="click: navigateToDetails">
+          <span class="glyphicon glyphicon-arrow-right" aria-label="Show details"></span>
+        </a>
+      </div>
+    </li>
+  </ul>
+  <button class="btn btn-default center-block show-more-button" data-bind="click: loadMoreStories, visible: !isDataLoading()">
+    <span class="glyphicon glyphicon-menu-down pull-left" aria-hidden="true"></span>
+    <span>Show more</span>
+    <span class="glyphicon glyphicon-menu-down pull-right" aria-hidden="true"></span>
+  </button>
+  <img  class="center-block" data-bind="visible: isDataLoading" src="{{ url_for('static', filename='loading.svg') }}">
 </div>
 <!-- END: News stories -->
+
+<!-- BEGIN: Story detail view -->
+<div id="storyDetail" class="center-block">
+  {{ languageFilterMacro() }}
+
+  <ul class="list-group" data-bind="foreach: articles">
+    <li class="list-group-item row baseCard">
+      <div class="col-xs-12">
+        <h4>
+          <a class="headline" target="_blank" data-bind="text : title, attr: {href:link}"></a>
+          <small>
+            <a class="publisher-link" target="_blank" data-bind="text: publisher.name, attr: {href:publisher.homepage}"></a>
+          </small>
+        </h4>
+        <p data-bind="text : summaryTextToDisplay"></p>
+    </li>
+  </ul>
+  <img  class="center-block" data-bind="visible: isDataLoading" src="{{ url_for('static', filename='loading.svg') }}">
+</div>
+<!-- END: Story detail view -->
 
 {% endblock %}
 {% block childScripts %}

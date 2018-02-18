@@ -12,6 +12,6 @@ class Doc:
 
     """
 
-    self.key = key;
+    self.key = key.upper();
     self.content = content;
     self.tags = tags;

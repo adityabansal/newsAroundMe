@@ -7,49 +7,8 @@ $(function() {
     self.location = ko.observable();
     self.locations = ko.observableArray(JSON.parse($("#locationMetadata")[0].innerHTML));
 
-
-    self.languages = ko.observableArray([]);
-    // The label to be shown in language dropdown
-    self.langLabel = ko.computed(function() {
-      var languageNames = [], allLanguageNames = [];
-
-      self.languages().forEach(function(language) {
-        if (language.selected()) {
-          languageNames.push(language.displayName);
-        }
-        allLanguageNames.push(language.displayName);
-      })
-
-      // in case user unselects all languages, select all of them back
-      if (languageNames.length === 0) {
-        self.languages().forEach(function(language) {
-          language.selected(true);
-        });
-
-        return allLanguageNames.join(",");
-      } else {
-        return languageNames.join(",");
-      }
-    });
-
-    self.languageFilter = ko.computed(function() {
-      var languageCodes = [];
-
-      self.languages().forEach(function(language) {
-        if (language.selected()) {
-          languageCodes.push(language.id);
-        }
-      })
-
-      if ((languageCodes.length === 0) ||
-          (languageCodes.length === self.languages().length)) {
-
-        return ""; // no language filter needed
-      } else {
-        return "languages=" + languageCodes.join(",");
-      }
-    })
-    self.languageFilter.subscribe(function(newValue) {
+    self.languageFilterVM = window.LanguageFilterViewModel;
+    self.languageFilterVM.languageFilter.subscribe(function(newValue) {
       var newUrl = "/api/stories?locale=" + self.location().value;
       if (!!newValue) {
         newUrl = newUrl + "&" + newValue;
@@ -72,19 +31,7 @@ $(function() {
 
         self.location(locationMatch);
         self.cityLabel(locationMatch.displayName);
-        self.languages([]);
-        $.each(locationMatch.languages, function(index, language) {
-          self.languages.push(
-            $.extend({}, language, {
-              "selected" : ko.observable(true)
-            }));
-        });
-
-        // update page title
-        document.title = locationMatch.title;
-         // update meta description. Just replacing the value of the 'content' attribute will not work.
-        $('meta[name=description]').remove();
-        $('head').append("<meta name=\"description\" content=\"" + locationMatch.description + "\">");
+        self.languageFilterVM.setLanguages(locationMatch.languages);
 
         url = "/api/stories?locale=" + locationMatch.value;
       }
@@ -167,6 +114,6 @@ $(function() {
   // bind the viewModel
   var vM = new SectionDropdownViewModel();
   window.SectionDropdownViewModel = vM;
-  ko.applyBindings(vM, $("#section-dropdown")[0]);
+  ko.applyBindings(vM, $("#section-filters")[0]);
 
 });

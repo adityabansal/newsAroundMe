@@ -1,11 +1,4 @@
 $(function() {
-  function guidGenerator() {
-    var S4 = function() {
-      return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
-    };
-    return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
-  }
-
   function cropText(text, maxLength) {
     if (!text) {
       return ""
@@ -14,18 +7,17 @@ $(function() {
   }
 
   function StoryViewModel(story) {
-    var self = this;
-    self.mainArticle = story.articles[0];
-    self.mainArticle.summaryTextToDisplay = cropText(self.mainArticle.summaryText, 100)
+    var self = this,
+        articleVMs = story.articles.map(article => new window.ArticleViewModel(article));
+    self.mainArticle = articleVMs[0];
 
     self.relatedArticles = null;
-    if (story.articles.length > 1) {
-      self.relatedArticles = ko.observableArray(story.articles.slice(1, 6));
+    if (articleVMs.length > 1) {
+      self.relatedArticles = ko.observableArray(articleVMs.slice(1, 6));
     }
 
-    self.carouselId = guidGenerator();
     self.images = ko.observableArray();
-    $.each(story.articles, function(index, article) {
+    $.each(articleVMs, function(index, article) {
       if ($.isArray(article.images)) {
         $.each(article.images, function(index, image) {
           var added = false;
@@ -46,6 +38,14 @@ $(function() {
         })
       }
     });
+
+    self.navigateToDetails = function() {
+      window.navigateTo({
+        title: (self.mainArticle.title + " - Full coverage by newsAroundMe"),
+        description: "See this and related articles at newsaroundme.com",
+        value: "story/" + self.mainArticle.id
+      });
+    }
   }
 
   window.StoryViewModel = StoryViewModel;
