@@ -39,11 +39,13 @@ $(function() {
       }
     });
 
+    self.storyDetailUrl = "/story/" + self.mainArticle.id;
+
     self.navigateToDetails = function() {
       window.navigateTo({
         title: (self.mainArticle.title + " - Full coverage by newsAroundMe"),
         description: "See this and related articles at newsaroundme.com",
-        value: "story/" + self.mainArticle.id
+        value: self.storyDetailUrl.substr(1) //remove the initial '/''
       });
     }
   }
