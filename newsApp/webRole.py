@@ -12,6 +12,7 @@ app = Flask(__name__)
 assets = Environment(app)
 
 home_js = Bundle(
+  'init.js',
   'languageFilterViewModel.js',
   'sectionDropdownViewModel.js',
   'articleViewModel.js',
@@ -165,7 +166,8 @@ def home():
     'home.html',
     title='newsAroundMe',
     description='Latest local news from your location',
-    locationsMetadata=json.dumps(LOCATION_METADATA))
+    locationsMetadata=json.dumps(LOCATION_METADATA),
+    languagesMetadata=json.dumps(AVAILABLE_LANGUAGES))
 
 @app.route('/<location>')
 def loadLocationPage(location):
@@ -178,7 +180,8 @@ def loadLocationPage(location):
     'home.html',
     title=matchingLocation[0]['title'],
     description=matchingLocation[0]['description'],
-    locationsMetadata=json.dumps(LOCATION_METADATA))
+    locationsMetadata=json.dumps(LOCATION_METADATA),
+    languagesMetadata=json.dumps(AVAILABLE_LANGUAGES))
 
 @app.route('/story/<docId>')
 def loadStoryPage(docId):
@@ -191,7 +194,8 @@ def loadStoryPage(docId):
     'home.html',
     title=cluster["articles"][0]['title'] + " - Full coverage by newsAroundMe",
     description="See this and related articles at newsaroundme.com",
-    locationsMetadata=json.dumps(LOCATION_METADATA))
+    locationsMetadata=json.dumps(LOCATION_METADATA),
+    languagesMetadata=json.dumps(AVAILABLE_LANGUAGES))
 
 if __name__ == '__main__':
   app.run()

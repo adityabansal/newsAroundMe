@@ -3,13 +3,16 @@
 
 {% from 'languageFilterMacro.html' import languageFilterMacro %}
 
+<script type="application/json" id="languagesMetadata">
+  {{ languagesMetadata|safe}}
+</script>
+<script type="application/json" id="locationMetadata">
+  {{ locationsMetadata|safe }}
+</script>
+
+
 <!-- BEGIN: Section and Language filters -->
 <div id="section-filters" class="center-block row">
-
-  <script type="application/json" id="locationMetadata">
-      {{ locationsMetadata|safe }}
-  </script>
-
   <!-- BEGIN: Section dropdown -->
   <div id="section-dropdown" class="dropdown upper-control">
     <div class="btn-group">
@@ -94,6 +97,14 @@
 
 <!-- BEGIN: Story detail view -->
 <div id="storyDetail" class="center-block">
+  <div class="upper-control" data-bind="visible: locations().length > 0">
+    <!-- ko foreach: locations -->
+        <a href="#" data-bind="click: $parent.navigateToLocale, attr: {href:url}">
+          <span class="glyphicon glyphicon-arrow-left"></span>
+          <span data-bind="text: displayName"></span><span> News</span>
+        </a>
+    <!-- /ko -->
+  </div>
   {{ languageFilterMacro() }}
 
   <ul class="list-group" data-bind="foreach: articles">

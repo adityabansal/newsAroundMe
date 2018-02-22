@@ -44,6 +44,7 @@ class ClusterManager:
             "articles": self.__getProcessedClusterArticles(
                 self.__filterDocsInCluster(cluster, filters)),
             "locales": cluster.locales,
+            "languages": cluster.languages,
             "importance": self.__computeClusterRankingScore(cluster)
         }
 

@@ -55,5 +55,5 @@ $(function() {
     }
   }
 
-  window.LanguageFilterViewModel = new LanguageFilterViewModel();
+  window.LanguageFilterViewModel = LanguageFilterViewModel;
 });

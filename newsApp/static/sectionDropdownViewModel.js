@@ -5,9 +5,9 @@ $(function() {
     self.disabled = ko.observable(false);
 
     self.location = ko.observable();
-    self.locations = ko.observableArray(JSON.parse($("#locationMetadata")[0].innerHTML));
+    self.locations = ko.observableArray(window.locationsMetadata);
 
-    self.languageFilterVM = window.LanguageFilterViewModel;
+    self.languageFilterVM = new window.LanguageFilterViewModel();
     self.languageFilterVM.languageFilter.subscribe(function(newValue) {
       var newUrl = "/api/stories?locale=" + self.location().value;
       if (!!newValue) {

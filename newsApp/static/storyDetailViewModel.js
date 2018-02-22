@@ -3,7 +3,8 @@ $(function() {
     var self = this;
     self.docId = null;
     self.articles = ko.observableArray([]);
-    self.languageFilterVM = window.LanguageFilterViewModel;
+    self.locations = ko.observableArray([]);
+    self.languageFilterVM = new window.LanguageFilterViewModel();
     self.lastRequest = null;
     self.isDataLoading = ko.observable(false);
 
@@ -14,12 +15,25 @@ $(function() {
       }
 
       self.isDataLoading(true);
+
+      // reinitialize everything and fill with new values once the call is complete
       self.articles([]);
+      self.locations([]);
+      self.languageFilterVM.languages([]);
       self.lastRequest = $.getJSON(url, function( response ) {
         self.articles([]);
         self.articles(response.articles.map(article =>
           new window.ArticleViewModel(article)));
-        console.log("Updated story from network for url: " + url);
+
+        self.locations(response.locales.map(function(locale) {
+          return window.locationsMetadata.filter(location =>
+            location.value === locale)[0];
+        }));
+
+        self.languageFilterVM.setLanguages(response.languages.map(function(langCode) {
+          return window.languagesMetadata.filter(language =>
+            language.id === langCode)
+        }));
       });
 
       self.lastRequest.always(function() {
@@ -42,6 +56,10 @@ $(function() {
 
       self.loadStoryInternal(newUrl);
     })
+
+    self.navigateToLocale = function(location) {
+      window.navigateTo(location);
+    }
   }
 
   var vM = new StoryDetailViewModel();

@@ -1,11 +1,4 @@
 $(function() {
-  function cropText(text, maxLength) {
-    if (!text) {
-      return ""
-    }
-    return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
-  }
-
   function StoryViewModel(story) {
     var self = this,
         articleVMs = story.articles.map(article => new window.ArticleViewModel(article));

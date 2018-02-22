@@ -83,11 +83,11 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
 
 .show-more-button {
   width: 50%;
-  background-color: #333;
+  background-color: #6b0000;
   color: white;
 }
 
 .show-more-button:hover, .show-more-button:focus {
-  background-color: #6b0000;
+  background-color: #5a0000;
   color: white;
 }
