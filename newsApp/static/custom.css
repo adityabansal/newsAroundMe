@@ -67,6 +67,12 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
   margin-bottom: 0.5em;
 }
 
+.baseCard .card-header {
+  font-size: 1.1em;
+  color: #6b0000;
+  padding-bottom: 0.3em;
+}
+
 .baseCard .headline {
   color: black;
   font-size: 1.2em;
@@ -79,6 +85,23 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
 
 .baseCard p {
   color: #171717;
+}
+
+.baseCard .card-action {
+  font-size: 1.1em;
+  color: #6b0000;
+  border: 1px solid #6b0000;
+  border-radius: 8px;
+}
+
+.baseCard .card-action span {
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.upper-nav-link {
+  font-size: 1.2em;
+  color: #6b0000;
 }
 
 .show-more-button {

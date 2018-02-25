@@ -9,14 +9,14 @@ $(function() {
       self.relatedArticles = ko.observableArray(articleVMs.slice(1, 6));
     }
 
-    self.images = ko.observableArray();
+    self.images = ko.observableArray([]);
     $.each(articleVMs, function(index, article) {
       if ($.isArray(article.images)) {
         $.each(article.images, function(index, image) {
           var added = false;
 
-          $.map(self.images(), function(elementOfArray, indexInArray) {
-            if (elementOfArray.src == image) {
+          $.each(self.images(), function(indexInArray, elementOfArray) {
+            if (elementOfArray.src === image) {
               added = true;
             }
           })

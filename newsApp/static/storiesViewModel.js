@@ -22,7 +22,7 @@ $(function() {
         console.log("Updated stories from network for url: " + url);
       });
 
-      if (!!caches) {
+      if ('caches' in window) {
         // fetch cached data
         caches.match(url).then(function(response) {
           if (!response) throw Error("No data");

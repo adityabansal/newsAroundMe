@@ -50,13 +50,15 @@
     <li class="list-group-item row baseCard">
       <div class="col-xs-12 col-xsl-6 col-sm-3" data-bind="if: images().length > 0">
         <div data-bind="with: images()[0]">
-          <a target="_blank" data-bind="attr: {href:link}">
-            <img class="img-responsive center-block storyPic" data-bind="attr:{'src': src}">
-          </a>
-          <p class="text-center small">
-              Image Source:
-              <a class="publisher-link" target="_blank" data-bind="text: publisher.name, attr: {href:link}"></a>
-          </p>
+          <div class="storyPic-container">
+            <a target="_blank" data-bind="attr: {href:link}">
+              <img class="img-responsive center-block storyPic" data-bind="attr:{'src': src}">
+            </a>
+            <p class="text-center small">
+                Image Source:
+                <a class="publisher-link" target="_blank" data-bind="text: publisher.name, attr: {href:link}"></a>
+            </p>
+          </div>
         </div>
       </div>
 
@@ -80,8 +82,9 @@
       </div>
 
       <div class="col-xs-12">
-        <a href="#" class="pull-right" data-bind="click: navigateToDetails, attr: {href:storyDetailUrl}">
-          <span class="glyphicon glyphicon-arrow-right" aria-label="Show details"></span>
+        <a href="#" class="pull-right card-action" data-bind="click: navigateToDetails, attr: {href:storyDetailUrl}">
+          <span class="hidden-xs">Details</span>
+          <span class="glyphicon glyphicon-arrow-right" aria-label="Details"></span>
         </a>
       </div>
     </li>
@@ -97,9 +100,9 @@
 
 <!-- BEGIN: Story detail view -->
 <div id="storyDetail" class="center-block">
-  <div class="upper-control" data-bind="visible: locations().length > 0">
+  <div data-bind="visible: locations().length > 0">
     <!-- ko foreach: locations -->
-        <a href="#" data-bind="click: $parent.navigateToLocale, attr: {href:url}">
+        <a href="#" class="upper-nav-link upper-control center-block" data-bind="click: $parent.navigateToLocale, attr: {href:url}">
           <span class="glyphicon glyphicon-arrow-left"></span>
           <span data-bind="text: displayName"></span><span> News</span>
         </a>
@@ -110,11 +113,27 @@
   <ul class="list-group" data-bind="foreach: articles">
     <li class="list-group-item row baseCard">
       <div class="col-xs-12">
+        <div class="card-header">
+          <span class="glyphicon glyphicon-time"></span>
+          <span data-bind="text: timeString"></span>
+          <span> by </span>
+          <a class="publisher-link" target="_blank" data-bind="text: publisher.name, attr: {href:link}"></a>
+        </div>
+      </div>
+
+      <div class="col-xs-12 col-xsl-6 col-sm-3" data-bind="if: images.length > 0">
+        <div data-bind="with: images[0]">
+          <div class="storyPic-container">
+            <a target="_blank" data-bind="attr: {href:$parent.link}">
+              <img class="img-responsive center-block storyPic" data-bind="attr:{'src': $data}">
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xs-12" data-bind="css:{'col-sm-9 col-xsl-6' : images.length > 0}">
         <h4>
           <a class="headline" target="_blank" data-bind="text : title, attr: {href:link}"></a>
-          <small>
-            <a class="publisher-link" target="_blank" data-bind="text: publisher.name, attr: {href:publisher.homepage}"></a>
-          </small>
         </h4>
         <p data-bind="text : summaryTextToDisplay"></p>
     </li>

@@ -13,6 +13,7 @@ assets = Environment(app)
 
 home_js = Bundle(
   'init.js',
+  'appUtils.js',
   'languageFilterViewModel.js',
   'sectionDropdownViewModel.js',
   'articleViewModel.js',
@@ -21,7 +22,7 @@ home_js = Bundle(
   'storiesViewModel.js',
   'navigate.js',
   'app.js',
-  #filters='jsmin',
+  filters='jsmin',
   output='gen/home_packed.js')
 assets.register('home_js', home_js)
 
