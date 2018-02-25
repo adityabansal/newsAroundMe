@@ -39,6 +39,15 @@ class ClusterManager:
         cluster.process();
         return cluster.articles;
 
+    def __getClusterResponse(self, cluster, filters = None):
+        return {
+            "articles": self.__getProcessedClusterArticles(
+                self.__filterDocsInCluster(cluster, filters)),
+            "locales": cluster.locales,
+            "languages": cluster.languages,
+            "importance": self.__computeClusterRankingScore(cluster)
+        }
+
     def __computeClusterRankingScore(self, cluster):
         return (0.4 * (len(cluster) - len(cluster.duplicates))) + \
             (0.6 * len(cluster.publishers))
@@ -80,11 +89,7 @@ class ClusterManager:
 
         for cluster in clusterList[skip:(skip + top)]:
             try:
-                response.append({
-                    "articles" : self.__getProcessedClusterArticles(
-                        self.__filterDocsInCluster(cluster, filters)),
-                    "importance" : self.__computeClusterRankingScore(cluster)
-                    })
+                response.append(self.__getClusterResponse(cluster, filters))
 
             except Exception, e:
                 logging.exception(
@@ -105,6 +110,13 @@ class ClusterManager:
         response = []
 
         return self.__constructQueryResponse(clusters, skip, top, filters)
+
+    def queryByDocId(self, docId, filters=None):
+        cluster = self.clusterTableManager.queryByDocId(docId)
+        if not cluster:
+            return None
+        else:
+            return self.__getClusterResponse(cluster, filters)
 
     def putCurrentClusters(self, clusters):
         jobManager = ClusterJobManager()

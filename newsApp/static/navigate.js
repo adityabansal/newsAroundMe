@@ -1,7 +1,20 @@
 $(function() {
   function onNavigateWithoutTracking() {
-    newPath = location.pathname;
-    window.SectionDropdownViewModel.loadSection(newPath.substr(1));
+    newPath = location.pathname.toLowerCase();
+
+    if (newPath.indexOf("/story/") === 0) {
+      window.StoryDetailViewModel.loadStory(newPath.substr(7))
+
+      $("#section-filters").hide();
+      $("#storyList").hide();
+      $("#storyDetail").show();
+    } else {
+      window.SectionDropdownViewModel.loadSection(newPath.substr(1));
+
+      $("#section-filters").show();
+      $("#storyList").show();
+      $("#storyDetail").hide();
+    }
   }
 
   function onNavigate() {
@@ -21,6 +34,13 @@ $(function() {
         section,
         section.title,
         "/" + section.value);
+
+      // update page title
+      document.title = section.title;
+       // update meta description. Just replacing the value of the 'content' attribute will not work.
+      $('meta[name=description]').remove();
+      $('head').append("<meta name=\"description\" content=\"" + section.description + "\">");
+
       onNavigate();
     } else {
       // this is to support old browsers

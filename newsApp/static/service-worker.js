@@ -1,12 +1,12 @@
-var appCacheName = 'shellCache-v2';
+var appCacheName = 'shellCache-v3';
 var filesToCache = [
   '/',
   '/static/ie10-viewport-bug-workaround.css',
-  '/static/custom.css',
   '/static/ie10-viewport-bug-workaround.js',
+  '/static/custom.css',
   '/static/gen/home_packed.js',
   '/static/logoNavbar.png',
-  '/static/loading.gif',
+  '/static/loading.svg',
   '/static/favicon.ico'
 ];
 

@@ -11,9 +11,19 @@ from imageProcessor import ImageProcessor
 app = Flask(__name__)
 assets = Environment(app)
 
-home_js = Bundle('sectionDropdownViewModel.js', 'storyViewModel.js',
-            'storiesViewModel.js', 'navigate.js', 'app.js',
-            filters='jsmin', output='gen/home_packed.js')
+home_js = Bundle(
+  'init.js',
+  'appUtils.js',
+  'languageFilterViewModel.js',
+  'sectionDropdownViewModel.js',
+  'articleViewModel.js',
+  'storyViewModel.js',
+  'storyDetailViewModel.js',
+  'storiesViewModel.js',
+  'navigate.js',
+  'app.js',
+  filters='jsmin',
+  output='gen/home_packed.js')
 assets.register('home_js', home_js)
 
 #start helper functions
@@ -128,6 +138,17 @@ def get_stories():
 
   abort(400, "Invalid query")
 
+@app.route('/api/story/<docId>', methods=['GET'])
+def get_story(docId):
+  filters = validateFilters(request.args)
+
+  clusterManager = ClusterManager()
+  cluster = clusterManager.queryByDocId(docId.upper(), filters)
+  if not cluster:
+    abort(404)
+  else:
+    return getJsonResponse(cluster)
+
 @app.route('/images/<imageKey>')
 def getImage(imageKey):
   imageProcessor = ImageProcessor()
@@ -146,10 +167,11 @@ def home():
     'home.html',
     title='newsAroundMe',
     description='Latest local news from your location',
-    locationsMetadata=json.dumps(LOCATION_METADATA))
+    locationsMetadata=json.dumps(LOCATION_METADATA),
+    languagesMetadata=json.dumps(AVAILABLE_LANGUAGES))
 
 @app.route('/<location>')
-def load(location):
+def loadLocationPage(location):
   matchingLocation = [x for x in LOCATION_METADATA if \
     x['value'].lower() == location.lower()]
 
@@ -159,7 +181,22 @@ def load(location):
     'home.html',
     title=matchingLocation[0]['title'],
     description=matchingLocation[0]['description'],
-    locationsMetadata=json.dumps(LOCATION_METADATA))
+    locationsMetadata=json.dumps(LOCATION_METADATA),
+    languagesMetadata=json.dumps(AVAILABLE_LANGUAGES))
+
+@app.route('/story/<docId>')
+def loadStoryPage(docId):
+  clusterManager = ClusterManager()
+  cluster = clusterManager.queryByDocId(docId.upper())
+
+  if not cluster:
+    return redirect(url_for('home'))
+  return render_template(
+    'home.html',
+    title=cluster["articles"][0]['title'] + " - Full coverage by newsAroundMe",
+    description="See this and related articles at newsaroundme.com",
+    locationsMetadata=json.dumps(LOCATION_METADATA),
+    languagesMetadata=json.dumps(AVAILABLE_LANGUAGES))
 
 if __name__ == '__main__':
   app.run()

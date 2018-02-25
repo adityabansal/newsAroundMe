@@ -1,5 +1,6 @@
 body {
   padding-top: 1em;
+  background-color: #e7e7e7
 }
 
 .navbar-header {
@@ -8,31 +9,36 @@ body {
 }
 
 .logo-img {
-	padding-left: 4px;
+  padding-left: 4px;
   padding-right: 4px;
 }
 
 a.logo-text, a.logo-text:hover, a.logo-text:focus {
-    font-family: 'Comic Sans MS', cursive, sans-serif;
-    font-size: 32px;
-    font-style: italic;
-    color: lightyellow;
-    text-decoration: none;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  font-size: 32px;
+  font-style: italic;
+  color: white;
+  text-decoration: none;
 }
 
 .body-content {
   padding: 40px 0 0 0;
 }
 
+.upper-control {
+  margin-bottom: 0.5em;
+  text-align: center;
+}
+
 .section-dropdown-button {
   margin-bottom: 0.5em;
   background-color: #6b0000;
-  color: lightyellow;
+  color: white;
 }
 
 .section-dropdown-button:hover, .section-dropdown-button:focus {
   background-color: #5a0000;
-  color: lightyellow;
+  color: white;
 }
 
 .section-dropdown-icon {
@@ -47,39 +53,64 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
   }
 }
 
-#storyList {
-  max-width: 1024px
+#section-filters, #storyList, #storyDetail {
+  max-width: 1024px;
 }
 
 .storyPic {
   max-height: 10em;
 }
 
-.story {
-  background-color: #333;
-  border-bottom: 5px solid white;
+.baseCard {
+  background-color: white;
+  border-top: 2px solid #6b0000;
+  margin-bottom: 0.5em;
 }
 
-.story .headline {
-  color: lightyellow;
+.baseCard .card-header {
+  font-size: 1.1em;
+  color: #6b0000;
+  padding-bottom: 0.3em;
+}
+
+.baseCard .headline {
+  color: black;
+  font-size: 1.2em;
   font-weight: bold;
 }
 
-.story .publisher-link {
-  color: #e7e7e7;
+.baseCard .publisher-link {
+  color: #171777;
 }
 
-.story p, .story em {
-  color: #d3d3d3;
+.baseCard p {
+  color: #171717;
+}
+
+.baseCard .card-action {
+  font-size: 1.1em;
+  color: #6b0000;
+  border: 1px solid #6b0000;
+  border-radius: 8px;
+}
+
+.baseCard .card-action span {
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.upper-nav-link {
+  font-size: 1.2em;
+  color: #6b0000;
 }
 
 .show-more-button {
   width: 50%;
-  background-color: #333;
-  color: lightyellow;
+  background-color: #6b0000;
+  color: white;
 }
 
 .show-more-button:hover, .show-more-button:focus {
-  background-color: #222;
-  color: lightyellow;
+  background-color: #5a0000;
+  color: white;
 }

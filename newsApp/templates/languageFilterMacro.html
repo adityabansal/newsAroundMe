@@ -1,0 +1,10 @@
+{% macro languageFilterMacro() %}
+  <div class="upper-control" data-bind="if: languageFilterVM.languages().length > 1">
+    <!-- ko foreach: languageFilterVM.languages -->
+      <label class="checkbox-inline">
+        <input type="checkbox" data-bind="checked: selected" />
+        <span data-bind="text: displayName"></span>
+      </label>
+    <!-- /ko -->
+  </div>
+{% endmacro %}

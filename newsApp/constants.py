@@ -118,5 +118,6 @@ LOCATION_METADATA = [
   {'displayName': 'Pune', 'icon': '', 'value': 'pune', 'lat': 18.52, 'long': 73.86, 'languages': [LANG_ENGLISH_METADATA]},
   {'displayName': 'Jaipur', 'icon': '', 'value': 'jaipur', 'lat': 26.91, 'long': 75.79, 'languages': [LANG_ENGLISH_METADATA, LANG_HINDI_METADATA]}]
 for location in LOCATION_METADATA:
-	location['title'] = location['displayName'] + ' News - newsAroundMe';
-	location['description'] = 'Latest local news from '+ location['displayName'] + '.';
+  location['title'] = location['displayName'] + ' News - newsAroundMe';
+  location['description'] = 'Latest local news from '+ location['displayName'] + '.';
+  location['url'] = "/" + location['value']
