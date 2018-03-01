@@ -158,7 +158,7 @@ class ImageProcessor:
 
       #See if the image is too small
       width, height = image.size
-      if width < 10 or height < 10:
+      if width < 150 or height < 150:
         logger.info(
           "Image size is too small. Not processing it. Size %ix%i. %s",
           width,
@@ -167,7 +167,7 @@ class ImageProcessor:
         return;
 
       #Resize the image
-      newSize = 200, 140
+      newSize = 300, 200
       image.thumbnail(newSize, Image.ANTIALIAS)
       logger.info("Image successfully resized. %s", jobIdLog)
 
