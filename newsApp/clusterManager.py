@@ -40,9 +40,20 @@ class ClusterManager:
         return cluster.articles;
 
     def __getClusterResponse(self, cluster, filters = None):
+        articles = self.__getProcessedClusterArticles(
+            self.__filterDocsInCluster(cluster, filters))
+
+        title = articles[0]['title'];
+        description = articles[0]['title'] + " - " + \
+            articles[0]['publisher'][PUBLISHER_DETAILS_NAME] + ".";
+        if len(articles) > 1:
+            description += " " + articles[1]['title'] + " - " + \
+              articles[1]['publisher'][PUBLISHER_DETAILS_NAME] + ".";
+
         return {
-            "articles": self.__getProcessedClusterArticles(
-                self.__filterDocsInCluster(cluster, filters)),
+            "articles": articles,
+            "title": title,
+            "description": description,
             "locales": cluster.locales,
             "languages": cluster.languages,
             "importance": self.__computeClusterRankingScore(cluster)
@@ -116,7 +127,7 @@ class ClusterManager:
         if not cluster:
             return None
         else:
-            return self.__getClusterResponse(cluster, filters)
+            return self.__constructQueryResponse([cluster], 0, 1, filters)[0]
 
     def putCurrentClusters(self, clusters):
         jobManager = ClusterJobManager()

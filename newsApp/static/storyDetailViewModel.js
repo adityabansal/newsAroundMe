@@ -8,7 +8,7 @@ $(function() {
     self.lastRequest = null;
     self.isDataLoading = ko.observable(false);
 
-    self.loadStoryInternal = function(url) {
+    self.loadStoryInternal = function(url, refreshLanguageFilter) {
 
       if(!!self.lastRequest && self.isDataLoading()) {
         self.lastRequest.abort();
@@ -16,24 +16,26 @@ $(function() {
 
       self.isDataLoading(true);
 
-      // reinitialize everything and fill with new values once the call is complete
       self.articles([]);
-      self.locations([]);
-      self.languageFilterVM.languages([]);
       self.lastRequest = $.getJSON(url, function( response ) {
         self.articles([]);
-        self.articles(response.articles.map(article =>
-          new window.ArticleViewModel(article)));
+        self.articles(response.articles.map(function(article) {
+          return new window.ArticleViewModel(article);
+        }));
 
         self.locations(response.locales.map(function(locale) {
-          return window.locationsMetadata.filter(location =>
-            location.value === locale)[0];
+          return window.locationsMetadata.filter(function(location) {
+            return location.value === locale;
+          })[0];
         }));
 
-        self.languageFilterVM.setLanguages(response.languages.map(function(langCode) {
-          return window.languagesMetadata.filter(language =>
-            language.id === langCode)
-        }));
+        if (!!refreshLanguageFilter) {
+          self.languageFilterVM.setLanguages(response.languages.map(function(langCode) {
+            return window.languagesMetadata.filter(function(language) {
+              return (language.id === langCode);
+            })[0];
+          }));
+        }
       });
 
       self.lastRequest.always(function() {
@@ -45,16 +47,16 @@ $(function() {
       self.docId = docId;
       var url = "/api/story/" + self.docId;
 
-      self.loadStoryInternal(url)
+      self.loadStoryInternal(url, true)
     }
 
     self.languageFilterVM.languageFilter.subscribe(function(newValue) {
       var newUrl = "/api/story/" + self.docId;
       if (!!newValue) {
-        newUrl = newUrl + "&" + newValue;
+        newUrl = newUrl + "?" + newValue;
       }
 
-      self.loadStoryInternal(newUrl);
+      self.loadStoryInternal(newUrl, false);
     })
 
     self.navigateToLocale = function(location) {

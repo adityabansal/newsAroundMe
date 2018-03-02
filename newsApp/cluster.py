@@ -74,6 +74,8 @@ class Cluster(set):
       doc = docManager.get(docKey)
 
       if not _isDuplicateArticle(docKey, docsAdded):
+        # note that this gets passed all the way till browser
+        # don't add any internal stuff here
         self.articles.append({
           'id': docKey,
           'title': doc.tags.get(LINKTAG_TITLE, ""),

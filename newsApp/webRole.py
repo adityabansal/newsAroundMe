@@ -9,8 +9,10 @@ from clusterManager import ClusterManager
 from imageProcessor import ImageProcessor
 
 app = Flask(__name__)
-assets = Environment(app)
 
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+
+assets = Environment(app)
 home_js = Bundle(
   'init.js',
   'appUtils.js',
@@ -33,6 +35,22 @@ def getJsonResponse(retValue):
   resp.headers['Content-Type'] = 'application/json;charset=utf-8'
 
   return resp
+
+def getSharingMetaTags(title, description, imageUrl, ogType):
+  if not ogType:
+    ogType = 'website'
+
+  if not imageUrl:
+    imageUrl = 'static/logo300by300.png'
+  imageUrl = request.host_url + imageUrl;
+
+  return  [
+    { 'tagType': u'name="twitter:card"', 'content': 'summary' },
+    { 'tagType': u'property="og:url"', 'content': request.base_url },
+    { 'tagType': u'property="og:type"', 'content': ogType},
+    { 'tagType': u'property="og:title"', 'content': title },
+    { 'tagType': u'property="og:description"', 'content': description },
+    { 'tagType': u'property="og:image"', 'content': imageUrl }];
 
 #end helper functions
 
@@ -182,21 +200,35 @@ def loadLocationPage(location):
     title=matchingLocation[0]['title'],
     description=matchingLocation[0]['description'],
     locationsMetadata=json.dumps(LOCATION_METADATA),
-    languagesMetadata=json.dumps(AVAILABLE_LANGUAGES))
+    languagesMetadata=json.dumps(AVAILABLE_LANGUAGES),
+    metaTags=getSharingMetaTags(
+      matchingLocation[0]['title'],
+      matchingLocation[0]['description'],
+      None,
+      None))
 
 @app.route('/story/<docId>')
 def loadStoryPage(docId):
   clusterManager = ClusterManager()
   cluster = clusterManager.queryByDocId(docId.upper())
 
+  imagesByArticle = [article['images'] for article in cluster['articles']]
+  allImages = [image for articleImages in imagesByArticle for image in articleImages]
+  image = allImages[0] if allImages else None
+
   if not cluster:
     return redirect(url_for('home'))
   return render_template(
     'home.html',
-    title=cluster["articles"][0]['title'] + " - Full coverage by newsAroundMe",
-    description="See this and related articles at newsaroundme.com",
+    title=cluster['title'],
+    description=cluster['description'],
     locationsMetadata=json.dumps(LOCATION_METADATA),
-    languagesMetadata=json.dumps(AVAILABLE_LANGUAGES))
+    languagesMetadata=json.dumps(AVAILABLE_LANGUAGES),
+    metaTags=getSharingMetaTags(
+      cluster['title'],
+      cluster['description'],
+      image,
+      'article'))
 
 if __name__ == '__main__':
   app.run()

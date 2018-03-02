@@ -44,7 +44,7 @@ $(function() {
     })
 
     self.setLanguages = function(languageArray) {
-      newLanguageArray =languageArray.map((language) => {
+      newLanguageArray =languageArray.map(function(language) {
         return $.extend({}, language, {
           "selected" : ko.observable(true)
         });

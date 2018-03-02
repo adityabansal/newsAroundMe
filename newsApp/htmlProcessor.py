@@ -44,7 +44,7 @@ def _extractText(html, textSelector):
     textDivs = html.cssselect(textSelector);
     for textDiv in textDivs:
         text += textDiv.text_content();
-    return text;
+    return text.strip();
 
 def _extractImages(html, imageSelector, baseUrl):
     images = html.cssselect(imageSelector);

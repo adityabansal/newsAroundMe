@@ -1,8 +1,12 @@
 $(function() {
   function StoryViewModel(story) {
     var self = this,
-        articleVMs = story.articles.map(article => new window.ArticleViewModel(article));
+        articleVMs = story.articles.map(function(article) {
+          return new window.ArticleViewModel(article);
+        });
     self.mainArticle = articleVMs[0];
+    self.title = story.title;
+    self.description = story.description;
 
     self.relatedArticles = null;
     if (articleVMs.length > 1) {
@@ -36,8 +40,8 @@ $(function() {
 
     self.navigateToDetails = function() {
       window.navigateTo({
-        title: (self.mainArticle.title + " - Full coverage by newsAroundMe"),
-        description: "See this and related articles at newsaroundme.com",
+        title: self.title,
+        description: self.description,
         value: self.storyDetailUrl.substr(1) //remove the initial '/''
       });
     }
