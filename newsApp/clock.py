@@ -7,6 +7,7 @@ from pushLinkJobs import pushLinkJobs
 from clusterDocsJob import clusterDocsJob
 from archiveStaleDocs import archiveStaleDocs
 from reprocessCurrentClusters import reprocessCurrentClusters
+from notifyTwitter import notifyTwitter
 from clusteringJobs import getCandidateDocsThroughClusters, cleanUpDistanceTable
 
 now = datetime.datetime.now()
@@ -42,6 +43,13 @@ def archiveStaleDocs_job():
 	start_date = now + datetime.timedelta(minutes = 7))
 def reprocessCurrentClusters_job():
     reprocessCurrentClusters()
+
+@sched.scheduled_job(
+	'interval',
+	minutes = clusteringInterval,
+	start_date = now + datetime.timedelta(minutes = 9))
+def notifyTwitterJob_job():
+	notifyTwitter()
 
 @sched.scheduled_job(
 	'interval',

@@ -61,7 +61,8 @@ class ClusterTableManager:
           'languages': json.dumps(cluster.languages),
           'duplicates': json.dumps(cluster.duplicates),
           'isCurrent': cluster.isCurrent,
-          'lastPubTime': cluster.lastPubTime
+          'lastPubTime': cluster.lastPubTime,
+          'notifiedOnTwitter': cluster.notifiedOnTwitter
         })
 
     mappingsTable = self.__getMappingsTable()
@@ -145,5 +146,6 @@ class ClusterTableManager:
     cluster.duplicates = json.loads(row['duplicates'])
     cluster.isCurrent = row.get('isCurrent', 'unknown')
     cluster.lastPubTime = float(row.get('lastPubTime', 0))
+    cluster.notifiedOnTwitter = row.get('notifiedOnTwitter', False)
 
     return cluster
