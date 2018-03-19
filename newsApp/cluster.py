@@ -1,4 +1,5 @@
 import hashlib
+from operator import itemgetter
 
 from constants import *
 from docManager import DocManager
@@ -105,6 +106,8 @@ class Cluster(set):
         self.lastPubTime =  doc.tags.get(LINKTAG_PUBTIME)
 
     nArticles = len(self.articles) + len(self.duplicates)
+    self.articles.sort(key=itemgetter('publishedOn'), reverse=True)
+
     #remove duplicates
     self.categories = _removeDuplicatesAndOutliers(self.categories, nArticles)
     self.countries = _removeDuplicatesAndOutliers(self.countries, nArticles)
