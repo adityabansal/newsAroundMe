@@ -53,7 +53,6 @@ class Cluster(set):
     docList.sort();
     self.id = hashlib.md5("-".join(docList)).hexdigest().upper()
     self.isCurrent = 'unknown'
-    self.notifiedOnTwitter = False;
 
   def process(self):
     """
