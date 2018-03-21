@@ -2,7 +2,7 @@ import os
 import logging
 
 from boto.dynamodb2.table import Table
-import twitter
+import tweepy
 
 from dbhelper import *
 
@@ -37,10 +37,9 @@ class NotifierTwitter:
     keys = self.__getKeys(handle);
     logging.info("Got secrets for twitter handle %s. Job id: %s", handle, jobId)
 
-    return twitter.Api(consumer_key=keys['consumerKey'],
-      consumer_secret=keys['consumerSecret'],
-      access_token_key=keys['token'],
-      access_token_secret=keys['tokenSecret'])
+    auth = tweepy.OAuthHandler(keys['consumerKey'], keys['consumerSecret'])
+    auth.set_access_token(keys['token'], keys['tokenSecret'])
+    return tweepy.API(auth)
 
   def addHandle(self, handle, consumerKey, consumerSecret, token, tokenSecret):
     table = self.__getTable();
@@ -59,7 +58,7 @@ class NotifierTwitter:
     tweetLength = linkLength;
 
     # don't include first article in tweet text as it would anyway show on the card
-    for article in cluster.articles[:1]:
+    for article in cluster.articles[1:]:
       articleTitle = article['title'];
       articleLink = article['link'];
       articleText = articleTitle + " (via: " + articleLink + ")\n\n";
@@ -89,5 +88,5 @@ class NotifierTwitter:
     tweetText = self.getNotificationText(cluster);
     logging.info("Going to tweet'%s' on %s. %s", tweetText, locale, jobLog)
 
-    api.PostUpdate(tweetText);
+    api.update_status(tweetText);
     logging.info("Posted the tweet successfully. Job id: %s", jobLog)

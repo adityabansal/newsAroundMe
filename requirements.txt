@@ -19,6 +19,6 @@ numpy==1.10.4
 jellyfish==0.5.3
 Pillow==4.1.1
 selenium==3.6.0
-python-twitter==3.4.1
 pycrypto==2.6.1
 enum34==1.1.6
+tweepy==3.6.0
