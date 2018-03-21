@@ -52,13 +52,14 @@ class NotifierTwitter:
       'tokenSecret': encryptSecret(tokenSecret, self.encryptionKey)      
     })
 
-  def getNotificationText(self, cluster, hashToAdd):
+  def getNotificationText(self, cluster):
     storyUrl = "https://" + self.domainName + "/story/" + cluster.articles[0]['id'];
     tweetText = "";
     linkLength = 23; #t.co length
-    tweetLength = linkLength + len(hashToAdd) + 10;
+    tweetLength = linkLength;
 
-    for article in cluster.articles:
+    # don't include first article in tweet text as it would anyway show on the card
+    for article in cluster.articles[:1]:
       articleTitle = article['title'];
       articleLink = article['link'];
       articleText = articleTitle + " (via: " + articleLink + ")\n\n";
@@ -70,7 +71,6 @@ class NotifierTwitter:
       else:
         break;
 
-    tweetText = tweetText + "#" + hashToAdd + " #news\n"
     tweetText = tweetText + storyUrl;
     return tweetText
 
@@ -86,7 +86,7 @@ class NotifierTwitter:
     api = self.__getTwitterApi(jobId, locale);
     logging.info("Got the twitter api interface for %s. %s", locale, jobLog)
 
-    tweetText = self.getNotificationText(cluster, locale);
+    tweetText = self.getNotificationText(cluster);
     logging.info("Going to tweet'%s' on %s. %s", tweetText, locale, jobLog)
 
     api.PostUpdate(tweetText);
