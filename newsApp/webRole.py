@@ -40,17 +40,18 @@ def getSharingMetaTags(title, description, imageUrl, ogType):
   if not ogType:
     ogType = 'website'
 
-  if not imageUrl:
-    imageUrl = 'static/logo300by300.png'
-  imageUrl = request.host_url + imageUrl;
-
-  return  [
+  metaTags = [
     { 'tagType': u'name="twitter:card"', 'content': 'summary' },
     { 'tagType': u'property="og:url"', 'content': request.base_url },
     { 'tagType': u'property="og:type"', 'content': ogType},
     { 'tagType': u'property="og:title"', 'content': title },
-    { 'tagType': u'property="og:description"', 'content': description },
-    { 'tagType': u'property="og:image"', 'content': imageUrl }];
+    { 'tagType': u'property="og:description"', 'content': description }];
+
+  if imageUrl:
+    imageUrl = request.host_url + imageUrl;
+    metaTags.append({ 'tagType': u'property="og:image"', 'content': imageUrl })
+
+  return metaTags;
 
 #end helper functions
 
