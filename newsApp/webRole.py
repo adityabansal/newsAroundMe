@@ -213,12 +213,13 @@ def loadStoryPage(docId):
   clusterManager = ClusterManager()
   cluster = clusterManager.queryByDocId(docId.upper())
 
+  if not cluster:
+    return redirect(url_for('home'))
+
   imagesByArticle = [article['images'] for article in cluster['articles']]
   allImages = [image for articleImages in imagesByArticle for image in articleImages]
   image = allImages[0] if allImages else None
 
-  if not cluster:
-    return redirect(url_for('home'))
   return render_template(
     'home.html',
     title=cluster['title'],

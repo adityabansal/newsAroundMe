@@ -77,8 +77,13 @@ $(function() {
         }
 
         self.chooseLocation(selectedLocation);
-        self.disabled(false)
-      });
+      })
+        .fail(function() {
+          self.chooseLocation(self.locations()[0]);
+        })
+        .always(function() {
+          self.disabled(false);
+        });
     }
 
     self._getMatchingLocation = function(section, lat, long) {

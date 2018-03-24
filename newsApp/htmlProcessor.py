@@ -124,7 +124,7 @@ def extractLink(jobId, html, selector, baseUrl):
     if len(titleElements) > 0:
         titleElement = titleElements[0]
 
-        titleText = titleElement.text_content()
+        titleText = titleElement.text_content().strip()
         if not titleText:
             return None
 
