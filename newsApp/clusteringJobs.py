@@ -15,7 +15,7 @@ from minerJobManager import MinerJobManager
 from loggingHelper import *
 from shingleTableManager import ShingleTableManager
 from workerJob import WorkerJob
-import textHelper as th
+import textHelperNltk as th
 
 logger = logging.getLogger('clusteringJobs')
 

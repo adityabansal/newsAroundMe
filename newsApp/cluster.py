@@ -4,6 +4,7 @@ from operator import itemgetter
 from constants import *
 from docManager import DocManager
 from distanceTableManager import DistanceTableManager
+import textHelper as th
 
 DOC_DUPLICATION_THRESHOLD = 0.85
 def _removeDuplicatesAndOutliers(items, articleCount):
@@ -25,6 +26,20 @@ def _isDuplicateArticle(docKey, docsAdded):
       return True
 
   return False
+
+def _getDocTitle(doc):
+  title = doc.tags.get(LINKTAG_TITLE, "").strip()
+  if doc.tags[FEEDTAG_LANG] == LANG_ENGLISH:
+    return th.removeNonAsciiChars(title)
+  else:
+    return title
+
+def _getDocSummary(doc):
+  summary = doc.tags.get(LINKTAG_SUMMARYTEXT, "").strip()
+  if doc.tags[FEEDTAG_LANG] == LANG_ENGLISH:
+    return th.removeNonAsciiChars(summary)
+  else:
+    return summary
 
 def _getImagesForDoc(doc):
   images = doc.tags.get(TAG_IMAGES, [])
@@ -79,10 +94,10 @@ class Cluster(set):
         # don't add any internal stuff here
         self.articles.append({
           'id': docKey,
-          'title': doc.tags.get(LINKTAG_TITLE, ""),
+          'title': _getDocTitle(doc),
           'publisher': doc.tags.get(TAG_PUBLISHER_DETAILS, ""),
           'link': doc.tags.get(DOCTAG_URL, "#"),
-          'summaryText': doc.tags.get(LINKTAG_SUMMARYTEXT, ""),
+          'summaryText': _getDocSummary(doc),
           'images': _getImagesForDoc(doc),
           'lang': doc.tags.get(FEEDTAG_LANG, ""),
           'publishedOn': doc.tags.get(LINKTAG_PUBTIME, 0)
