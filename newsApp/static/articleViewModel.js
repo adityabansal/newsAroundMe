@@ -11,7 +11,9 @@ $(function() {
       return "/" + image;
     });
 
-    self.timeString = window.AppUtils.computeTimeString(article.publishedOn)
+    self.timeString = window.AppUtils.computeTimeString(article.publishedOn);
+
+    self.highlights = self.highlights.slice(0, 6);
   }
 
   window.ArticleViewModel = ArticleViewModel;

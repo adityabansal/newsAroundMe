@@ -133,9 +133,18 @@
 
       <div class="col-xs-12" data-bind="css:{'col-sm-9 col-xsl-6' : images.length > 0}">
         <h4>
-          <a class="headline" target="_blank" data-bind="text : title, attr: {href:link}"></a>
+          <a class="headline" target="_blank" data-bind="text: title, attr: {href:link}"></a>
         </h4>
-        <p data-bind="text : summaryTextToDisplay"></p>
+        <p data-bind="visible: highlights.length === 0, text: summaryTextToDisplay"></p>
+
+        <div data-bind="if: highlights.length > 0">
+          <ul data-bind="foreach: highlights">
+            <li data-bind="css:{'hidden-xs' : $index() > 2}">
+              <p data-bind="text: $data"></p>
+            </li>
+          </ul>
+        </div>
+      </div>
     </li>
   </ul>
   <img  class="center-block" data-bind="visible: isDataLoading" src="{{ url_for('static', filename='loading.svg') }}">
