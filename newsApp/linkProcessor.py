@@ -11,6 +11,7 @@ from minerJobManager import MinerJobManager
 from clusterJobManager import ClusterJobManager
 from cluster import Cluster
 import htmlProcessor as hp
+import textHelperNltk as th
 from publisher import Publisher
 from publisherManager import PublisherManager
 from translation import translate
@@ -52,6 +53,12 @@ def _addTranslationTags(jobId, doc):
       docLang)
 
   return doc
+
+def _getDocHighlights(doc):
+  if doc.tags[FEEDTAG_LANG] == LANG_ENGLISH:
+    return th.getImportantSentences(doc.content)
+  else:
+    return []
 
 def processLink(jobId, linkId):
   """
@@ -104,6 +111,7 @@ def processLink(jobId, linkId):
   if LINKTAG_SUMMARYTEXT not in doc.tags:
     doc.tags[LINKTAG_SUMMARYTEXT] = doc.content[:200]
   doc = _addTranslationTags(jobId, doc)
+  doc.tags[LINKTAG_HIGHLIGHTS] = _getDocHighlights(doc)
 
   # save the doc
   docManager = DocManager();

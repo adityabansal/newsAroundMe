@@ -6,6 +6,8 @@ LANG_HINDI = 'hi'
 LANG_HINDI_METADATA = {'id': LANG_HINDI, 'displayName': 'Hindi'}
 LANG_MARATHI = "mr"
 LANG_MARATHI_METADATA = {'id': LANG_MARATHI, 'displayName': 'Marathi'}
+LANG_BENGALI = "bn"
+LANG_BENGALI_METADATA = {'id': LANG_BENGALI, 'displayName':"Bengali" }
 
 # common tag names
 TAG_PUBLISHER = 'publisher'
@@ -45,6 +47,7 @@ LINKTAG_SUMMARYTEXT = 'summaryText'
 LINKTAG_SUMMARYIMAGES = 'summaryImages'
 LINKTAG_PUBTIME = 'pubtime'
 LINKTAG_TITLE = 'title'
+LINKTAG_HIGHLIGHTS = 'highlights'
 
 # publisher tags
 PUBLISHERTAG_TEXTSELECTOR = 'textSelector'

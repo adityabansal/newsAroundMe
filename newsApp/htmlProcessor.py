@@ -1,3 +1,4 @@
+
 import logging
 import requests
 import urlparse
@@ -43,7 +44,7 @@ def _extractText(html, textSelector):
     text = "";
     textDivs = html.cssselect(textSelector);
     for textDiv in textDivs:
-        text += textDiv.text_content();
+        text += textDiv.text_content().strip() + " ";
     return text.strip();
 
 def _extractImages(html, imageSelector, baseUrl):

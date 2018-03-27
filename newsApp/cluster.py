@@ -98,6 +98,7 @@ class Cluster(set):
           'publisher': doc.tags.get(TAG_PUBLISHER_DETAILS, ""),
           'link': doc.tags.get(DOCTAG_URL, "#"),
           'summaryText': _getDocSummary(doc),
+          'highlights': doc.tags.get(LINKTAG_HIGHLIGHTS, []),
           'images': _getImagesForDoc(doc),
           'lang': doc.tags.get(FEEDTAG_LANG, ""),
           'publishedOn': doc.tags.get(LINKTAG_PUBTIME, 0)

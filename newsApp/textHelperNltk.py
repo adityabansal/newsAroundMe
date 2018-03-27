@@ -23,6 +23,12 @@ def _removePuntuation(text):
         remove_punctuation_map = dict((ord(char), None) for char in string.punctuation)
         return text.translate(remove_punctuation_map)
 
+def hasNumbers(inputString):
+    return any(char.isdigit() for char in inputString)
+
+def getSentences(text):
+    return nltk.sent_tokenize(text)
+
 def getTokens(text):
     text = removeNonAsciiChars(text);
     lowers = text.lower()
@@ -134,3 +140,17 @@ def compareTextEntities(text1, text2, doc1EntityWeights, doc2EntityWeights):
             return 1.0
         else:
             return score
+
+def getImportantSentences(text):
+    sentences = getSentences(text);
+    importantSentences= [];
+
+    for sentence in sentences:
+        nEntities = len(getEntities(sentence))
+        if nEntities > 3:
+            importantSentences.append(sentence)
+        elif nEntities == 3:
+            if " said " in sentence or " told " in sentence or hasNumbers(sentence):
+                importantSentences.append(sentence)
+
+    return importantSentences;
