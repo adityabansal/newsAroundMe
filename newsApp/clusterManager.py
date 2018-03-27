@@ -64,8 +64,8 @@ class ClusterManager:
         }
 
     def __computeClusterRankingScore(self, cluster):
-        return (0.4 * (len(cluster) - len(cluster.duplicates))) + \
-            (0.6 * len(cluster.publishers))
+        return (0.3 * (len(cluster) - len(cluster.duplicates))) + \
+            (0.7 * len(cluster.publishers))
 
     def __sortClustersByImportance(self, clusters):
         clusterList = list(clusters)
