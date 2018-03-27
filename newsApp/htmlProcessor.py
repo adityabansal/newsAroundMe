@@ -44,7 +44,11 @@ def _extractText(html, textSelector):
     text = "";
     textDivs = html.cssselect(textSelector);
     for textDiv in textDivs:
-        text += textDiv.text_content().strip() + " ";
+        textContent = textDiv.text_content().strip()
+        # news text would generally be long,
+        # text from ads would be smaller
+        if len(textContent) > 80:
+            text += textContent + " ";
     return text.strip();
 
 def _extractImages(html, imageSelector, baseUrl):
