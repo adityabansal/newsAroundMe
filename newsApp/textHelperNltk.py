@@ -83,28 +83,31 @@ def compareEnglishTitles(title1, title2):
         return float(len(intersection))/shorterLen
 
 @retry(stop_max_attempt_number=3)
+def getEntitiesInternal(text):
+    if not text:
+        return []
+
+    text = removeNonAsciiChars(text)
+
+    sentences = nltk.sent_tokenize(text)
+    sentences = [nltk.word_tokenize(sent) for sent in sentences]
+    sentences = [nltk.pos_tag(sent) for sent in sentences]
+
+    entities = [];
+    for sentence in sentences:
+        extractedEntities = nltk.ne_chunk(sentence, binary=True).subtrees(
+            filter = lambda x: x.label() == 'NE')
+        for entity in extractedEntities:
+            newEntity = ' '.join([leaf[0] for leaf in entity.leaves()])
+            entities.append(newEntity)
+
+    return list(set(entities))
+
 def getEntities(text):
     try:
-        if not text:
-            return []
-
-        text = removeNonAsciiChars(text)
-
-        sentences = nltk.sent_tokenize(text)
-        sentences = [nltk.word_tokenize(sent) for sent in sentences]
-        sentences = [nltk.pos_tag(sent) for sent in sentences]
-
-        entities = [];
-        for sentence in sentences:
-            extractedEntities = nltk.ne_chunk(sentence, binary=True).subtrees(
-                filter = lambda x: x.label() == 'NE')
-            for entity in extractedEntities:
-                newEntity = ' '.join([leaf[0] for leaf in entity.leaves()])
-                entities.append(newEntity)
-
-        return list(set(entities))
+        return getEntitiesInternal(text)
     except Exception as e:
-        logging.exception("Could not extract entities for text: '%s'", text)
+        logging.info("Could not extract entities for text: '%s'", text)
         return []
 
 def compareEntities(entity1, entity2, doc1EntityWeights, doc2EntityWeights):
