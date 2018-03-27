@@ -2,6 +2,7 @@ import itertools
 import logging
 import string
 
+from retrying import retry
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem.porter import *
@@ -81,6 +82,7 @@ def compareEnglishTitles(title1, title2):
     else:
         return float(len(intersection))/shorterLen
 
+@retry(stop_max_attempt_number=3)
 def getEntities(text):
     try:
         if not text:
