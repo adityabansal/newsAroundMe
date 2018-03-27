@@ -149,7 +149,7 @@ def getImportantSentences(text):
 
     for sentence in sentences:
         nEntities = len(getEntities(sentence))
-        if nEntities > 3:
+        if nEntities > 3 and nEntities < 6:
             importantSentences.append(sentence)
         elif nEntities == 3:
             if " said " in sentence or " told " in sentence or hasNumbers(sentence):
