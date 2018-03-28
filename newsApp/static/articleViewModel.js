@@ -13,7 +13,7 @@ $(function() {
 
     self.timeString = window.AppUtils.computeTimeString(article.publishedOn);
 
-    self.highlights = self.highlights.slice(0, 6);
+    self.highlights = !!self.highlights ? self.highlights.slice(0, 6) : [];
   }
 
   window.ArticleViewModel = ArticleViewModel;
