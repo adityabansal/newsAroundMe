@@ -174,7 +174,10 @@ def _linkFromWebPageEntry(jobId, entry, feed, entrySelector):
     linkTags[LINKTAG_TITLE] = hp.extractText(
       jobId,
       entry,
-      entrySelector['titleText'])
+      entrySelector['titleText'],
+      None)
+    if not linkTags[LINKTAG_TITLE]:
+      return None;
 
   # add summary and image tags
   processingResult = hp.processHtml(

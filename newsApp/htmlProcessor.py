@@ -40,15 +40,36 @@ def _parseAndCleanHtml(rawHtml):
 
     return cleaner.clean_html(parsedHtml)
 
-def _extractText(html, textSelector):
+def _extractTextFromElement(element, baseUrl):
+    if baseUrl and element.tag == 'a':
+        if 'href' in element.attrib:
+            baseDomain = urlparse.urlparse(baseUrl).hostname;
+            link = element.attrib['href'];
+            #don't text from foreign links, likely to be ads
+            if _isAbsolute(link) and baseDomain not in link:
+                return "";
+
+    text_content = "";
+    if element.text:
+        text_content = element.text;
+
+    if len(element):
+        for child in element:
+            childText = _extractTextFromElement(child, baseUrl);
+            if childText:
+                text_content += childText + " ";
+
+            if child.tail:
+                text_content += child.tail + " "
+
+    return text_content.strip();
+
+def _extractText(html, textSelector, baseUrl):
     text = "";
     textDivs = html.cssselect(textSelector);
     for textDiv in textDivs:
-        textContent = textDiv.text_content().strip()
-        # news text would generally be long,
-        # text from ads would be smaller
-        if len(textContent) > 80:
-            text += textContent + " ";
+        textContent = _extractTextFromElement(textDiv, baseUrl)
+        text += textContent + " ";
     return text.strip();
 
 def _extractImages(html, imageSelector, baseUrl):
@@ -85,7 +106,7 @@ def processHtml(jobId, rawHtml, textSelector, imageSelectors, baseUrl = None):
         return ("", [])
 
     # Extract out text
-    text = _extractText(parsedHtml, textSelector)
+    text = _extractText(parsedHtml, textSelector, baseUrl)
     if (text == ""):
         logger.info(
             "Did not find any text for selector: %s. JobId: %s",
@@ -141,7 +162,7 @@ def extractLink(jobId, html, selector, baseUrl):
     logger.info("Could not extract link. JobId: %s", jobId)
     return None
 
-def extractText(jobId, html, textSelector):
+def extractText(jobId, html, textSelector, baseUrl):
     try:
         parsedHtml = _parseAndCleanHtml(html)
     except XMLSyntaxError:
@@ -149,4 +170,4 @@ def extractText(jobId, html, textSelector):
         return None
 
     # Extract out text
-    return _extractText(parsedHtml, textSelector)
+    return _extractText(parsedHtml, textSelector, baseUrl)
