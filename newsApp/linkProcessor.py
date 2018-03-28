@@ -54,11 +54,13 @@ def _addTranslationTags(jobId, doc):
 
   return doc
 
+PUBLISHERS_BLACKLISTED_FOR_HIGHLIGHTS = ["TOI"]
 def _getDocHighlights(doc):
   if doc.tags[FEEDTAG_LANG] == LANG_ENGLISH:
-    return th.getImportantSentences(doc.content)
-  else:
-    return []
+    if doc.tags[TAG_PUBLISHER] not in PUBLISHERS_BLACKLISTED_FOR_HIGHLIGHTS:
+      return th.getImportantSentences(doc.content)
+
+  return []
 
 def processLink(jobId, linkId):
   """
