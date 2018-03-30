@@ -43,11 +43,20 @@ class NotificationTableManager:
       return notificationState.get(notifier.name, False)
 
   def isClusterNotified(self, cluster, notifier):
+    nUnnotifiedDocs = 0
     for docId in cluster:
-      if self.isDocNotified(docId, notifier):
-        return True;
+      if not self.isDocNotified(docId, notifier):
+        nUnnotifiedDocs = nUnnotifiedDocs + 1;
 
-    return False;
+    if nUnnotifiedDocs == len(cluster):
+      # all docs in clusters are unNotified
+      return False;
+    elif nUnnotifiedDocs > 2:
+      # at least 3 docs in the cluster are unNotified
+      return False;
+    else:
+      # some notified docs and less than 3 unNotified docs
+      return True;
 
   def setClusterNotified(self, cluster, notifier):
     table = self.__getTable();

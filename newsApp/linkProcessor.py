@@ -54,7 +54,7 @@ def _addTranslationTags(jobId, doc):
 
   return doc
 
-PUBLISHERS_BLACKLISTED_FOR_HIGHLIGHTS = ["TOI"]
+PUBLISHERS_BLACKLISTED_FOR_HIGHLIGHTS = []
 def _getDocHighlights(doc):
   if doc.tags[FEEDTAG_LANG] == LANG_ENGLISH:
     if doc.tags[TAG_PUBLISHER] not in PUBLISHERS_BLACKLISTED_FOR_HIGHLIGHTS:

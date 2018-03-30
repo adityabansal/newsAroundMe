@@ -15,6 +15,9 @@ __imageProcessor = ImageProcessor()
 def _isAbsolute(url):
     return bool(urlparse.urlparse(url).netloc)
 
+def _getUrlDomain(url):
+    return urlparse.urlparse(url).hostname.lower();
+
 def _addHttpToUrlIfNeeded(url):
     if not bool(urlparse.urlparse(url).scheme):
         return "http:" + url
@@ -43,11 +46,15 @@ def _parseAndCleanHtml(rawHtml):
 def _extractTextFromElement(element, baseUrl):
     if baseUrl and element.tag == 'a':
         if 'href' in element.attrib:
-            baseDomain = urlparse.urlparse(baseUrl).hostname;
+            baseDomain = _getUrlDomain(baseUrl);
             link = element.attrib['href'];
-            #don't text from foreign links, likely to be ads
-            if _isAbsolute(link) and baseDomain not in link:
-                return "";
+            #don't extract text from foreign links, likely to be ads
+            if _isAbsolute(link) and len(link) > 200\
+                and baseDomain != _getUrlDomain(link):
+                    logger.info(
+                        "Filtered out element with link %s while extracting text",
+                        link[:50] + "...")
+                    return "";
 
     text_content = "";
     if element.text:
