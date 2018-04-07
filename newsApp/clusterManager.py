@@ -180,8 +180,13 @@ class ClusterManager:
         jobId = "notifyTwitterForLocale" + locale
         nt = NotifierTwitter()
         notificationTableManager = NotificationTableManager()
+
         if not nt.doesLocaleExist(locale):
           logging.info("No twitter handle exists for locale %s. %s", locale, jobId)
+          return; #skip
+
+        if nt.isNightTime(locale):
+          logging.info("Night time for locale %s. %s", locale, jobId)
           return; #skip
 
         logging.info("Fetching clusters for locale %s. %s", locale, jobId);
@@ -192,7 +197,7 @@ class ClusterManager:
         logging.info("Fetched clusters for locale %s. %s", locale, jobId);
         logging.info("Number of unnotified clusters are: %i. %s", len(clustersToNotify), jobId)
 
-        for cluster in clustersToNotify:
+        for cluster in clustersToNotify[:2]:
             cluster.process()
             try:
                 nt.notifyForLocale(jobId, cluster, locale)

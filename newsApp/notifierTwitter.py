@@ -1,5 +1,7 @@
 import os
 import logging
+from datetime import datetime
+from pytz import timezone
 
 from boto.dynamodb2.table import Table
 import tweepy
@@ -78,6 +80,12 @@ class NotifierTwitter:
       return False;
     else:
       return True;
+
+  def isNightTime(self, locale):
+    # for now we only have cities in india
+    india_tz = timezone('Asia/Kolkata')
+    hour = datetime.now(india_tz).hour
+    return hour >= 0 and hour < 6
 
   def notifyForLocale(self, jobId, cluster, locale):
     jobLog  = "Job id: " + jobId;

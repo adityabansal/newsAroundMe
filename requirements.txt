@@ -22,3 +22,4 @@ selenium==3.6.0
 pycrypto==2.6.1
 enum34==1.1.6
 tweepy==3.6.0
+pytz==2016.7
