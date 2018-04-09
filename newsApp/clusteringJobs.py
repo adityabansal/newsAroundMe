@@ -98,8 +98,8 @@ def computeDocSimScoreUsingEntities(doc1, doc2):
         doc1EntityWeights,
         doc2EntityWeights)
 
-    return titleSim*0.3 \
-           + titleSimEntities*0.3 \
+    return titleSim*0.2 \
+           + titleSimEntities*0.4 \
            + summarySim*0.2 \
            + contentSim*0.2;
 
