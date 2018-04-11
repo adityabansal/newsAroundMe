@@ -98,10 +98,15 @@ def computeDocSimScoreUsingEntities(doc1, doc2):
         doc1EntityWeights,
         doc2EntityWeights)
 
-    return titleSim*0.2 \
+    score = titleSim*0.2 \
            + titleSimEntities*0.4 \
            + summarySim*0.2 \
-           + contentSim*0.2;
+           + contentSim*0.2
+
+    if score > 0.5:
+        score = min(score * 1.4, 1.0)
+
+    return score
 
 def compareDocs(jobId, doc1Key, doc2Key):
     jobInfo = "Doc1 id: " + doc1Key + " Doc2 id: " + doc2Key \
