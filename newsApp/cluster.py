@@ -1,5 +1,7 @@
 import hashlib
 from operator import itemgetter
+import Queue
+from threading import Thread
 
 from constants import *
 from docManager import DocManager
@@ -17,15 +19,33 @@ def _removeDuplicatesAndOutliers(items, articleCount):
 
   return [item for item in d.keys() if d[item] > 0.4 * articleCount]
 
-def _isDuplicateArticle(docKey, docsAdded):
-  distanceTableManager = DistanceTableManager()
-
+def _isDuplicateArticle(docKey, docsAdded, distanceTableManager):
   for addedDoc in docsAdded:
     distance = distanceTableManager.getDistance(docKey, addedDoc)
     if distance > DOC_DUPLICATION_THRESHOLD:
       return True
 
   return False
+
+def _getDocsInParallel(docKeys):
+  que = Queue.Queue()
+  threads_list = list()
+  docManager = DocManager()
+  for docKey in docKeys:
+    t = Thread(
+      target=lambda q, arg1: q.put(docManager.get(arg1)),
+      args=(que, docKey))
+    t.start()
+    threads_list.append(t)
+
+  for t in threads_list:
+    t.join()
+
+  docs = list()
+  while not que.empty():
+    docs.append(que.get())
+
+  return docs
 
 def _getDocTitle(doc):
   title = doc.tags.get(LINKTAG_TITLE, "").strip()
@@ -65,7 +85,7 @@ class Cluster(set):
 
     set.__init__(self, docList)
 
-    docList.sort();
+    docList.sort()
     self.id = hashlib.md5("-".join(docList)).hexdigest().upper()
     self.isCurrent = 'unknown'
 
@@ -85,11 +105,14 @@ class Cluster(set):
     self.lastPubTime = 0
 
     docManager = DocManager()
-    docsAdded = []
-    for docKey in super(Cluster, self).__iter__():
-      doc = docManager.get(docKey)
+    distanceTableManager = DistanceTableManager()
 
-      if not _isDuplicateArticle(docKey, docsAdded):
+    docKeys = list(super(Cluster, self).__iter__())
+    docs = _getDocsInParallel(docKeys)
+    docsAdded = []
+    for doc in docs:
+      docKey = doc.key
+      if not _isDuplicateArticle(docKey, docsAdded, distanceTableManager):
         # note that this gets passed all the way till browser
         # don't add any internal stuff here
         self.articles.append({

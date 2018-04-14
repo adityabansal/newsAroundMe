@@ -18,19 +18,18 @@ class DistanceTableManager:
         Instantiates a new instance of DbItemManager class
         """
 
-        self.tableConnString = os.environ['DISTTABLE_CONNECTIONSTRING'];
+        self.tableConnString = os.environ['DISTTABLE_CONNECTIONSTRING']
+        self.__table = None
 
     def __getTable(self):
         """
         Get the distances table.
         """
 
-        tableConnectionParams = parseConnectionString(
-            self.tableConnString);
+        if not self.__table:
+            self.__table = getDbTable(self.tableConnString)
 
-        return Table(
-            tableConnectionParams['name'],
-            connection = getDbConnection(tableConnectionParams));
+        return self.__table
 
     def createFreshTable(self):
         """
