@@ -25,7 +25,7 @@ def translateGoogle(jobInfo, text, fromLang, toLang = 'en'):
     logger.info("Completed google translation. %s", jobInfo)
     return result
   except:
-    logger.info("Google translation failed. %s", jobInfo)
+    logger.exception("Google translation failed. %s", jobInfo)
     return ""
 
 def _getMicrosoftAccessToken(jobInfo):
@@ -34,19 +34,25 @@ def _getMicrosoftAccessToken(jobInfo):
   }
 
   auth_url = 'https://api.cognitive.microsoft.com/sts/v1.0/issueToken'
-  auth_token = requests.post(auth_url, headers = auth_headers).content
+  get_auth_token_result = requests.post(auth_url, headers = auth_headers)
+  if get_auth_token_result.status_code == 200:
+    auth_token = get_auth_token_result.content
 
-  logger.info(
-    "Obtained MStranslate auth token through azure key. %s",
-    jobInfo)
-  return auth_token;
+    logger.info(
+      "Obtained MStranslate auth token through azure key. %s",
+      jobInfo)
+    return auth_token
+  else:
+    raise Exception(
+      "Could not obtain microsoft access token. Response: " + \
+      get_auth_token_result.content)
 
 def translateMicrosoft(jobInfo, text, fromLang, toLang = 'en'):
   try:
-    logger.info("Started microsoft translation. %s", jobInfo);
+    logger.info("Started microsoft translation. %s", jobInfo)
 
     # get the access token
-    auth_token = _getMicrosoftAccessToken(jobInfo);
+    auth_token = _getMicrosoftAccessToken(jobInfo)
 
     # make the translate api call
     strText = text
@@ -66,7 +72,7 @@ def translateMicrosoft(jobInfo, text, fromLang, toLang = 'en'):
       headers=headers)
 
     if translation_result.status_code == 200 and \
-      'TranslateApiException' not in translation_result.content:
+      'Exception:' not in translation_result.content:
       logger.info("Completed microsoft translation. %s", jobInfo)
       return translation_result.content
     else:
@@ -75,7 +81,7 @@ def translateMicrosoft(jobInfo, text, fromLang, toLang = 'en'):
         translation_result.status_code,
         translation_result.content)
       return ""
-  except Exception as e:
+  except Exception:
     logging.exception("Microsoft translation failed. %s", jobInfo)
     return ""
 
