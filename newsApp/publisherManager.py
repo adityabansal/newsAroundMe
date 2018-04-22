@@ -1,9 +1,9 @@
 import os
 
 from publisher import Publisher
-from dbItemManager import DbItemManager
+from dbItemManagerV2 import DbItemManagerV2
 
-class PublisherManager(DbItemManager):
+class PublisherManager(DbItemManagerV2):
     """
     Manage publishers stored on AWS dynamo db database.
 
@@ -19,5 +19,5 @@ class PublisherManager(DbItemManager):
         Instantiates the publisherManager.
         """
 
-        DbItemManager.__init__(self,
+        DbItemManagerV2.__init__(self,
             os.environ['PUBLISHERTAGSTABLE_CONNECTIONSTRING']);
