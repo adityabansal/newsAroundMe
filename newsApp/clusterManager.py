@@ -18,7 +18,7 @@ from workerJob import WorkerJob
 from notificationTableManager import NotificationTableManager, Notifier
 from notifierTwitter import NotifierTwitter
 
-NOTIFICATION_IMPORTANCE_THRESHOLD = 1.95
+NOTIFICATION_IMPORTANCE_THRESHOLD = 1.85
 
 class ClusterManager:
     """
