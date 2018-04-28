@@ -10,12 +10,12 @@ from nltk.stem.porter import *
 from encodedEntity import EncodedEntity
 from textHelper import removeNonAsciiChars
 
-nltk.download('punkt');
-nltk.download('stopwords');
-nltk.download('maxent_treebank_pos_tagger');
-nltk.download('maxent_ne_chunker');
-nltk.download('averaged_perceptron_tagger')
-nltk.download('words')
+#nltk.download('punkt');
+#nltk.download('stopwords');
+#nltk.download('maxent_treebank_pos_tagger');
+#nltk.download('maxent_ne_chunker');
+#nltk.download('averaged_perceptron_tagger')
+#nltk.download('words')
 
 def _removePuntuation(text):
     if isinstance(text, str):

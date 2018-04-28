@@ -4,8 +4,8 @@ import Queue
 from threading import Thread
 
 from constants import *
+from docHelper import getDocComparisionScore
 from docManager import DocManager
-from distanceTableManager import DistanceTableManager
 import textHelper as th
 
 DOC_DUPLICATION_THRESHOLD = 0.85
@@ -19,9 +19,9 @@ def _removeDuplicatesAndOutliers(items, articleCount):
 
   return [item for item in d.keys() if d[item] > 0.4 * articleCount]
 
-def _isDuplicateArticle(docKey, docsAdded, distanceTableManager):
+def _isDuplicateArticle(doc, docsAdded):
   for addedDoc in docsAdded:
-    distance = distanceTableManager.getDistance(docKey, addedDoc)
+    distance = getDocComparisionScore("processCluster", doc, addedDoc)
     if distance > DOC_DUPLICATION_THRESHOLD:
       return True
 
@@ -104,15 +104,12 @@ class Cluster(set):
     self.duplicates = []
     self.lastPubTime = 0
 
-    docManager = DocManager()
-    distanceTableManager = DistanceTableManager()
-
     docKeys = list(super(Cluster, self).__iter__())
     docs = _getDocsInParallel(docKeys)
     docsAdded = []
     for doc in docs:
       docKey = doc.key
-      if not _isDuplicateArticle(docKey, docsAdded, distanceTableManager):
+      if not _isDuplicateArticle(doc, docsAdded):
         # note that this gets passed all the way till browser
         # don't add any internal stuff here
         self.articles.append({
@@ -126,7 +123,7 @@ class Cluster(set):
           'lang': doc.tags.get(FEEDTAG_LANG, ""),
           'publishedOn': doc.tags.get(LINKTAG_PUBTIME, 0)
         })
-        docsAdded.append(docKey)
+        docsAdded.append(doc)
       else:
         self.duplicates.append(docKey)
 
