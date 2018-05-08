@@ -2,6 +2,7 @@ import logging
 import os
 import random
 import requests
+import time
 import cStringIO
 
 from PIL import Image
@@ -54,7 +55,7 @@ class ImageProcessor:
     # delete existing table if it exists
     try:
       logger.info("Deleting the table ...")
-      self.__getTable().delete();
+      self.__getMappingTable().delete()
       logger.info("Deleted the table. Waiting for sometime before creating a new one")
       time.sleep(20)
     except:
@@ -122,11 +123,15 @@ class ImageProcessor:
       return None;
 
   def processImage(self, jobId, imageUrl):
-    jobIdLog = "JobId: " + jobId;
+    jobIdLog = "JobId: " + jobId
     logger.info(
         "Started processing image with url %s. %s",
         imageUrl,
         jobIdLog)
+
+    if imageUrl.startswith("data:image/"):
+      logger.info("Not processing image with data URI scheme %s", jobIdLog)
+      return
 
     imageMapping = self.__getImageMapping(imageUrl)
     if imageMapping:
