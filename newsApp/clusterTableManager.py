@@ -3,10 +3,10 @@ import time
 import json
 
 from boto.dynamodb2.table import Table
-from boto.dynamodb2.fields import HashKey, RangeKey
+from boto.dynamodb2.fields import HashKey, RangeKey, GlobalAllIndex
 
 from cluster import Cluster
-from dbhelper import *
+from dbhelper import getDbTableWithSchemaAndGlobalIndexes
 from constants import *
 
 class ClusterTableManager:
@@ -21,7 +21,7 @@ class ClusterTableManager:
     Instantiates a new instance of ClusterTableManager class
     """
 
-    self.tableConnString = os.environ['CLUSTERTABLE_CONNECTIONSTRING'];
+    self.tableConnString = os.environ['CLUSTERTABLE_CONNECTIONSTRING']
     self.docClusterMappingTable = os.environ['DOCCLUSTERMAPPINGTABLE_CONNECTIONSTRING']
 
   def __getTable(self):
@@ -29,26 +29,48 @@ class ClusterTableManager:
     Get the clusters table.
     """
 
-    return getDbTable(self.tableConnString);
+    return getDbTableWithSchemaAndGlobalIndexes(
+      self.tableConnString,
+      [
+        HashKey('clusterId')
+      ],
+      [
+        GlobalAllIndex('isCurrent-clusterId-index', parts=[
+          HashKey('isCurrent'),
+          RangeKey('clusterId')
+        ])
+      ]
+    )
 
   def __getMappingsTable(self):
-    return getDbTable(self.docClusterMappingTable)
+    return getDbTableWithSchemaAndGlobalIndexes(
+      self.docClusterMappingTable,
+      [
+        HashKey('clusterId'),
+        RangeKey('docId')
+      ],
+      [
+        GlobalAllIndex('docId-clusterId-index', parts=[
+          HashKey('docId'),
+          RangeKey('clusterId')
+        ])
+      ]
+    )
 
   def archiveOldClusters(self):
     currentClusters = self.getCurrentClusters()
-    table = self.__getTable();
-    timeLimit = int(time.time()) - CLUSTERING_DOC_AGE_LIMIT * 60 * 60 * 24;
+    timeLimit = int(time.time()) - CLUSTERING_DOC_AGE_LIMIT * 60 * 60 * 24
 
     clustersToArchive = [cluster for cluster in currentClusters if \
       cluster.lastPubTime < timeLimit]
     for cluster in clustersToArchive:
-      cluster.isCurrent = 'false';
-    self.addClusters(clustersToArchive);
+      cluster.isCurrent = 'false'
+    self.addClusters(clustersToArchive)
 
-    return clustersToArchive;
+    return clustersToArchive
 
   def addClusters(self, clusters):
-    table = self.__getTable();
+    table = self.__getTable()
     with table.batch_write() as batch:
       for cluster in clusters:
         batch.put_item(data={
@@ -77,7 +99,7 @@ class ClusterTableManager:
     self.addClusters([cluster])
 
   def getCluster(self, clusterId):
-    table = self.__getTable();
+    table = self.__getTable()
     queryResult = list(table.query_2(clusterId__eq = clusterId))
 
     if queryResult:
@@ -99,14 +121,10 @@ class ClusterTableManager:
       index = 'isCurrent-clusterId-index'))
 
   def queryByCategoryAndCountry(self, category, country):
-    table = self.__getTable()
-
     return (cluster for cluster in self.getCurrentClusters() \
       if category in cluster.categories and country in cluster.countries)
 
   def queryByLocale(self, locale):
-    table = self.__getTable()
-
     return (cluster for cluster in self.getCurrentClusters() \
       if locale in cluster.locales)
 

@@ -30,18 +30,33 @@ def getDbTable(connectionString):
     Get a dynamo db table object using connection string
     """
 
-    connectionParams = parseConnectionString(connectionString);
+    connectionParams = parseConnectionString(connectionString)
 
     return Table(
             connectionParams['name'],
-            connection = getDbConnection(connectionParams));
+            connection = getDbConnection(connectionParams))
+
+
+def getDbTableWithSchemaAndGlobalIndexes(connectionString, tableSchema, globalIndexes):
+    """
+    Get a dynamo db table object using connection string
+    This is more efficient than getDbTable method because it avoids call to get table metadata
+    """
+
+    connectionParams = parseConnectionString(connectionString)
+
+    return Table(
+            connectionParams['name'],
+            connection = getDbConnection(connectionParams),
+            schema = tableSchema,
+            global_indexes = globalIndexes)
 
 def getS3Connection(connectionString):
-    connectionParams = parseConnectionString(connectionString);
+    connectionParams = parseConnectionString(connectionString)
 
     connection = S3Connection(
         connectionParams['accessKeyId'],
-        connectionParams['secretAccessKey']);
+        connectionParams['secretAccessKey'])
 
     return connection
 
@@ -60,6 +75,6 @@ def decryptSecret(value, encryptionKey):
     Helper function to decrypt a secret stored in database.
     """
 
-    cipherText = base64.b64decode(value);
+    cipherText = base64.b64decode(value)
     aesCipher = AES.new(encryptionKey, AES.MODE_ECB)
-    return aesCipher.decrypt(cipherText).rstrip('{');
+    return aesCipher.decrypt(cipherText).rstrip('{')
