@@ -1,8 +1,11 @@
-var appCacheName = 'shellCache-v7';
+var appCacheName = 'shellCache-v8';
 var filesToCache = [
   '/',
   '/static/ie10-viewport-bug-workaround.css',
   '/static/ie10-viewport-bug-workaround.js',
+  '/static/bootstrap-3.3.6/css/bootstrap.min.css',
+  '/static/bootstrap-3.3.6/js/bootstrap.min.js',
+  '/static/bootstrap-3.3.6/fonts/glyphicons-halflings-regular.woff2',
   '/static/custom.css',
   '/static/gen/home_packed.js',
   '/static/logoNavbar.png',
