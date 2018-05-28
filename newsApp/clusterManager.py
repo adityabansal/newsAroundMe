@@ -15,10 +15,9 @@ from clusterTableManager import ClusterTableManager
 from loggingHelper import *
 from clusterJobManager import ClusterJobManager
 from workerJob import WorkerJob
-from notificationTableManager import NotificationTableManager, Notifier
-from notifierTwitter import NotifierTwitter
 
 NOTIFICATION_IMPORTANCE_THRESHOLD = 1.85
+NOTIFICATION_MIN_NUMBER_THRESHOLD = 2
 
 class ClusterManager:
     """
@@ -176,35 +175,17 @@ class ClusterManager:
 
         self.clusterTableManager.addClusters(currentClusters)
 
-    def notifyTwitterForLocale(self, locale):
-        jobId = "notifyTwitterForLocale" + locale
-        nt = NotifierTwitter()
-        notificationTableManager = NotificationTableManager()
+    def getNotfiableClustersForLocale(self, jobId, locale):
+        logging.info("Fetching clusters for locale %s. %s", locale, jobId)
 
-        if not nt.doesLocaleExist(locale):
-          logging.info("No twitter handle exists for locale %s. %s", locale, jobId)
-          return; #skip
+        clusters = list(self.clusterTableManager.queryByLocale(locale))
+        sortedClusters = self.__sortClustersByImportance(clusters)
+        importantClusters = [cluster for cluster in clusters if \
+            self.__computeClusterRankingScore(cluster) > NOTIFICATION_IMPORTANCE_THRESHOLD]
+        notifableClusters = importantClusters
+        if len(notifableClusters) < NOTIFICATION_MIN_NUMBER_THRESHOLD:
+            notifableClusters = sortedClusters[:NOTIFICATION_MIN_NUMBER_THRESHOLD]
 
-        if nt.isNightTime(locale):
-          logging.info("Night time for locale %s. %s", locale, jobId)
-          return; #skip
+        logging.info("Number of notfiable clusters are: %i. %s", len(notifableClusters), jobId)
+        return notifableClusters
 
-        logging.info("Fetching clusters for locale %s. %s", locale, jobId);
-        clusters = clusters = self.clusterTableManager.queryByLocale(locale)
-        clustersToNotify = [cluster for cluster in clusters if \
-            self.__computeClusterRankingScore(cluster) > NOTIFICATION_IMPORTANCE_THRESHOLD and \
-            not notificationTableManager.isClusterNotified(cluster, Notifier.twitter)]
-        logging.info("Fetched clusters for locale %s. %s", locale, jobId);
-        logging.info("Number of unnotified clusters are: %i. %s", len(clustersToNotify), jobId)
-
-        for cluster in clustersToNotify[:2]:
-            cluster.process()
-            try:
-                nt.notifyForLocale(jobId, cluster, locale)
-                notificationTableManager.setClusterNotified(cluster, Notifier.twitter)
-            except:
-                logging.exception('Failed to tweet story for cluster %s. %s', cluster.id, jobId)
-
-    def notifyTwitterForAllLocales(self):
-        for location in LOCATION_METADATA:
-            self.notifyTwitterForLocale(location['value'])
