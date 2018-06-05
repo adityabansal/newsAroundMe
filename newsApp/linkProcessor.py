@@ -20,20 +20,54 @@ from workerJob import WorkerJob
 logger = logging.getLogger('linkProcessor')
 
 def _generateRandomDocKey():
-    return ''.join(random.choice('0123456789ABCDEF') for i in range(16));
+    return ''.join(random.choice('0123456789ABCDEF') for i in range(16))
 
 def _getDocKey(link):
     # overwrite the existing doc if this link has already been processed.
     if LINKTAG_DOCKEY in link.tags:
-        return link.tags[LINKTAG_DOCKEY];
+        return link.tags[LINKTAG_DOCKEY]
     else:
-        return _generateRandomDocKey();
+        return _generateRandomDocKey()
 
 def _getPublisherDetails(publisher):
     return {
         PUBLISHER_DETAILS_FRIENDLYID: publisher.tags[PUBLISHERTAG_FRIENDLYID],
         PUBLISHER_DETAILS_NAME: publisher.tags[PUBLISHERTAG_NAME],
         PUBLISHER_DETAILS_HOMEPAGE: publisher.tags[PUBLISHERTAG_HOMEPAGE]}
+
+def _processHtmlForLink(jobId, link, publisher):
+  linkAndJobId = "Link id: " + link.id + ". Job id: " + jobId
+  linkId = link.id
+
+  pageStaticHtml = link.getHtmlStatic()
+  logger.info("Got static html for the link. %s.", linkAndJobId)
+  resultStatic = hp.processHtml(
+    jobId,
+    pageStaticHtml,
+    publisher.tags[PUBLISHERTAG_TEXTSELECTOR],
+    json.loads(publisher.tags[PUBLISHERTAG_IMAGESELECTORS]),
+    linkId)
+
+  if len(resultStatic[0]) > 500 and len(resultStatic[1]) > 0:
+    logger.info(
+      "Text and images extracted using static html. %s.",
+      linkAndJobId)
+    return resultStatic
+
+  pageDynamicHtml = link.getHtmlDynamic()
+  logger.info("Got dynamic html for the link. %s.", linkAndJobId)
+  resultDynamic = hp.processHtml(
+    jobId,
+    pageDynamicHtml,
+    publisher.tags[PUBLISHERTAG_TEXTSELECTOR],
+    json.loads(publisher.tags[PUBLISHERTAG_IMAGESELECTORS]),
+    linkId)
+
+  text = resultDynamic[0]
+  if len(text) < resultStatic[0]:
+    text = resultStatic[0]
+  images = list(set(resultStatic[1] + resultDynamic[1]))
+  return (text, images)
 
 def _addTranslationTags(jobId, doc):
   docLang = doc.tags[FEEDTAG_LANG]
@@ -75,40 +109,31 @@ def processLink(jobId, linkId):
   6. update the link's is processed tag.
   """
 
-  linkAndJobId = "Link id: " + linkId + ". Job id: " + jobId;
+  linkAndJobId = "Link id: " + linkId + ". Job id: " + jobId
   logger.info("Started processing link. %s.", linkAndJobId)
   
   # get the link
-  linkManager = LinkManager();
-  link = linkManager.get(linkId);
+  linkManager = LinkManager()
+  link = linkManager.get(linkId)
   logger.info("Got link from database. %s.", linkAndJobId)
 
   # get the publisher
-  publisherManager = PublisherManager();
-  publisher = publisherManager.get(link.tags[TAG_PUBLISHER]);
+  publisherManager = PublisherManager()
+  publisher = publisherManager.get(link.tags[TAG_PUBLISHER])
   logger.info(
     "Got publisher from database. Publisher id: %s. %s.",
     link.tags[TAG_PUBLISHER],
     linkAndJobId)
 
   # get html for the link
-  pageHtml = link.getHtml();
-  logger.info("Got html for the link. %s.", linkAndJobId)
-
-  # process that html
-  processingResult = hp.processHtml(
-      jobId,
-      pageHtml,
-      publisher.tags[PUBLISHERTAG_TEXTSELECTOR],
-      json.loads(publisher.tags[PUBLISHERTAG_IMAGESELECTORS]),
-      linkId);
+  processingResult = _processHtmlForLink(jobId, link, publisher)
   if not processingResult[0]:
     logger.warning("No text extracted for the link. %s.", linkAndJobId)
 
   # generate corresponding doc
-  doc = Doc(_getDocKey(link), processingResult[0], link.tags);
-  doc.tags[TAG_IMAGES] = processingResult[1];
-  doc.tags[DOCTAG_URL] = linkId;
+  doc = Doc(_getDocKey(link), processingResult[0], link.tags)
+  doc.tags[TAG_IMAGES] = processingResult[1]
+  doc.tags[DOCTAG_URL] = linkId
   doc.tags[TAG_PUBLISHER_DETAILS] = _getPublisherDetails(publisher)
   if LINKTAG_SUMMARYTEXT not in doc.tags:
     doc.tags[LINKTAG_SUMMARYTEXT] = doc.content[:200]
@@ -116,16 +141,16 @@ def processLink(jobId, linkId):
   doc.tags[LINKTAG_HIGHLIGHTS] = _getDocHighlights(doc)
 
   # save the doc
-  docManager = DocManager();
-  docManager.put(doc);
+  docManager = DocManager()
+  docManager.put(doc)
   logger.info(
       "Document generated and saved for link. Doc key %s. %s.",
       doc.key,
       linkAndJobId)
 
   #update the doc key in links table
-  link.tags[LINKTAG_DOCKEY] = doc.key;
-  linkManager.put(link);
+  link.tags[LINKTAG_DOCKEY] = doc.key
+  linkManager.put(link)
 
   # put parse doc job
   parseDocJob = WorkerJob(JOB_PARSEDOC, { JOBARG_PARSEDOC_DOCID : doc.key})
@@ -149,8 +174,8 @@ def processLink(jobId, linkId):
       linkAndJobId)
 
   # update the link
-  link.tags[LINKTAG_ISPROCESSED] = 'true';
-  linkManager.put(link);
+  link.tags[LINKTAG_ISPROCESSED] = 'true'
+  linkManager.put(link)
   logger.info(
     "Link updated after being successfully processed. %s.",
     linkAndJobId)

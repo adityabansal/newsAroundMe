@@ -1,20 +1,20 @@
 from dbItem import DbItem
-from webPageLoader import *
+from webPageLoader import loadPageAndGetHtml, getHtmlStatic
 import time
 import requests
 
 def _openUrlWithRetries(url, max_retries = 3):
-    nRetries = 0;
+    nRetries = 0
     while (True):
         try:
-            response = requests.get(url, timeout = 10);
-            return response;
+            response = requests.get(url, timeout = 10)
+            return response
         except Exception as e:
             if (nRetries >= max_retries):
-                raise e;
+                raise e
             else:
-                time.sleep(10);
-                nRetries = nRetries + 1;
+                time.sleep(10)
+                nRetries = nRetries + 1
 
 def getIdentifierUrl(url):
   """
@@ -23,8 +23,8 @@ def getIdentifierUrl(url):
   due to redirects etc.
   """
 
-  result = _openUrlWithRetries(url);
-  return result.url;
+  result = _openUrlWithRetries(url)
+  return result.url
 
 class Link(DbItem):
   """
@@ -39,7 +39,10 @@ class Link(DbItem):
     Instantiates a link object representing a link to a web page.
     """
 
-    DbItem.__init__(self, getIdentifierUrl(id), tags);
+    DbItem.__init__(self, getIdentifierUrl(id), tags)
 
-  def getHtml(self):
+  def getHtmlDynamic(self):
     return loadPageAndGetHtml(self.id)
+
+  def getHtmlStatic(self):
+    return getHtmlStatic(self.id)
