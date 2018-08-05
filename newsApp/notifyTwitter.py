@@ -28,7 +28,7 @@ def notifyTwitterForLocale(locale):
     logging.info("Number of unnotified clusters are: %i. %s", len(clustersToNotify), jobId)
 
     for cluster in clustersToNotify[:2]:
-        cluster.process()
+        cluster = clusterManager.getProcessedCluster(cluster)
         try:
             nt.notifyForLocales(jobId, cluster)
             notificationTableManager.setClusterNotified(cluster, Notifier.twitter)

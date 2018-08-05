@@ -37,7 +37,7 @@ class DocManager:
         bucketConnParams = parseConnectionString(self.bucketConnString)
         conn = getS3Connection(self.bucketConnString)
 
-        return conn.get_bucket(bucketConnParams['bucketName'])
+        return conn.get_bucket(bucketConnParams['bucketName'], validate=False)
 
     def __isDocNew(self, key, timeLimit):
         if _getEpochSecs(key.last_modified) < timeLimit:
@@ -77,3 +77,4 @@ class DocManager:
         k = Key(self.__getBucket())
         k.key = docKey
         k.delete()
+        self.cache.delete(docKey)

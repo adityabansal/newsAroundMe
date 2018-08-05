@@ -2,6 +2,7 @@ import os
 import json
 import random
 import time
+import logging
 
 from boto.s3.connection import S3Connection
 from boto.exception import S3ResponseError
@@ -9,10 +10,9 @@ from boto.s3.key import Key
 
 from constants import *
 from docManager import DocManager
-from dbhelper import *
 from cluster import Cluster
 from clusterTableManager import ClusterTableManager
-from loggingHelper import *
+from processedClusterStore import ProcessedClusterStore
 from clusterJobManager import ClusterJobManager
 from workerJob import WorkerJob
 
@@ -32,15 +32,19 @@ class ClusterManager:
 
         self.clusterTableManager = ClusterTableManager()
         self.docManager = DocManager()
+        self.processedClusterStore = ProcessedClusterStore()
+
+    def getProcessedCluster(self, cluster):
+        return self.processedClusterStore.getProcessedCluster(cluster)
 
     def processNewCluster(self, cluster):
-        cluster.process()
         cluster.isCurrent = 'true'
+        cluster = self.processedClusterStore.processAndSaveCluster(cluster)
         self.clusterTableManager.addCluster(cluster)
 
     def __getProcessedClusterArticles(self, cluster):
-        cluster.process();
-        return cluster.articles;
+        cluster = self.getProcessedCluster(cluster)
+        return cluster.articles
 
     def __getClusterResponse(self, cluster, filters = None):
         articles = self.__getProcessedClusterArticles(
@@ -157,6 +161,7 @@ class ClusterManager:
 
         logging.info("Number of clusters to delete are: %i", len(expiredClusters))
         self.clusterTableManager.deleteClusters(expiredClusters)
+        self.processedClusterStore.deleteClusters(expiredClusters)
 
     def getCurrentClusters(self):
         return self.clusterTableManager.getCurrentClusters()
@@ -171,7 +176,7 @@ class ClusterManager:
     def reprocessCurrentClusters(self):
         currentClusters = self.getCurrentClusters()
         for cluster in currentClusters:
-            cluster.process()
+            cluster = self.processedClusterStore.processAndSaveCluster(cluster)
 
         self.clusterTableManager.addClusters(currentClusters)
 

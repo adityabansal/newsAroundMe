@@ -1,4 +1,5 @@
 import hashlib
+import json
 from operator import itemgetter
 import Queue
 from threading import Thread
@@ -149,3 +150,35 @@ class Cluster(set):
     self.locales = _removeDuplicatesAndOutliers(self.locales, nArticles)
     self.publishers = list(set(self.publishers))
     self.languages = list(set(self.languages))
+
+  def deserializeFromString(self, clusterString):
+    clusterDict = json.loads(clusterString)
+    self.__init__(clusterDict['docKeys'])
+    self.articles = clusterDict['articles']
+    self.categories = clusterDict['categories']
+    self.countries = clusterDict['countries']
+    self.locales = clusterDict['locales']
+    self.publishers = clusterDict['publishers']
+    self.languages = clusterDict['languages']
+    self.duplicates = clusterDict['duplicates']
+    self.isCurrent = clusterDict['isCurrent']
+    self.lastPubTime = float(clusterDict['lastPubTime'])
+
+  def serializeToString(self):
+    """
+    Serialize cluster to string. Only works for processed clusters
+    """
+
+    return json.dumps({
+      'clusterId': self.id,
+      'docKeys': list(super(Cluster, self).__iter__()),
+      'articles': self.articles,
+      'categories': self.categories,
+      'countries': self.countries,
+      'locales': self.locales,
+      'publishers': self.publishers,
+      'languages': self.languages,
+      'duplicates': self.duplicates,
+      'isCurrent': self.isCurrent,
+      'lastPubTime': self.lastPubTime
+    })
