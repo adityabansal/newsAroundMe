@@ -65,6 +65,24 @@
       </div>
     </div>
 
+    <footer class="footer">
+      <div class="footer-container row">
+        <div class="col-xs-12 col-md-6">
+          <p>newsaroundme.com is a next-gen local news aggregator, that groups together similar news articles and shows you top trending news stories from your city.</p>
+          <p>Contact us at <a href="mailto:contact@newsaroundme.com"><strong>contact@newsaroundme.com</strong></a>.</p>
+        </div>
+        <div class="col-xs-12 col-md-6">
+          <!-- ko foreach: locations -->
+          <div class="footer-link-container">
+            <a class="footer-link" href="#" data-bind="click: $parent.navigateToLocation, attr:{'href': url}">
+              <span data-bind="text: longDisplayName">
+            </a>
+          </div>
+          <!-- /ko -->
+        </div>
+      </div>
+    </footer>
+
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->

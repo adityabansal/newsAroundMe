@@ -124,3 +124,4 @@ for location in LOCATION_METADATA:
   location['title'] = location['displayName'] + ' News | Newsaroundme';
   location['description'] = 'Latest local news from '+ location['displayName'] + '.';
   location['url'] = "/" + location['value']
+  location['longDisplayName'] = location['displayName'] + ' news'

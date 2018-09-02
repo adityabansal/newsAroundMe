@@ -22,6 +22,7 @@ home_js = Bundle(
   'storyViewModel.js',
   'storyDetailViewModel.js',
   'storiesViewModel.js',
+  'footerViewModel.js',
   'navigate.js',
   'app.js',
   filters='jsmin',

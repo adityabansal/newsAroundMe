@@ -23,6 +23,7 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
 
 .body-content {
   padding: 40px 0 0 0;
+  min-height: 45em;
 }
 
 .upper-control {
@@ -113,4 +114,31 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
 .show-more-button:hover, .show-more-button:focus {
   background-color: #5a0000;
   color: white;
+}
+
+.footer {
+  width: 100%;
+  background-color: #222;
+  margin-top: 5em;
+}
+
+.footer > .footer-container {
+  padding: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.footer > .footer-container p {
+  color: #aaa;
+}
+
+.footer .footer-link-container {
+  min-width: 9em;
+  padding-right: 5px;
+  display: inline-block;
+}
+
+.footer .footer-link {
+  color: #aaa;
+  text-decoration: underline;
 }
