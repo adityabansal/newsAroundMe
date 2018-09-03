@@ -1,7 +1,9 @@
 $(function() {
   function onNavigateWithoutTracking() {
-    newPath = location.pathname.toLowerCase();
+    // scroll to top before navigatiing anywhere
+    document.body.scrollTop = document.documentElement.scrollTop = 0;
 
+    newPath = location.pathname.toLowerCase();
     if (newPath.indexOf("/story/") === 0) {
       window.StoryDetailViewModel.loadStory(newPath.substr(7))
 

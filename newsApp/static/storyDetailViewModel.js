@@ -16,6 +16,11 @@ $(function() {
 
       self.isDataLoading(true);
 
+      if (refreshLanguageFilter) {
+        self.locations([]);
+        self.languageFilterVM.setLanguages([]);
+      }
+
       self.articles([]);
       self.lastRequest = $.getJSON(url, function( response ) {
         self.articles([]);

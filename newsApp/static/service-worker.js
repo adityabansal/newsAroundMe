@@ -1,4 +1,4 @@
-var appCacheName = 'shellCache-v9';
+var appCacheName = 'shellCache-v10';
 var filesToCache = [
   '/',
   '/static/ie10-viewport-bug-workaround.css',
