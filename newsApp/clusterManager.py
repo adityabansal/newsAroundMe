@@ -17,6 +17,7 @@ from clusterJobManager import ClusterJobManager
 from workerJob import WorkerJob
 
 NOTIFICATION_IMPORTANCE_THRESHOLD = 1.85
+NOTIFICATION_IMPORTANCE_THRESHOLD_LOW = 1.1
 NOTIFICATION_MIN_NUMBER_THRESHOLD = 2
 
 class ClusterManager:
@@ -184,12 +185,17 @@ class ClusterManager:
         logging.info("Fetching clusters for locale %s. %s", locale, jobId)
 
         clusters = list(self.clusterTableManager.queryByLocale(locale))
-        sortedClusters = self.__sortClustersByImportance(clusters)
+
         importantClusters = [cluster for cluster in clusters if \
             self.__computeClusterRankingScore(cluster) > NOTIFICATION_IMPORTANCE_THRESHOLD]
+
+        lessImportantClusters = [cluster for cluster in clusters if \
+            self.__computeClusterRankingScore(cluster) > NOTIFICATION_IMPORTANCE_THRESHOLD_LOW]
+        lessImportantClusters = self.__sortClustersByImportance(lessImportantClusters)
+
         notifableClusters = importantClusters
         if len(notifableClusters) < NOTIFICATION_MIN_NUMBER_THRESHOLD:
-            notifableClusters = sortedClusters[:NOTIFICATION_MIN_NUMBER_THRESHOLD]
+            notifableClusters = lessImportantClusters[:NOTIFICATION_MIN_NUMBER_THRESHOLD]
 
         logging.info("Number of notfiable clusters are: %i. %s", len(notifableClusters), jobId)
         return notifableClusters
