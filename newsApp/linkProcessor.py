@@ -77,15 +77,23 @@ def _addTranslationTags(jobId, doc):
       jobId,
       doc.tags[LINKTAG_TITLE],
       docLang)
-    doc.tags[DOCTAG_TRANSLATED_SUMMARYTEXT] = translate(
-      jobId,
-      doc.tags[LINKTAG_SUMMARYTEXT],
-      docLang)
+    if LINKTAG_SUMMARYTEXT in doc.tags:
+      doc.tags[DOCTAG_TRANSLATED_SUMMARYTEXT] = translate(
+        jobId,
+        doc.tags[LINKTAG_SUMMARYTEXT],
+        docLang)
     doc.tags[DOCTAG_TRANSLATED_CONTENT] = translate(
       jobId,
       doc.content,
       docLang)
 
+  return doc
+
+def _addSummaryIfNotPresent(doc):
+  if LINKTAG_SUMMARYTEXT not in doc.tags:
+    doc.tags[LINKTAG_SUMMARYTEXT] = doc.content[:200]
+    if DOCTAG_TRANSLATED_CONTENT in doc.tags:
+      doc.tags[DOCTAG_TRANSLATED_SUMMARYTEXT] = doc.tags[DOCTAG_TRANSLATED_CONTENT][:200]
   return doc
 
 PUBLISHERS_BLACKLISTED_FOR_HIGHLIGHTS = []
@@ -135,9 +143,8 @@ def processLink(jobId, linkId):
   doc.tags[TAG_IMAGES] = processingResult[1]
   doc.tags[DOCTAG_URL] = linkId
   doc.tags[TAG_PUBLISHER_DETAILS] = _getPublisherDetails(publisher)
-  if LINKTAG_SUMMARYTEXT not in doc.tags:
-    doc.tags[LINKTAG_SUMMARYTEXT] = doc.content[:200]
   doc = _addTranslationTags(jobId, doc)
+  doc = _addSummaryIfNotPresent(doc)
   doc.tags[LINKTAG_HIGHLIGHTS] = _getDocHighlights(doc)
 
   # save the doc
