@@ -34,7 +34,7 @@ def computeEnglishDocsSimScore(doc1, doc2):
     doc1EntityWeights = json.loads(doc1.tags.get(DOCTAG_ENTITY_WEIGHTS, "{}"))
     doc2EntityWeights = json.loads(doc2.tags.get(DOCTAG_ENTITY_WEIGHTS, "{}"))
 
-    titleSim = th.compareEnglishTitles(
+    titleSim = th.compareTitles(
         getDocEnglishTitle(doc1),
         getDocEnglishTitle(doc2))
 
@@ -44,11 +44,11 @@ def computeEnglishDocsSimScore(doc1, doc2):
         doc1EntityWeights,
         doc2EntityWeights)
 
-    summarySim = th.compareEnglishTexts(
+    summarySim = th.compareUsingShingles(
         getDocEnglishSummaryText(doc1),
         getDocEnglishSummaryText(doc2))
 
-    contentSim = th.compareEnglishTexts(
+    contentSim = th.compareUsingShingles(
         getDocEnglishContent(doc1),
         getDocEnglishContent(doc2))
 
@@ -61,7 +61,7 @@ def computeDocSimScoreUsingEntities(doc1, doc2):
     doc1EntityWeights = json.loads(doc1.tags.get(DOCTAG_ENTITY_WEIGHTS, "{}"))
     doc2EntityWeights = json.loads(doc2.tags.get(DOCTAG_ENTITY_WEIGHTS, "{}"))
 
-    titleSim = th.compareEnglishTitles(
+    titleSim = th.compareTitles(
         getDocEnglishTitle(doc1),
         getDocEnglishTitle(doc2))
 

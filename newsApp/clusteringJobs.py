@@ -148,29 +148,29 @@ def parseDoc(jobId, docId):
 
     # compute and put shingles
     if (doc.tags[FEEDTAG_LANG] == LANG_ENGLISH):
-        shingles = th.getStemmedShingles(
-          getDocEnglishSummaryText(doc), 2, 3)
-        shingles = shingles + th.getStemmedShingles(
+        shingles = th.getShingles(getDocEnglishSummaryText(doc), 3, 3)
+        shingles = shingles + th.getShingles(
           getDocEnglishContent(doc), 3, 3)
         logger.info("Completed getting shingles. %s.", docAndJobId)
+        shingles = list(set(shingles))
         logger.info(
           "Number of unique shigles are %i. %s.",
-          len(set(shingles)),
+          len(shingles),
           docAndJobId)
 
         shingleTableManager = ShingleTableManager()
-        shingleTableManager.addEntries(docId, shingles);
+        shingleTableManager.addEntries(docId, shingles)
         logger.info("Added shingles to shingle table. %s.", docAndJobId)
 
     # compute and put entities
     entities = th.getEntities(getDocEnglishTitle(doc)) + \
         th.getEntities(getDocEnglishSummaryText(doc)) + \
-        th.getEntities(getDocEnglishContent(doc));
+        th.getEntities(getDocEnglishContent(doc))
     entities = list(set(entities))
     logger.info("Completed getting entities. %s.", docAndJobId)
     logger.info(
       "Number of unique entities are %i. %s.",
-      len(set(entities)),
+      len(entities),
       docAndJobId)
 
     entityTableManager = EntityTableManager()
@@ -178,7 +178,7 @@ def parseDoc(jobId, docId):
     logger.info("Added entities to entity table. %s.", docAndJobId)
 
     #store entity weights in the doc
-    entityWeights = {};
+    entityWeights = {}
     for entity in entities:
         entityWeight = entityTableManager.getEntityWeight(entity)
         entityWeights[entity] = entityWeight
@@ -218,7 +218,7 @@ def getCandidateDocsUsingShingles(jobId, docId, docAndJobId):
     matches = [match for match in matchFreq.keys() if matchFreq[match] > 4]
 
     logger.info("%i matching docs found using shingles. %s.", len(matches), docAndJobId)
-    return matches;
+    return matches
 
 def getCandidateDocsUsingEntities(jobId, docId, docAndJobId):
     entityTableManager = EntityTableManager()
@@ -258,7 +258,7 @@ def putComareDocJobs(docId, matches, docAndJobId):
                 docAndJobId)
 
 def getCandidateDocs(jobId, docId):
-    docAndJobId = "Doc id: " + docId + ". Job id: " + jobId;
+    docAndJobId = "Doc id: " + docId + ". Job id: " + jobId
     logger.info("Started get candidate docs job. %s.", docAndJobId)
 
     matchesUsingShingles = getCandidateDocsUsingShingles(jobId, docId, docAndJobId)
