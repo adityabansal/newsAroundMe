@@ -88,11 +88,22 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
   color: #171717;
 }
 
+.baseCard .card-actionRow {
+    border-top: 2px solid #aaa;
+    padding-top: 0.5em;
+    margin-top: 0.5em;
+}
+
 .baseCard .card-action {
   font-size: 1.1em;
-  color: #6b0000;
-  border: 1px solid #6b0000;
-  border-radius: 8px;
+  color: #333;
+  padding-left: 0.2em;
+  border-left: 2px solid #aaa;
+}
+
+.baseCard .card-action:hover {
+  color:#5a0000;
+  text-decoration: none;
 }
 
 .baseCard .card-action span {
@@ -100,9 +111,24 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
   padding-right: 4px;
 }
 
+.storyCard {
+  margin-bottom: 20px;
+  box-shadow:         3px 3px 5px 6px #888;
+  -webkit-box-shadow: 3px 3px 5px 6px #888;
+  -moz-box-shadow:    3px 3px 5px 6px #888;
+}
+
+.articleCard {
+  border: 2px solid #777;
+}
+
 .upper-nav-link {
   font-size: 1.2em;
   color: #6b0000;
+}
+
+.upper-nav-link:hover {
+  color: #5b0000;
 }
 
 .show-more-button {

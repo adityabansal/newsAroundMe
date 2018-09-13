@@ -47,7 +47,7 @@
 <!-- BEGIN: News stories -->
 <div id="storyList" class="center-block">
   <ul class="list-group" data-bind="foreach: stories">
-    <li class="list-group-item row baseCard">
+    <li class="list-group-item row baseCard storyCard">
       <div class="col-xs-12 col-xsl-6 col-sm-3" data-bind="if: images().length > 0">
         <div data-bind="with: images()[0]">
           <div class="storyPic-container">
@@ -81,9 +81,9 @@
         </div>
       </div>
 
-      <div class="col-xs-12">
+      <div class="col-xs-12 card-actionRow">
         <a href="#" class="pull-right card-action" data-bind="click: navigateToDetails, attr: {href:storyDetailUrl}">
-          <span class="hidden-xs">Details</span>
+          <span>Details</span>
           <span class="glyphicon glyphicon-arrow-right" aria-label="Details"></span>
         </a>
       </div>
@@ -111,7 +111,7 @@
   {{ languageFilterMacro() }}
 
   <ul class="list-group" data-bind="foreach: articles">
-    <li class="list-group-item row baseCard">
+    <li class="list-group-item row baseCard articleCard">
       <div class="col-xs-12">
         <div class="card-header">
           <span class="glyphicon glyphicon-time"></span>
