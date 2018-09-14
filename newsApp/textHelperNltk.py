@@ -87,7 +87,10 @@ def compareUsingShingles(text1, text2):
     if shorterLen == 0:
         return 0
     else:
-        return float(len(intersection))/shorterLen
+        denominator = min(shorterLen, 200)
+        comparisionScore = float(len(intersection))/denominator
+        comparisionScore = min(comparisionScore, 1.0)
+        return comparisionScore
 
 def compareTitles(title1, title2):
     title1Tokens = set(getTokens(title1))
@@ -99,7 +102,8 @@ def compareTitles(title1, title2):
     if  shorterLen == 0:
         return 0
     else:
-        return float(len(intersection))/shorterLen
+        comparisionScore = float(len(intersection))/shorterLen
+        return comparisionScore
 
 @retry(stop_max_attempt_number=3)
 def getEntitiesInternal(text):

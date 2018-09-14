@@ -154,7 +154,7 @@ def parseDoc(jobId, docId):
         logger.info("Completed getting shingles. %s.", docAndJobId)
         shingles = list(set(shingles))
         logger.info(
-          "Number of unique shigles are %i. %s.",
+          "Number of unique shingles are %i. %s.",
           len(shingles),
           docAndJobId)
 
