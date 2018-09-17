@@ -9,7 +9,7 @@ from googleapiclient.discovery import build
 logger = logging.getLogger('translation')
 
 MSTRANSLATE_LANGS = ['hi', 'bn', 'ta']
-GOOGLE_LANGS = ['hi', 'bn', 'ta', 'mr']
+GOOGLE_LANGS = ['hi', 'bn', 'ta', 'mr', 'gu']
 
 def translateGoogle(jobInfo, text, fromLang, toLang = 'en'):
   try:

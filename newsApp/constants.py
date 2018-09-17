@@ -8,6 +8,9 @@ LANG_MARATHI = "mr"
 LANG_MARATHI_METADATA = {'id': LANG_MARATHI, 'displayName': 'Marathi'}
 LANG_BENGALI = "bn"
 LANG_BENGALI_METADATA = {'id': LANG_BENGALI, 'displayName':"Bengali" }
+LANG_GUJARATI = "gu"
+LANG_GUJARATI_METADATA = {'id': LANG_GUJARATI, 'displayName':"Gujarati" }
+
 
 # common tag names
 TAG_PUBLISHER = 'publisher'
@@ -118,10 +121,10 @@ LOCATION_METADATA = [
   {'displayName': 'Kolkata', 'icon': '', 'value': 'kolkata', 'lat': 22.57, 'long': 88.36, 'languages': [LANG_ENGLISH_METADATA]},
   {'displayName': 'Hyderabad', 'icon': '', 'value': 'hyderabad', 'lat': 17.39, 'long': 78.49, 'languages': [LANG_ENGLISH_METADATA]},
   {'displayName': 'Ahmedabad', 'icon': '', 'value': 'ahmedabad', 'lat': 23.02, 'long': 72.57, 'languages': [LANG_ENGLISH_METADATA]},
-  {'displayName': 'Pune', 'icon': '', 'value': 'pune', 'lat': 18.52, 'long': 73.86, 'languages': [LANG_ENGLISH_METADATA]},
+  {'displayName': 'Pune', 'icon': '', 'value': 'pune', 'lat': 18.52, 'long': 73.86, 'languages': [LANG_ENGLISH_METADATA, LANG_MARATHI_METADATA]},
   {'displayName': 'Jaipur', 'icon': '', 'value': 'jaipur', 'lat': 26.91, 'long': 75.79, 'languages': [LANG_ENGLISH_METADATA, LANG_HINDI_METADATA]}]
 for location in LOCATION_METADATA:
-  location['title'] = location['displayName'] + ' News | Newsaroundme';
-  location['description'] = 'Latest local news from '+ location['displayName'] + '.';
+  location['title'] = location['displayName'] + ' News | Newsaroundme'
+  location['description'] = 'Latest local news from '+ location['displayName'] + '.'
   location['url'] = "/" + location['value']
   location['longDisplayName'] = location['displayName'] + ' news'
