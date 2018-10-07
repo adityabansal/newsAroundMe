@@ -89,6 +89,7 @@ class Cluster(set):
     docList.sort()
     self.id = hashlib.md5("-".join(docList)).hexdigest().upper()
     self.isCurrent = 'unknown'
+    self.isProcessed = False
 
   def process(self):
     """
@@ -150,6 +151,7 @@ class Cluster(set):
     self.locales = _removeDuplicatesAndOutliers(self.locales, nArticles)
     self.publishers = list(set(self.publishers))
     self.languages = list(set(self.languages))
+    self.isProcessed = True
 
   def deserializeFromString(self, clusterString):
     clusterDict = json.loads(clusterString)
@@ -163,11 +165,15 @@ class Cluster(set):
     self.duplicates = clusterDict['duplicates']
     self.isCurrent = clusterDict['isCurrent']
     self.lastPubTime = float(clusterDict['lastPubTime'])
+    self.isProcessed = True
 
   def serializeToString(self):
     """
     Serialize cluster to string. Only works for processed clusters
     """
+
+    if not self.isProcessed:
+      raise ValueError('Only processed clusters can be serialized')
 
     return json.dumps({
       'clusterId': self.id,
