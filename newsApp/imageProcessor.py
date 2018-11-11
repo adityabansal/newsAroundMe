@@ -171,8 +171,13 @@ class ImageProcessor:
           jobIdLog)
         return;
 
+      # crop image if its too long
+      if height > width:
+        image.crop(0, 0, width, width)
+        logger.info("Image too long. Cropped bottom part. %s", jobIdLog)
+
       #Resize the image
-      newSize = 300, 200
+      newSize = 300, 300
       image.thumbnail(newSize, Image.ANTIALIAS)
       logger.info("Image successfully resized. %s", jobIdLog)
 
