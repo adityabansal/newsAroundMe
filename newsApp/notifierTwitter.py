@@ -89,7 +89,7 @@ class NotifierTwitter:
     # for now we only have cities in india
     india_tz = timezone('Asia/Kolkata')
     hour = datetime.now(india_tz).hour
-    return hour >= 1 and hour < 6
+    return hour >= 2 and hour < 7
 
   def notifyForLocales(self, jobId, cluster):
     jobLog  = "Job id: " + jobId
