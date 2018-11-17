@@ -8,9 +8,10 @@ logger = logging.getLogger('webPageLoader')
 
 def getHtmlStatic(url, max_retries = 2):
     nRetries = 0
+    headers = {'User-Agent': 'newsbot'}
     while (True):
         try:
-            return requests.get(url, timeout = 10).text
+            return requests.get(url, headers = headers, timeout = 10).text
         except Exception as e:
             if (nRetries >= max_retries):
                 raise e
