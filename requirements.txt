@@ -14,7 +14,7 @@ Flask-Assets==0.12
 python-binary-memcached==0.24.6
 google-api-python-client==1.5.2
 oauth2client==2.2.0
-requests==2.9.1
+requests==2.20.0
 numpy==1.10.4
 jellyfish==0.5.3
 Pillow==4.1.1
