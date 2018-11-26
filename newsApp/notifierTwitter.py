@@ -7,14 +7,15 @@ from boto.dynamodb2.table import Table
 import tweepy
 
 from dbhelper import getDbTable, decryptSecret, encryptSecret
+from notifierBase import NotifierBase
 
 logger = logging.getLogger('notifierTwitter')
 
-class NotifierTwitter:
+class NotifierTwitter(NotifierBase):
   def __init__(self):
+    NotifierBase.__init__(self)
     self.tableConnString = os.environ['TWITTERHANDLESTABLE_CONNECTIONSTRING']
     self.encryptionKey = os.environ['TWITTERHANDLESTABLE_KEY']
-    self.domainName = os.environ['DOMAIN']
     self.__table = None
 
   def __getTable(self):
@@ -84,12 +85,6 @@ class NotifierTwitter:
       return False
     else:
       return True
-
-  def isNightTime(self, locale):
-    # for now we only have cities in india
-    india_tz = timezone('Asia/Kolkata')
-    hour = datetime.now(india_tz).hour
-    return hour >= 2 and hour < 7
 
   def notifyForLocales(self, jobId, cluster):
     jobLog  = "Job id: " + jobId
