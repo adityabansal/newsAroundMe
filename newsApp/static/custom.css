@@ -55,7 +55,7 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
 }
 
 #section-filters, #storyList, #storyDetail {
-  max-width: 1024px;
+  max-width: 768px;
 }
 
 .storyPic {
@@ -113,9 +113,9 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
 
 .storyCard {
   margin-bottom: 20px;
-  box-shadow:         3px 3px 5px 6px #888;
-  -webkit-box-shadow: 3px 3px 5px 6px #888;
-  -moz-box-shadow:    3px 3px 5px 6px #888;
+  box-shadow:         3px 3px 5px 6px #444;
+  -webkit-box-shadow: 3px 3px 5px 6px #444;
+  -moz-box-shadow:    3px 3px 5px 6px #444;
 }
 
 .articleCard {
