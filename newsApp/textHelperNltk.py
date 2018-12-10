@@ -170,8 +170,8 @@ def compareTextEntities(text1, text2, doc1EntityWeights, doc2EntityWeights):
             return score
 
 def getImportantSentences(text):
-    sentences = getSentences(text);
-    importantSentences= [];
+    sentences = getSentences(text)
+    importantSentences= []
 
     for sentence in sentences:
         nEntities = len(getEntities(sentence))
@@ -181,4 +181,7 @@ def getImportantSentences(text):
             if " said " in sentence or " told " in sentence or hasNumbers(sentence):
                 importantSentences.append(sentence)
 
-    return importantSentences;
+    # Filter out sentences that are too long.
+    importantSentences = [s for s in importantSentences if len(s)<350]
+
+    return importantSentences
