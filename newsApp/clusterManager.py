@@ -19,6 +19,7 @@ from workerJob import WorkerJob
 NOTIFICATION_IMPORTANCE_THRESHOLD = 1.85
 NOTIFICATION_IMPORTANCE_THRESHOLD_LOW = 1.1
 NOTIFICATION_MIN_NUMBER_THRESHOLD = 3
+NOTIFICATION_MAX_NUMBER_THRESHOLD = 10
 
 class ClusterManager:
     """
@@ -188,15 +189,22 @@ class ClusterManager:
 
         importantClusters = [cluster for cluster in clusters if \
             self.__computeClusterRankingScore(cluster) > NOTIFICATION_IMPORTANCE_THRESHOLD]
+        importantClusters = self.__sortClustersByImportance(importantClusters)
 
         lessImportantClusters = [cluster for cluster in clusters if \
             self.__computeClusterRankingScore(cluster) > NOTIFICATION_IMPORTANCE_THRESHOLD_LOW]
         lessImportantClusters = self.__sortClustersByImportance(lessImportantClusters)
 
-        notifableClusters = importantClusters
-        if len(notifableClusters) < NOTIFICATION_MIN_NUMBER_THRESHOLD:
-            notifableClusters = lessImportantClusters[:NOTIFICATION_MIN_NUMBER_THRESHOLD]
+        notifiableClusters = importantClusters
 
-        logging.info("Number of notfiable clusters are: %i. %s", len(notifableClusters), jobId)
-        return notifableClusters
+        # if we have too less notifiable clusters, send notification for less important clusters.
+        if len(notifiableClusters) < NOTIFICATION_MIN_NUMBER_THRESHOLD:
+            notifiableClusters = lessImportantClusters[:NOTIFICATION_MIN_NUMBER_THRESHOLD]
+
+        # if we have too many notifiable clusters, limit the number to avoid spamming.
+        if len(notifiableClusters) > NOTIFICATION_MAX_NUMBER_THRESHOLD:
+            notifiableClusters = notifiableClusters[:NOTIFICATION_MAX_NUMBER_THRESHOLD]
+
+        logging.info("Number of notfiable clusters are: %i. %s", len(notifiableClusters), jobId)
+        return notifiableClusters
 

@@ -133,20 +133,20 @@ class ImageProcessor:
       logger.info("Not processing image with data URI scheme %s", jobIdLog)
       return
 
+    if self.__isImageBlackListed(imageUrl):
+      logger.info(
+        "Image url %s is blacklisted. %s. Not processing it.",
+        imageUrl,
+        jobIdLog)
+      return
+
     imageMapping = self.__getImageMapping(imageUrl)
     if imageMapping:
       logger.info(
         "Image url %s has already been processed. %s. Not reprocessing it.",
         imageUrl,
         jobIdLog)
-      return imageMapping;
-
-    if self.__isImageBlackListed(imageUrl):
-      logger.info(
-        "Image url %s is blacklisted. %s. Not processing it.",
-        imageUrl,
-        jobIdLog)
-      return;
+      return imageMapping
 
     try:
       #Retrieve our source image from a URL
