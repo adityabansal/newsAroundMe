@@ -178,3 +178,29 @@ def extractText(jobId, html, textSelector, baseUrl):
 
     # Extract out text
     return _extractText(parsedHtml, textSelector, baseUrl)
+
+def extractOpenGraphData(jobId, rawHtml, baseUrl):
+    # Parse html with lxml library
+    try:
+        # not calling _parseAndCleanHtml as cleaner removes meta tags.
+        parsedHtml = lh.fromstring(rawHtml)
+    except XMLSyntaxError:
+        logger.warning(
+            "Could not parse page html. JobId: %s", jobId)
+        return ([], "")
+
+    ogImageElements = parsedHtml.cssselect('meta[property="og:image"]')
+    ogImages = [_getCompleteUrl(img.attrib['content'], baseUrl) \
+        for img in ogImageElements if 'content' in img.attrib]
+    ogImages = list(set(ogImages)) # remove duplicates
+    ogImages = [_processImage(jobId, img) for img in ogImages] #process images
+    ogImages = filter(None, ogImages) #filter out unprocessed images
+    logger.info("Extracted out %i og images. JobId: %s", len(ogImages), jobId)
+
+    ogDescElement = parsedHtml.cssselect('meta[property="og:description"]')
+    ogDesc = ""
+    if (len(ogDescElement) == 1) and ('content' in ogDescElement[0].attrib):
+        ogDesc = ogDescElement[0].attrib['content']
+        logger.info("Extracted og description. JobId: %s", jobId)
+
+    return { 'images' : ogImages, 'summary' : ogDesc }

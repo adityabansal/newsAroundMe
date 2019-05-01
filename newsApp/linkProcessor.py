@@ -39,6 +39,9 @@ def _processHtmlForLink(jobId, link, publisher):
   linkAndJobId = "Link id: " + link.id + ". Job id: " + jobId
   linkId = link.id
 
+  text = ''
+  images = []
+
   pageStaticHtml = link.getHtmlStatic()
   logger.info("Got static html for the link. %s.", linkAndJobId)
   resultStatic = hp.processHtml(
@@ -52,22 +55,29 @@ def _processHtmlForLink(jobId, link, publisher):
     logger.info(
       "Text and images extracted using static html. %s.",
       linkAndJobId)
-    return resultStatic
-
-  pageDynamicHtml = link.getHtmlDynamic()
-  logger.info("Got dynamic html for the link. %s.", linkAndJobId)
-  resultDynamic = hp.processHtml(
-    jobId,
-    pageDynamicHtml,
-    publisher.tags[PUBLISHERTAG_TEXTSELECTOR],
-    json.loads(publisher.tags[PUBLISHERTAG_IMAGESELECTORS]),
-    linkId)
-
-  text = resultDynamic[0]
-  if len(text) < resultStatic[0]:
     text = resultStatic[0]
-  images = list(set(resultStatic[1] + resultDynamic[1]))
-  return (text, images)
+    images = resultStatic[1]
+  else:
+    pageDynamicHtml = link.getHtmlDynamic()
+    logger.info("Got dynamic html for the link. %s.", linkAndJobId)
+    resultDynamic = hp.processHtml(
+      jobId,
+      pageDynamicHtml,
+      publisher.tags[PUBLISHERTAG_TEXTSELECTOR],
+      json.loads(publisher.tags[PUBLISHERTAG_IMAGESELECTORS]),
+      linkId)
+
+    text = resultDynamic[0]
+    if len(text) < resultStatic[0]:
+      text = resultStatic[0]
+    images = list(set(resultStatic[1] + resultDynamic[1]))
+
+  ogData = hp.extractOpenGraphData(jobId, pageStaticHtml, linkId)
+  if len(images) == 0:
+    images = ogData['images']
+    logger.info("Using %i images from Open Graph metadata", len(images))
+
+  return (text, images, ogData['summary'])
 
 def _addTranslationTags(jobId, doc):
   docLang = doc.tags[FEEDTAG_LANG]
@@ -89,11 +99,12 @@ def _addTranslationTags(jobId, doc):
 
   return doc
 
-def _addSummaryIfNotPresent(doc):
+def _addSummaryIfNotPresent(doc, ogSummary):
   if LINKTAG_SUMMARYTEXT not in doc.tags:
-    doc.tags[LINKTAG_SUMMARYTEXT] = doc.content[:200]
-    if DOCTAG_TRANSLATED_CONTENT in doc.tags:
-      doc.tags[DOCTAG_TRANSLATED_SUMMARYTEXT] = doc.tags[DOCTAG_TRANSLATED_CONTENT][:200]
+    if ogSummary != "":
+      doc.tags[LINKTAG_SUMMARYTEXT] = ogSummary
+    else:
+      doc.tags[LINKTAG_SUMMARYTEXT] = doc.content[:200]
   return doc
 
 PUBLISHERS_BLACKLISTED_FOR_HIGHLIGHTS = []
@@ -141,10 +152,10 @@ def processLink(jobId, linkId):
   # generate corresponding doc
   doc = Doc(_getDocKey(link), processingResult[0], link.tags)
   doc.tags[TAG_IMAGES] = processingResult[1]
+  doc = _addSummaryIfNotPresent(doc, processingResult[2])
   doc.tags[DOCTAG_URL] = linkId
   doc.tags[TAG_PUBLISHER_DETAILS] = _getPublisherDetails(publisher)
   doc = _addTranslationTags(jobId, doc)
-  doc = _addSummaryIfNotPresent(doc)
   doc.tags[LINKTAG_HIGHLIGHTS] = _getDocHighlights(doc)
 
   # save the doc
