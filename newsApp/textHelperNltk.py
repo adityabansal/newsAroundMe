@@ -1,6 +1,7 @@
 import itertools
 import logging
 import string
+import math
 
 from retrying import retry
 import nltk
@@ -161,10 +162,10 @@ def compareTextEntities(text1, text2, doc1EntityWeights, doc2EntityWeights):
                  for x in itertools.product(text1Entities, text2Entities)]
 
     if len(entityPairSimilarities) == 0:
-        return 0;
+        return 0
     else:
         lessNumberOfEntities = min(len(text1Entities), len(text2Entities))
-        score = float(sum(entityPairSimilarities))/(min(max(lessNumberOfEntities, 2), 8))
+        score = float(sum(entityPairSimilarities))/(math.sqrt(5*lessNumberOfEntities))
         if (score >= 1.0):
             return 1.0
         else:
