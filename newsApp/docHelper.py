@@ -48,14 +48,28 @@ def computeEnglishDocsSimScore(doc1, doc2):
         getDocEnglishSummaryText(doc1),
         getDocEnglishSummaryText(doc2))
 
+    summarySimEntities = th.compareTextEntities(
+        getDocEnglishSummaryText(doc1),
+        getDocEnglishSummaryText(doc2),
+        doc1EntityWeights,
+        doc2EntityWeights)
+
     contentSim = th.compareUsingShingles(
         getDocEnglishContent(doc1),
         getDocEnglishContent(doc2))
 
+    contentSimEntities = th.compareTextEntities(
+        getDocEnglishContent(doc1),
+        getDocEnglishContent(doc2),
+        doc1EntityWeights,
+        doc2EntityWeights)
+
     return titleSim*0.1 \
            + titleSimEntities*0.15 \
-           + summarySim*0.3 \
-           + contentSim*0.45
+           + summarySim*0.15 \
+           + summarySimEntities * 0.15 \
+           + contentSim*0.3 \
+           + contentSimEntities*0.15
 
 def computeDocSimScoreUsingEntities(doc1, doc2):
     doc1EntityWeights = json.loads(doc1.tags.get(DOCTAG_ENTITY_WEIGHTS, "{}"))
@@ -84,9 +98,9 @@ def computeDocSimScoreUsingEntities(doc1, doc2):
         doc2EntityWeights)
 
     score = titleSim*0.2 \
-           + titleSimEntities*0.4 \
+           + titleSimEntities*0.3 \
            + summarySim*0.2 \
-           + contentSim*0.2
+           + contentSim*0.3
 
     if score > 0.5:
         score = min(score * 1.4, 1.0)

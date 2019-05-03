@@ -148,7 +148,8 @@ def compareEntities(entity1, entity2, doc1EntityWeights, doc2EntityWeights):
         commonWords = entity1Words.intersection(entity2Words)
 
         if len(commonWords) > 0:
-            return combinedWeight * float(len(commonWords))/(len(entity1Words) + len(entity2Words))
+            return combinedWeight * \
+              float(len(commonWords)*2)/(len(entity1Words) + len(entity2Words))
         else:
             return 0.0
 
@@ -163,7 +164,7 @@ def compareTextEntities(text1, text2, doc1EntityWeights, doc2EntityWeights):
         return 0;
     else:
         lessNumberOfEntities = min(len(text1Entities), len(text2Entities))
-        score = float(sum(entityPairSimilarities))/(max(lessNumberOfEntities, 2))
+        score = float(sum(entityPairSimilarities))/(min(max(lessNumberOfEntities, 2), 8))
         if (score >= 1.0):
             return 1.0
         else:
