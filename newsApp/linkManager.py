@@ -31,13 +31,8 @@ class LinkManager(DbItemManagerV2):
         Put a new link.
         """
 
-        dbItem = DbItemManagerV2.get(self, linkId);
+        dbItem = DbItemManagerV2.get(self, linkId)
         link = Link(linkId, dbItem.tags)
-
-        #handle the case when link starts gettting redirected to new url
-        if link.id != linkId:
-            self.delete(linkId)
-            self.put(link)
 
         return link
 

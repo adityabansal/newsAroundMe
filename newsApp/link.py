@@ -3,7 +3,7 @@ from webPageLoader import loadPageAndGetHtml, getHtmlStatic
 import time
 import requests
 
-def _openUrlWithRetries(url, max_retries = 3):
+def _openUrlWithRetries(url, max_retries = 2):
     nRetries = 0
     while (True):
         try:
@@ -39,7 +39,18 @@ class Link(DbItem):
     Instantiates a link object representing a link to a web page.
     """
 
-    DbItem.__init__(self, getIdentifierUrl(id), tags)
+    DbItem.__init__(self, id, tags)
+
+  def checkExistence(self):
+    try:
+      _openUrlWithRetries(self.id)
+    except:
+      return False
+
+    return True
+
+  def getFinalRedirect(self):
+    return getIdentifierUrl(self.id)
 
   def getHtmlDynamic(self):
     return loadPageAndGetHtml(self.id)

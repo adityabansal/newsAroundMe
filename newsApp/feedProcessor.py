@@ -42,10 +42,22 @@ def _putNewLinks(feedAndJobId, linksToAdd):
 
   for link in linksToAdd:
     try:
-      existingLink = linkManager.get(link.id)
+      linkManager.get(link.id)
       logger.info(
         "Link with id '%s' already exists. Not processing it. %s",
         link.id,
+        feedAndJobId)
+      continue
+    except:
+      pass
+
+    try:
+      linkRedirect = link.getFinalRedirect()
+      linkManager.get(linkRedirect)
+      logger.info(
+        "Link with id '%s' redirects to %s which already exists. Not processing it. %s",
+        link.id,
+        linkRedirect,
         feedAndJobId)
       continue
     except:
@@ -104,12 +116,11 @@ def _linkFromFeedEntry(jobId, entry, feed):
   # Add new tags retrieved from the feed entry
   linkTags.update(_retrieveNewTagsFromFeedEntry(jobId, entry))
 
-  try:
-    # Return the final link object
-    return Link(entry.link, linkTags)
-  except Exception as e:
-    logger.info("Could not open link %s. Job id: %s", entry.link, jobId)
-    return None;
+  linkObject = Link(entry.link, linkTags)
+  if linkObject.checkExistence():
+    return linkObject
+  else:
+    return None
 
 def processRssFeed(jobId, feed):
   """
@@ -193,12 +204,11 @@ def _linkFromWebPageEntry(jobId, entry, feed, entrySelector):
   linkTags[LINKTAG_PUBTIME] = int(time.time())
   linkTags[LINKTAG_ISPROCESSED] = 'false'
 
-  try:
-    # Return the final link object
-    return Link(link, linkTags)
-  except Exception as e:
-    logger.info("Could not open link %s. Job id: %s", link, jobId)
-    return None;
+  linkObject = Link(link, linkTags)
+  if linkObject.checkExistence():
+    return linkObject
+  else:
+    return None
 
 def processWebFeed(jobId, feed):
   feedAndJobId = "Feed id: " + feed.id + ". Job id: " + jobId;
