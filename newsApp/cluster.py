@@ -9,7 +9,7 @@ from docHelper import getDocComparisionScore
 from docManager import DocManager
 import textHelper as th
 
-DOC_DUPLICATION_THRESHOLD = 0.80
+DOC_DUPLICATION_THRESHOLD = 0.75
 def _removeDuplicatesAndOutliers(items, articleCount):
   d = {}
   for item in items:
