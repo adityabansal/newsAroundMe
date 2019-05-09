@@ -9,6 +9,7 @@ from archiveStaleDocs import archiveStaleDocs
 from reprocessCurrentClusters import reprocessCurrentClusters
 from notifyTwitter import notifyTwitter
 from clusteringJobs import getCandidateDocsThroughClusters, cleanUpDistanceTable
+from deepCleanStaleDocs import deepCleanStaleDocs
 
 now = datetime.datetime.now()
 clusteringInterval = 10
@@ -39,7 +40,7 @@ def archiveStaleDocs_job():
 
 @sched.scheduled_job(
 	'interval',
-	minutes = clusteringInterval,
+	minutes = clusteringInterval * 2,
 	start_date = now + datetime.timedelta(minutes = 7))
 def reprocessCurrentClusters_job():
     reprocessCurrentClusters()
@@ -64,5 +65,12 @@ def cleanUpDistanceTable_job():
 	start_date = now + datetime.timedelta(minutes = 15))
 def getCandidateDocsThroughClusters_job():
     getCandidateDocsThroughClusters("")
+
+@sched.scheduled_job(
+	'interval',
+	hours = 30,
+	start_date = now + datetime.timedelta(hours = 2))
+def deepCleanStaleDocs_job():
+    deepCleanStaleDocs()
 
 sched.start()
