@@ -16,11 +16,11 @@ clusteringInterval = 10
 
 sched = BlockingScheduler()
 
-@sched.scheduled_job('interval', minutes = 2, start_date = now)
+@sched.scheduled_job('interval', minutes = 3, start_date = now)
 def pushFeedJobs_job():
     pushFeedJobs()
 
-@sched.scheduled_job('interval', minutes = 4, start_date = now)
+@sched.scheduled_job('interval', minutes = 6, start_date = now)
 def pushLinkJobs_job():
     pushLinkJobs()
 
