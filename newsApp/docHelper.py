@@ -116,7 +116,7 @@ def getDocComparisionScore(jobInfo, doc1, doc2):
     else:
         score = computeDocSimScoreUsingEntities(doc1, doc2)
         # make it slightly easier for non-english docs to get clustered.
-        score = score * 1.1
+        score = score * 1.15
         logger.info("Compared using entities. %s", jobInfo)
 
     if FEEDTAG_LOCALE in doc1.tags and FEEDTAG_LOCALE in doc2.tags and \

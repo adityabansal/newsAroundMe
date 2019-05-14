@@ -21,7 +21,7 @@ import textHelperNltk as th
 
 logger = logging.getLogger('clusteringJobs')
 
-SIMSCORE_MIN_THRESHOLD = 0.06
+SIMSCORE_MIN_THRESHOLD = 0.07
 
 def compareDocs(jobId, doc1Key, doc2Key):
     jobInfo = "Doc1 id: " + doc1Key + " Doc2 id: " + doc2Key \
@@ -317,7 +317,7 @@ def getCandidateDocsThroughClusters(jobId):
                             jobInfo)
 
 ## Agglomerative clustering logic ##
-MIN_CLUSTER_SIMILARITY = 0.22
+MIN_CLUSTER_SIMILARITY = 0.26
 
 def _tryGetDocDistance(distances, docId1, docId2):
     first = min(docId1, docId2)
