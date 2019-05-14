@@ -23,23 +23,42 @@ logger = logging.getLogger('clusteringJobs')
 
 SIMSCORE_MIN_THRESHOLD = 0.07
 
+def compareDocsAfterFetch(jobInfo, doc1, doc2, distanceTableManager):
+    score = getDocComparisionScore(jobInfo, doc1, doc2)
+
+    if score > SIMSCORE_MIN_THRESHOLD:
+        distanceTableManager.addEntry(doc1.key, doc2.key, score)
+        logger.info("Added comparision score to distances table. %s", jobInfo)
+
 def compareDocs(jobId, doc1Key, doc2Key):
     jobInfo = "Doc1 id: " + doc1Key + " Doc2 id: " + doc2Key \
               + ". Job id: " + jobId
     logger.info("Started comparing docs. %s", jobInfo)
 
     docManager = DocManager()
+    distanceTableManager = DistanceTableManager()
+
     doc1 = docManager.get(doc1Key)
     doc2 = docManager.get(doc2Key)
 
-    score = getDocComparisionScore(jobInfo, doc1, doc2)
-
-    if score > SIMSCORE_MIN_THRESHOLD:
-        distanceTableManager = DistanceTableManager()
-        distanceTableManager.addEntry(doc1Key, doc2Key, score)
-        logger.info("Added comparision score to distances table. %s", jobInfo)
+    compareDocsAfterFetch(jobInfo, doc1, doc2, distanceTableManager)
 
     logger.info("Completed comparing docs. %s", jobInfo)
+
+def compareDocsBatch(jobId, docId, otherDocs):
+    jobInfo = "Doc id: " + docId + ". Job id: " + jobId
+    logger.info("Starting batch compare docs. %s", jobInfo)
+
+    docManager = DocManager()
+    distanceTableManager = DistanceTableManager()
+
+    doc = docManager.get(docId)
+
+    for otherDocId in otherDocs:
+        otherDoc = docManager.get(otherDocId)
+        compareDocsAfterFetch(jobInfo, doc, otherDoc, distanceTableManager)
+
+    logger.info("Completed batch compare docs. %s", jobInfo)
 
 @retry(stop_max_attempt_number=3)
 def cleanUpDoc(jobId, docId):
@@ -242,20 +261,27 @@ def getCandidateDocsUsingEntities(jobId, docId, docAndJobId):
 def putComareDocJobs(docId, matches, docAndJobId):
     jobManager = MinerJobManager()
 
-    for match in matches:
-        if match != docId:
-            job = WorkerJob(
-                JOB_COMPAREDOCS,
-                {
-                    JOBARG_COMPAREDOCS_DOC1ID : docId,
-                    JOBARG_COMPAREDOCS_DOC2ID : match
-                })
-            jobManager.enqueueJob(job)
-            logging.info(
-                "Put compare docs job with jobid: %s. compared docId: %s. %s",
-                job.jobId,
-                match,
-                docAndJobId)
+    matches = [match for match in matches if match != docId]
+
+    batchSize = 5
+    i = 0
+    while i < len(matches):
+        docsToCompare = matches[i:(i + batchSize)]
+
+        job = WorkerJob(
+            JOB_COMPAREDOCSBATCH,
+            {
+                JOBARG_COMPAREDOCSBATCH_DOCID : docId,
+                JOBARG_COMPAREDOCSBATCH_OTHERDOCS : docsToCompare
+            })
+        jobManager.enqueueJob(job)
+        logging.info(
+            "Put compare docs batch job with jobid: %s. compared docs: %s. %s",
+            job.jobId,
+            json.dumps(docsToCompare),
+            docAndJobId)
+
+        i = i + batchSize
 
 def getCandidateDocs(jobId, docId):
     docAndJobId = "Doc id: " + docId + ". Job id: " + jobId

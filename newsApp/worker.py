@@ -34,6 +34,11 @@ def RunJob(job):
                 job.jobId,
                 job.jobParams[JOBARG_COMPAREDOCS_DOC1ID],
                 job.jobParams[JOBARG_COMPAREDOCS_DOC2ID])
+        if job.jobName == JOB_COMPAREDOCSBATCH:
+            cj.compareDocsBatch(
+                job.jobId,
+                job.jobParams[JOBARG_COMPAREDOCSBATCH_DOCID],
+                job.jobParams[JOBARG_COMPAREDOCSBATCH_OTHERDOCS])
         if job.jobName == JOB_CLUSTERDOCS:
             cj.clusterDocs(job.jobId)
         if job.jobName == JOB_UPDATEDBTHROUGHPUT:
