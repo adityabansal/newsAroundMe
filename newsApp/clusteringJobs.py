@@ -23,7 +23,10 @@ logger = logging.getLogger('clusteringJobs')
 
 SIMSCORE_MIN_THRESHOLD = 0.07
 
-def compareDocsAfterFetch(jobInfo, doc1, doc2, distanceTableManager):
+def compareDocsAfterFetch(jobId, doc1, doc2, distanceTableManager):
+    jobInfo = "Doc1 id: " + doc1.key + " Doc2 id: " + doc2.key \
+              + ". Job id: " + jobId
+
     score = getDocComparisionScore(jobInfo, doc1, doc2)
 
     if score > SIMSCORE_MIN_THRESHOLD:
@@ -41,7 +44,7 @@ def compareDocs(jobId, doc1Key, doc2Key):
     doc1 = docManager.get(doc1Key)
     doc2 = docManager.get(doc2Key)
 
-    compareDocsAfterFetch(jobInfo, doc1, doc2, distanceTableManager)
+    compareDocsAfterFetch(jobId, doc1, doc2, distanceTableManager)
 
     logger.info("Completed comparing docs. %s", jobInfo)
 
@@ -56,7 +59,7 @@ def compareDocsBatch(jobId, docId, otherDocs):
 
     for otherDocId in otherDocs:
         otherDoc = docManager.get(otherDocId)
-        compareDocsAfterFetch(jobInfo, doc, otherDoc, distanceTableManager)
+        compareDocsAfterFetch(jobId, doc, otherDoc, distanceTableManager)
 
     logger.info("Completed batch compare docs. %s", jobInfo)
 

@@ -165,7 +165,7 @@ def compareTextEntities(text1, text2, doc1EntityWeights, doc2EntityWeights):
         return 0
     else:
         lessNumberOfEntities = min(len(text1Entities), len(text2Entities))
-        score = float(sum(entityPairSimilarities))/(math.sqrt(5*lessNumberOfEntities))
+        score = float(sum(entityPairSimilarities))/(math.pow(3*lessNumberOfEntities, 0.6))
         if (score >= 1.0):
             return 1.0
         else:

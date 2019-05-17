@@ -30,7 +30,12 @@ def getDocEnglishContent(doc):
   else:
     return doc.content
 
-def computeEnglishDocsSimScore(doc1, doc2):
+def getDocEnglishContentSimilarity(doc1, doc2):
+    return th.compareUsingShingles(
+        getDocEnglishContent(doc1),
+        getDocEnglishContent(doc2))
+
+def computeEnglishDocsSimScore(jobInfo, doc1, doc2):
     doc1EntityWeights = json.loads(doc1.tags.get(DOCTAG_ENTITY_WEIGHTS, "{}"))
     doc2EntityWeights = json.loads(doc2.tags.get(DOCTAG_ENTITY_WEIGHTS, "{}"))
 
@@ -44,19 +49,13 @@ def computeEnglishDocsSimScore(doc1, doc2):
         doc1EntityWeights,
         doc2EntityWeights)
 
-    summarySim = th.compareUsingShingles(
-        getDocEnglishSummaryText(doc1),
-        getDocEnglishSummaryText(doc2))
-
-    summarySimEntities = th.compareTextEntities(
-        getDocEnglishSummaryText(doc1),
-        getDocEnglishSummaryText(doc2),
+    titleAndSummarySimEntities = th.compareTextEntities(
+        getDocEnglishTitle(doc1) + ". " + getDocEnglishSummaryText(doc1),
+        getDocEnglishTitle(doc2) + ". " + getDocEnglishSummaryText(doc2),
         doc1EntityWeights,
         doc2EntityWeights)
 
-    contentSim = th.compareUsingShingles(
-        getDocEnglishContent(doc1),
-        getDocEnglishContent(doc2))
+    contentSim = getDocEnglishContentSimilarity(doc1, doc2)
 
     contentSimEntities = th.compareTextEntities(
         getDocEnglishContent(doc1),
@@ -64,14 +63,23 @@ def computeEnglishDocsSimScore(doc1, doc2):
         doc1EntityWeights,
         doc2EntityWeights)
 
+    logger.info(
+        "Doc comparision scores. titleSim: %s, titleSimEntities: %s," +
+        "titleAndSummarySimEntities: %s, contentSim: %s, contentSimEntities: %s. %s",
+        titleSim,
+        titleSimEntities,
+        titleAndSummarySimEntities,
+        contentSim,
+        contentSimEntities,
+        jobInfo)
+
     return titleSim*0.1 \
            + titleSimEntities*0.15 \
-           + summarySim*0.15 \
-           + summarySimEntities * 0.15 \
+           + titleAndSummarySimEntities * 0.3 \
            + contentSim*0.3 \
            + contentSimEntities*0.15
 
-def computeDocSimScoreUsingEntities(doc1, doc2):
+def computeDocSimScoreUsingEntities(jobInfo, doc1, doc2):
     doc1EntityWeights = json.loads(doc1.tags.get(DOCTAG_ENTITY_WEIGHTS, "{}"))
     doc2EntityWeights = json.loads(doc2.tags.get(DOCTAG_ENTITY_WEIGHTS, "{}"))
 
@@ -85,9 +93,9 @@ def computeDocSimScoreUsingEntities(doc1, doc2):
         doc1EntityWeights,
         doc2EntityWeights)
 
-    summarySim = th.compareTextEntities(
-        getDocEnglishSummaryText(doc1),
-        getDocEnglishSummaryText(doc2),
+    titleAndSummarySimEntities = th.compareTextEntities(
+        getDocEnglishTitle(doc1) + ". " + getDocEnglishSummaryText(doc1),
+        getDocEnglishTitle(doc2) + ". " + getDocEnglishSummaryText(doc2),
         doc1EntityWeights,
         doc2EntityWeights)
 
@@ -97,9 +105,18 @@ def computeDocSimScoreUsingEntities(doc1, doc2):
         doc1EntityWeights,
         doc2EntityWeights)
 
+    logger.info(
+        "Doc comparision scores. titleSim: %s, titleSimEntities: %s," +
+        "titleAndSummarySimEntities: %s, contentSim: %s. %s",
+        titleSim,
+        titleSimEntities,
+        titleAndSummarySimEntities,
+        contentSim,
+        jobInfo)
+
     score = titleSim*0.2 \
            + titleSimEntities*0.3 \
-           + summarySim*0.2 \
+           + titleAndSummarySimEntities*0.2 \
            + contentSim*0.3
 
     if score > 0.5:
@@ -111,10 +128,10 @@ def getDocComparisionScore(jobInfo, doc1, doc2):
     score = 0
     if (doc1.tags[FEEDTAG_LANG] == LANG_ENGLISH) and \
         (doc2.tags[FEEDTAG_LANG] == LANG_ENGLISH):
-        score = computeEnglishDocsSimScore(doc1, doc2)
+        score = computeEnglishDocsSimScore(jobInfo, doc1, doc2)
         logger.info("Compared using shingles. %s", jobInfo)
     else:
-        score = computeDocSimScoreUsingEntities(doc1, doc2)
+        score = computeDocSimScoreUsingEntities(jobInfo, doc1, doc2)
         # make it slightly easier for non-english docs to get clustered.
         score = score * 1.15
         logger.info("Compared using entities. %s", jobInfo)
@@ -132,6 +149,11 @@ def getDocComparisionScore(jobInfo, doc1, doc2):
     if doc1.tags[TAG_PUBLISHER] != doc2.tags[TAG_PUBLISHER]:
         # make it slightly easier for different-publisher-docs to get clustered
         score = score * 1.1
+
+    if doc1.tags[TAG_PUBLISHER] == doc2.tags[TAG_PUBLISHER]:
+        if doc1.tags[TAG_PUBLISHER] == 'TOI':
+            logger.info("Adding penalty for TOI docs. %s", jobInfo)
+            score = score*0.75
 
     if score > 1:
         score = 1

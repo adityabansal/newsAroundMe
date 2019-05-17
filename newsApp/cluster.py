@@ -5,11 +5,12 @@ import Queue
 from threading import Thread
 
 from constants import *
-from docHelper import getDocComparisionScore
+from docHelper import getDocComparisionScore,getDocEnglishContentSimilarity
 from docManager import DocManager
 import textHelper as th
 
-DOC_DUPLICATION_THRESHOLD = 0.75
+DOC_DUPLICATION_SCORE_THRESHOLD = 0.85
+DOC_DUPLICATION_CONTENT_THRESHOLD = 0.7
 def _removeDuplicatesAndOutliers(items, articleCount):
   d = {}
   for item in items:
@@ -23,7 +24,10 @@ def _removeDuplicatesAndOutliers(items, articleCount):
 def _isDuplicateArticle(doc, docsAdded):
   for addedDoc in docsAdded:
     distance = getDocComparisionScore("processCluster", doc, addedDoc)
-    if distance > DOC_DUPLICATION_THRESHOLD:
+    if distance >= DOC_DUPLICATION_SCORE_THRESHOLD:
+      return True
+    englishContentSim = getDocEnglishContentSimilarity(doc, addedDoc)
+    if englishContentSim >= DOC_DUPLICATION_CONTENT_THRESHOLD:
       return True
 
   return False
