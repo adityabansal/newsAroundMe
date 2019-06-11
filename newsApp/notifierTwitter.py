@@ -2,6 +2,7 @@ import os
 import logging
 from datetime import datetime
 from pytz import timezone
+import time
 
 from boto.dynamodb2.table import Table
 import tweepy
@@ -66,16 +67,18 @@ class NotifierTwitter(NotifierBase):
 
     # don't include first article in tweet text as it would anyway show on the card
     for article in cluster.articles[1:]:
-      articleTitle = article['title']
-      articleLink = article['link']
-      articleText = articleTitle + " (via: " + articleLink + ")\n\n"
-      #  "{} (via: {})\n".format(articleTitle, articleLink)
-      articleTextLength = len(articleText) - (len(articleLink) - linkLength)
-      if (tweetLength + articleTextLength) < 200:
-        tweetText = tweetText + articleText
-        tweetLength = tweetLength + articleTextLength
-      else:
-        break
+      # don't tweet old articles in cluster
+      if article['publishedOn'] > (int(time.time()) - 18 * 60 * 60):
+        articleTitle = article['title']
+        articleLink = article['link']
+        articleText = articleTitle + " (via: " + articleLink + ")\n\n"
+        #  "{} (via: {})\n".format(articleTitle, articleLink)
+        articleTextLength = len(articleText) - (len(articleLink) - linkLength)
+        if (tweetLength + articleTextLength) < 200:
+          tweetText = tweetText + articleText
+          tweetLength = tweetLength + articleTextLength
+        else:
+          break
 
     tweetText = tweetText + storyUrl
     return tweetText

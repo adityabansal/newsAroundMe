@@ -23,12 +23,13 @@ def _removeDuplicatesAndOutliers(items, articleCount):
 
 def _isDuplicateArticle(doc, docsAdded):
   for addedDoc in docsAdded:
-    distance = getDocComparisionScore("processCluster", doc, addedDoc)
-    if distance >= DOC_DUPLICATION_SCORE_THRESHOLD:
-      return True
-    englishContentSim = getDocEnglishContentSimilarity(doc, addedDoc)
-    if englishContentSim >= DOC_DUPLICATION_CONTENT_THRESHOLD:
-      return True
+    if doc.tags[FEEDTAG_LANG] == addedDoc.tags[FEEDTAG_LANG]:
+      distance = getDocComparisionScore("processCluster", doc, addedDoc)
+      if distance >= DOC_DUPLICATION_SCORE_THRESHOLD:
+        return True
+      englishContentSim = getDocEnglishContentSimilarity(doc, addedDoc)
+      if englishContentSim >= DOC_DUPLICATION_CONTENT_THRESHOLD:
+        return True
 
   return False
 
