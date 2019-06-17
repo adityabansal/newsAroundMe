@@ -150,9 +150,11 @@ def getDocComparisionScore(jobInfo, doc1, doc2):
         # make it slightly easier for different-publisher-docs to get clustered
         score = score * 1.1
 
-    if doc1.tags[TAG_PUBLISHER] == doc2.tags[TAG_PUBLISHER]:
-        if doc1.tags[TAG_PUBLISHER] == 'TOI':
-            logger.info("Adding penalty for TOI docs. %s", jobInfo)
+    doc1Publisher = doc1.tags[TAG_PUBLISHER]
+    doc2Publisher = doc2.tags[TAG_PUBLISHER]
+    if doc1Publisher == doc2Publisher:
+        if doc1Publisher == 'TOI' or doc1Publisher == 'TelanganaToday':
+            logger.info("Adding penalty for TOI or TelanganaToday docs. %s", jobInfo)
             score = score*0.75
 
     if score > 1:

@@ -13,7 +13,7 @@ GOOGLE_LANGS = ['hi', 'bn', 'ta', 'mr', 'gu']
 
 def translateGoogle(jobInfo, text, fromLang, toLang = 'en'):
   try:
-    logger.info("Started google translation. %s", jobInfo);
+    logger.info("Started google translation. %s", jobInfo)
 
     service = build('translate', 'v2',
             developerKey = os.environ['GOOGLE_DEV_KEY'])
@@ -90,8 +90,8 @@ def translate(jobId, text, fromLang, toLang = 'en'):
      + " Job id: " + jobId
 
   # clip text if too long to save costs
-  if len(text) > 600:
-    text = text[:600]
+  if len(text) > 800:
+    text = text[:800]
 
   if fromLang in MSTRANSLATE_LANGS and fromLang in GOOGLE_LANGS:
     msResult = translateMicrosoft(jobInfo, text, fromLang, toLang)
