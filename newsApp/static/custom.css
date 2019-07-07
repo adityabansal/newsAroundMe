@@ -59,7 +59,7 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
 }
 
 .storyPic {
-  max-height: 10em;
+  max-height: 12em;
 }
 
 .baseCard {
@@ -129,6 +129,51 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
 
 .upper-nav-link:hover {
   color: #5b0000;
+}
+
+.cs-section {
+  margin-top:6em;
+}
+
+.cs-item {
+  height:25em;
+  overflow-y:auto;
+  margin-bottom:15px;
+  padding-left:15px;
+  padding-right:15px;
+  border:2px solid #777;
+  border-bottom-right-radius: 4px;
+  border-bottom-left-radius: 4px;
+  background-color:white;
+}
+
+.cs-item .cs-image-container {
+  padding-top: 1em;
+}
+
+.cs-item .cs-title {
+  color:black;
+  font-weight: 600;
+}
+
+.cs-item .cs-image {
+  max-height: 10em;
+}
+
+.cs-item .cs-publisher {
+  color:#171717;
+}
+
+.cs-city-link, .cs-story-link {
+  color: #6b0000;
+}
+
+.cs-city-link:hover, .cs-story-link:hover {
+  color: #5b0000;
+}
+
+.cs-bottom {
+  text-align: center;
 }
 
 .show-more-button {

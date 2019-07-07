@@ -16,6 +16,7 @@ assets = Environment(app)
 home_js = Bundle(
   'init.js',
   'appUtils.js',
+  'dataLoaderModel.js',
   'languageFilterViewModel.js',
   'sectionDropdownViewModel.js',
   'articleViewModel.js',
@@ -46,13 +47,13 @@ def getSharingMetaTags(title, description, imageUrl, ogType):
     { 'tagType': u'property="og:url"', 'content': request.base_url },
     { 'tagType': u'property="og:type"', 'content': ogType},
     { 'tagType': u'property="og:title"', 'content': title },
-    { 'tagType': u'property="og:description"', 'content': description }];
+    { 'tagType': u'property="og:description"', 'content': description }]
 
   if imageUrl:
-    imageUrl = request.host_url + imageUrl;
+    imageUrl = request.host_url + imageUrl
     metaTags.append({ 'tagType': u'property="og:image"', 'content': imageUrl })
 
-  return metaTags;
+  return metaTags
 
 #end helper functions
 

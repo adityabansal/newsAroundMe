@@ -8,6 +8,17 @@ $(function() {
     self.lastRequest = null;
     self.isDataLoading = ko.observable(false);
 
+    self.mainCity = ko.observable();
+    self.cityStories = ko.observableArray([]);
+    self.loadCityStories = function(stories) {
+      self.cityStories([]);
+      stories = stories.slice(0, 4);
+      $.each(stories, function( index, story ) {
+        self.cityStories.push(new window.StoryViewModel(story));
+      });
+    }
+    self.cityStoriesDataLoader = new window.DataLoaderModel();
+
     self.loadStoryInternal = function(url, refreshLanguageFilter) {
 
       if(!!self.lastRequest && self.isDataLoading()) {
@@ -22,6 +33,8 @@ $(function() {
       }
 
       self.articles([]);
+      self.cityStories([]);
+
       self.lastRequest = $.getJSON(url, function( response ) {
         self.articles([]);
         self.articles(response.articles.map(function(article) {
@@ -33,6 +46,7 @@ $(function() {
             return location.value === locale;
           })[0];
         }));
+        self.mainCity(self.locations()[0])
 
         if (!!refreshLanguageFilter) {
           self.languageFilterVM.setLanguages(response.languages.map(function(langCode) {
@@ -67,6 +81,13 @@ $(function() {
     self.navigateToLocale = function(location) {
       window.navigateTo(location);
     }
+
+    self.mainCity.subscribe(function(newLocation) {
+      self.cityStoriesDataLoader.initialize(
+        "/api/stories?locale=" + newLocation.value,
+        self.loadCityStories)
+      self.cityStoriesDataLoader.loadDataOfflineFirst()
+    })
   }
 
   var vM = new StoryDetailViewModel();

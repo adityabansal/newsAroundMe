@@ -2,71 +2,32 @@ $(function() {
   function StoriesViewModel() {
     var self = this;
     self.stories = ko.observableArray([]);
-    self.lastRequest = null;
-    self.lastNetworkRequest = null;
-    self.isDataLoading = ko.observable(false)
+    self.dataLoader = new window.DataLoaderModel();
+    self.isDataLoading = self.dataLoader.isDataLoading;
 
-    self.showStories = function(stories) {
+    self.appendStories = function(stories) {
       $.each(stories, function( index, story ) {
         self.stories.push(new window.StoryViewModel(story));
       });
     }
 
-    self.loadStoriesInitialOfflineFirst = function(url) {
-      // fetch fresh data
-      var networkDataReceived = false;
-      self.lastNetworkRequest = $.getJSON(url, function( stories ) {
-        self.stories([]);
-        self.showStories(stories);
-        networkDataReceived = true;
-        console.log("Updated stories from network for url: " + url);
-      });
-
-      if ('caches' in window) {
-        // fetch cached data
-        caches.match(url).then(function(response) {
-          if (!response) throw Error("No data");
-          return response.json();
-        }).then(function(stories) {
-          // don't overwrite newer network data
-          if (!networkDataReceived) {
-            self.stories([]);
-            self.showStories(stories);
-            console.log("Updated stories from cache for url: " + url);
-          }
-        }).catch(function() {
-          // we didn't get cached data, the network is our last hope:
-          return self.lastNetworkRequest;
-        })
-      }
-
-      return self.lastNetworkRequest;
-    }
-
-    self.loadMoreStoriesFromNetwork = function(url) {
-      return $.getJSON(url, function( stories ) {
-        self.showStories(stories);
-      });
+    self.showStories = function(stories) {
+      self.stories([]);
+      self.appendStories(stories)
     }
 
     self.loadStoriesInternal = function(url) {
+      var lastRequest;
 
-      if(!!self.lastRequest && self.isDataLoading()) {
-        self.lastRequest.abort();
-      }
-
-      self.isDataLoading(true);
       if (url.indexOf("skip") > 0 && url.indexOf("top") > 0) {
-        self.lastRequest = self.loadMoreStoriesFromNetwork(url);
+        self.dataLoader.initialize(url, self.appendStories)
+        lastRequest = self.dataLoader.loadDataFromNetwork();
       } else {
-        self.lastRequest = self.loadStoriesInitialOfflineFirst(url);
+        self.dataLoader.initialize(url, self.showStories)
+        lastRequest = self.dataLoader.loadDataOfflineFirst();
       }
 
-      self.lastRequest.always(function() {
-        self.isDataLoading(false);
-      });
-
-      self.lastRequest.then(function() {
+      lastRequest.then(function() {
         self.loadMoreStoriesAuto();
       })
     }
