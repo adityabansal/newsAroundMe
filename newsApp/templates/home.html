@@ -48,7 +48,7 @@
 <div id="storyList" class="center-block">
   <ul class="list-group" data-bind="foreach: stories">
     <li class="list-group-item row baseCard storyCard">
-      <div class="col-xs-12 col-xsl-6 col-sm-3" data-bind="if: images().length > 0">
+      <div class="col-xs-12 col-xsl-6 col-sm-4" data-bind="if: images().length > 0">
         <div data-bind="with: images()[0]">
           <div class="storyPic-container">
             <a target="_blank" data-bind="attr: {href:link}">
@@ -62,7 +62,7 @@
         </div>
       </div>
 
-      <div class="col-xs-12" data-bind="css:{'col-sm-9 col-xsl-6' : images().length > 0}">
+      <div class="col-xs-12" data-bind="css:{'col-sm-8 col-xsl-6' : images().length > 0}">
         <h4>
           <a class="headline" target="_blank" data-bind="text : mainArticle.title, attr: {href:mainArticle.link}"></a>
           <small>
@@ -121,7 +121,7 @@
         </div>
       </div>
 
-      <div class="col-xs-12 col-xsl-6 col-sm-3" data-bind="if: images.length > 0">
+      <div class="col-xs-12 col-xsl-6 col-sm-4" data-bind="if: images.length > 0">
         <div data-bind="with: images[0]">
           <div class="storyPic-container">
             <a target="_blank" data-bind="attr: {href:$parent.link}">
@@ -131,7 +131,7 @@
         </div>
       </div>
 
-      <div class="col-xs-12" data-bind="css:{'col-sm-9 col-xsl-6' : images.length > 0}">
+      <div class="col-xs-12" data-bind="css:{'col-sm-8 col-xsl-6' : images.length > 0}">
         <h4>
           <a class="headline" target="_blank" data-bind="text: title, attr: {href:link}"></a>
         </h4>
@@ -158,34 +158,39 @@
     <div class="row"  data-bind="foreach: cityStories">
       <div class="col-xs-12 col-xsl-6 col-sm-6">
         <div class="cs-item">
-          <div class="cs-image-container" data-bind="if: images().length > 0">
-            <img class="cs-image center-block" data-bind="attr:{'src': images()[0].src}">
-            <p class="text-center small" data-bind="with: images()[0]">
-              Image Source:
-              <a class="cs-publisher" target="_blank" data-bind="text: publisher.name, attr: {href:link}"></a>
-            </p>
-          </div>
-            
-          <div class="cs-body">
-            <h4>
-              <a class="cs-title" target="_blank" data-bind="text : mainArticle.title, attr: {href:mainArticle.link}"></a>
-              <small>
-                <span class="cs-publisher" data-bind="text: mainArticle.publisher.name"></span>
-              </small>
-            </h4>
-            <!-- ko if: relatedArticles -->
-            <h5 data-bind="with: relatedArticles()[0]">
-              <a class="cs-title" target="_blank" data-bind="text : title, attr: {href:link}"></a>
-              <small>
-                <span class="cs-publisher" data-bind="text: publisher.name"></span>
-              </small>
-            </h5>
-            <!-- /ko -->
+          <div class="cs-content row">
+            <div class="cs-image-container" data-bind="if: images().length > 0">
+              <img class="cs-image center-block" data-bind="attr:{'src': images()[0].src}">
+              <p class="text-center small" data-bind="with: images()[0]">
+                Image Source:
+                <a class="cs-publisher" target="_blank" data-bind="text: publisher.name, attr: {href:link}"></a>
+              </p>
+            </div>
+              
+            <div class="cs-body">
+              <h4>
+                <a class="cs-title" target="_blank" data-bind="text : mainArticle.title, attr: {href:mainArticle.link}"></a>
+                <small>
+                  <span class="cs-publisher" data-bind="text: mainArticle.publisher.name"></span>
+                </small>
+              </h4>
+              <!-- ko if: relatedArticles -->
+              <h5 data-bind="with: relatedArticles()[0]">
+                <a class="cs-title" target="_blank" data-bind="text : title, attr: {href:link}"></a>
+                <small>
+                  <span class="cs-publisher" data-bind="text: publisher.name"></span>
+                </small>
+              </h5>
+              <!-- /ko -->
+            </div>
           </div>
 
-          <div class="cs-bottom">
+          <div class="cs-bottom row">
             <h4>
-              <a class="cs-story-link" href="#" data-bind="click: navigateToDetails, attr: {href:storyDetailUrl}">View full coverage</a>
+              <a class="cs-story-link" href="#" data-bind="click: navigateToDetails, attr: {href:storyDetailUrl}">
+                View full coverage
+                <span class="glyphicon glyphicon-arrow-right" aria-label="View full coverage"></span>
+              </a>
             </h4>
           </div>
         </div>

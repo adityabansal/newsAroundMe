@@ -132,12 +132,10 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
 }
 
 .cs-section {
-  margin-top:6em;
+  margin-top:4em;
 }
 
 .cs-item {
-  height:25em;
-  overflow-y:auto;
   margin-bottom:15px;
   padding-left:15px;
   padding-right:15px;
@@ -145,6 +143,13 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
   border-bottom-right-radius: 4px;
   border-bottom-left-radius: 4px;
   background-color:white;
+}
+
+.cs-item .cs-content {
+  height:20em;
+  overflow-y:auto;
+  padding-left:15px;
+  padding-right:15px;
 }
 
 .cs-item .cs-image-container {
@@ -157,7 +162,7 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
 }
 
 .cs-item .cs-image {
-  max-height: 10em;
+  max-height: 12em;
 }
 
 .cs-item .cs-publisher {
@@ -173,6 +178,7 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
 }
 
 .cs-bottom {
+  background-color:#f4f4f4;
   text-align: center;
 }
 
