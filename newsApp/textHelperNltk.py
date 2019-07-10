@@ -117,7 +117,7 @@ def getEntitiesInternal(text):
     sentences = [nltk.word_tokenize(sent) for sent in sentences]
     sentences = [nltk.pos_tag(sent) for sent in sentences]
 
-    entities = [];
+    entities = []
     for sentence in sentences:
         extractedEntities = nltk.ne_chunk(sentence, binary=True).subtrees(
             filter = lambda x: x.label() == 'NE')
@@ -135,11 +135,11 @@ def getEntities(text):
         return []
 
 def compareEntities(entity1, entity2, doc1EntityWeights, doc2EntityWeights):
-    entity1 = EncodedEntity(entity1)
     entity1Weigth = doc1EntityWeights.get(entity1, 0.8)
-    entity2 = EncodedEntity(entity2)
+    entity1 = EncodedEntity(entity1)
     entity2Weigth = doc2EntityWeights.get(entity2, 0.8)
-    combinedWeight = entity1Weigth * entity2Weigth;
+    entity2 = EncodedEntity(entity2)
+    combinedWeight = entity1Weigth * entity2Weigth
 
     if entity1.encoded == entity2.encoded:
         return 1.0 * combinedWeight
