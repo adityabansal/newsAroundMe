@@ -172,7 +172,7 @@ def compareTextEntities(text1, text2, doc1EntityWeights, doc2EntityWeights):
             return score
 
 def getImportantSentences(text):
-    sentences = getSentences(text)
+    sentences = getSentences(removeNonAsciiChars(text))
     importantSentences= []
 
     for sentence in sentences:
