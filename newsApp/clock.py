@@ -47,7 +47,7 @@ def reprocessCurrentClusters_job():
 
 @sched.scheduled_job(
 	'interval',
-	minutes = clusteringInterval,
+	minutes = clusteringInterval * 2,
 	start_date = now + datetime.timedelta(minutes = 9))
 def notifyTwitterJob_job():
 	notifyTwitter()
