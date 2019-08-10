@@ -187,7 +187,7 @@ def extractOpenGraphData(jobId, rawHtml, baseUrl):
     except XMLSyntaxError:
         logger.warning(
             "Could not parse page html. JobId: %s", jobId)
-        return ([], "")
+        return { 'images' : [], 'summary' : ""}
 
     ogImageElements = parsedHtml.cssselect('meta[property="og:image"]')
     ogImages = [_getCompleteUrl(img.attrib['content'], baseUrl) \
