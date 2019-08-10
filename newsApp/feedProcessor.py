@@ -176,9 +176,9 @@ def _linkFromWebPageEntry(jobId, entry, feed, entrySelector):
     entrySelector['title'],
     feed.tags[FEEDTAG_URL])
   if not extractTitleResult:
-    return None;
-  link = extractTitleResult[0];
-  linkTags[LINKTAG_TITLE] = extractTitleResult[1];
+    return None
+  link = extractTitleResult[0]
+  linkTags[LINKTAG_TITLE] = extractTitleResult[1]
 
   if 'titleText' in entrySelector:
     logger.info("titleText selector specified. Using it. %s", jobId)
@@ -188,18 +188,7 @@ def _linkFromWebPageEntry(jobId, entry, feed, entrySelector):
       entrySelector['titleText'],
       None)
     if not linkTags[LINKTAG_TITLE]:
-      return None;
-
-  # add summary and image tags
-  processingResult = hp.processHtml(
-      jobId,
-      entry,
-      entrySelector['summary'],
-      entrySelector['image'],
-      feed.tags[FEEDTAG_URL]);
-  linkTags[LINKTAG_SUMMARY] = entry;
-  linkTags[LINKTAG_SUMMARYTEXT] = processingResult[0];
-  linkTags[LINKTAG_SUMMARYIMAGES] = processingResult[1];
+      return None
 
   linkTags[LINKTAG_PUBTIME] = int(time.time())
   linkTags[LINKTAG_ISPROCESSED] = 'false'
@@ -211,10 +200,10 @@ def _linkFromWebPageEntry(jobId, entry, feed, entrySelector):
     return None
 
 def processWebFeed(jobId, feed):
-  feedAndJobId = "Feed id: " + feed.id + ". Job id: " + jobId;
+  feedAndJobId = "Feed id: " + feed.id + ". Job id: " + jobId
 
   # get page html
-  pageHtml = "";
+  pageHtml = ""
   if FEEDTAG_IS_FEEDPAGE_STATIC in feed.tags:
     pageHtml = getHtmlStatic(feed.tags[FEEDTAG_URL])
   else:
@@ -242,7 +231,7 @@ def processWebFeed(jobId, feed):
     for entry in entries[:30]:
       link = _linkFromWebPageEntry(jobId, entry, feed, entrySelector)
       if link:
-        linksToAdd.append(link);
+        linksToAdd.append(link)
         logger.info("Discovered link: %s. %s", link.id, feedAndJobId)
 
   if len(linksToAdd) == 0:
@@ -265,8 +254,8 @@ def processWebFeed(jobId, feed):
   logger.info("Completed processing webPage feed. %s.", feedAndJobId)
 
 def processFeed(jobId, feedId):
-  feedAndJobId = "Feed id: " + feedId + ". Job id: " + jobId;
-  logger.info("Started processing rss feed. %s.", feedAndJobId)
+  feedAndJobId = "Feed id: " + feedId + ". Job id: " + jobId
+  logger.info("Started processing feed. %s.", feedAndJobId)
 
   # get the feed
   feedManager = FeedManager()
