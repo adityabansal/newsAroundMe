@@ -104,7 +104,7 @@ def validateFilters(requestArgs):
   parsedFilters = {}
 
   if CLUSTERS_FILTER_LANGUAGES in requestArgs:
-    parsedLangs = requestArgs.get(CLUSTERS_FILTER_LANGUAGES).split(",");
+    parsedLangs = requestArgs.get(CLUSTERS_FILTER_LANGUAGES).split(",")
 
     for lang in parsedLangs:
       try:
@@ -176,10 +176,12 @@ def getImage(imageKey):
   imageContent = imageProcessor.getImageContent(imageKey)
 
   if not imageContent:
-    return abort(404);
+    return abort(404)
   else:
     response = make_response(imageContent)
     response.headers['Content-Type'] = 'image/jpeg'
+    # allow some caching for images only as they are unlikely to change.
+    response.cache_control.max_age = 7200
     return response
 
 @app.route('/')
