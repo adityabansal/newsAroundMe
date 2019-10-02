@@ -74,7 +74,7 @@ class NotifierTwitter(NotifierBase):
         articleText = articleTitle + " (via: " + articleLink + ")\n\n"
         #  "{} (via: {})\n".format(articleTitle, articleLink)
         articleTextLength = len(articleText) - (len(articleLink) - linkLength)
-        if (tweetLength + articleTextLength) < 200:
+        if (tweetLength + articleTextLength) < 240:
           tweetText = tweetText + articleText
           tweetLength = tweetLength + articleTextLength
         else:

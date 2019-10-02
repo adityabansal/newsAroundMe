@@ -122,7 +122,7 @@ AVAILABLE_LANGUAGES = [
 ]
 
 LOCATION_METADATA = [
-  {'displayName': 'Delhi', 'icon': '', 'value': 'delhi', 'lat': 28.70, 'long': 77.10, 'languages': [LANG_ENGLISH_METADATA]},
+  {'displayName': 'Delhi', 'icon': '', 'value': 'delhi', 'lat': 28.70, 'long': 77.10, 'languages': [LANG_ENGLISH_METADATA, LANG_HINDI_METADATA]},
   {'displayName': 'Mumbai', 'icon': '', 'value': 'mumbai', 'lat': 19.08, 'long': 72.88, 'languages': [LANG_ENGLISH_METADATA]},
   {'displayName': 'Bangalore', 'icon': '', 'value': 'bangalore', 'lat': 12.97, 'long': 77.59, 'languages': [LANG_ENGLISH_METADATA]},
   {'displayName': 'Chennai', 'icon': '', 'value': 'chennai', 'lat': 13.08, 'long': 80.27, 'languages': [LANG_ENGLISH_METADATA, LANG_TAMIL_METADATA]},
@@ -133,6 +133,6 @@ LOCATION_METADATA = [
   {'displayName': 'Jaipur', 'icon': '', 'value': 'jaipur', 'lat': 26.91, 'long': 75.79, 'languages': [LANG_ENGLISH_METADATA, LANG_HINDI_METADATA]}]
 for location in LOCATION_METADATA:
   location['title'] = location['displayName'] + ' News | Newsaroundme'
-  location['description'] = 'Latest local news from '+ location['displayName'] + '.'
+  location['description'] = 'Local news from '+ location['displayName'] + '.'
   location['url'] = "/" + location['value']
   location['longDisplayName'] = location['displayName'] + ' news'
