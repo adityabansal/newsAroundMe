@@ -1,0 +1,1 @@
+web: gunicorn newsApp.webRole:app --worker-class gevent
