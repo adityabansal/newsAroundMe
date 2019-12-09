@@ -120,6 +120,9 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
 
 .articleCard {
   border: 2px solid #777;
+  max-height: 24em;
+  overflow-x: auto;
+  margin-bottom: 20px;
 }
 
 .upper-nav-link {
