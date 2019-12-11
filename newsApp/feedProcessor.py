@@ -232,7 +232,6 @@ def processWebFeed(jobId, feed):
       link = _linkFromWebPageEntry(jobId, entry, feed, entrySelector)
       if link:
         linksToAdd.append(link)
-        logger.info("Discovered link: %s. %s", link.id, feedAndJobId)
 
   if len(linksToAdd) == 0:
     logger.warning("No links found while processing webPage. %s", feedAndJobId)
