@@ -69,14 +69,18 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
 }
 
 .baseCard .card-header {
-  font-size: 1.1em;
+  font-size: 1em;
   color: #6b0000;
   padding-bottom: 0.3em;
 }
 
+.baseCard .card-header .publisher-link {
+  font-weight:bolder
+}
+
 .baseCard .headline {
   color: black;
-  font-size: 1.2em;
+  font-size: 1.1em;
   font-weight: bold;
 }
 
@@ -120,7 +124,7 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
 
 .articleCard {
   border: 2px solid #777;
-  max-height: 24em;
+  max-height: 22em;
   overflow-x: auto;
   margin-bottom: 20px;
 }
