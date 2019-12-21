@@ -3,7 +3,7 @@ import logging
 import requests
 import urlparse
 
-from lxml.etree import XMLSyntaxError
+from lxml.etree import XMLSyntaxError,ParserError
 import lxml.html as lh
 from lxml.html.clean import Cleaner
 
@@ -106,8 +106,8 @@ def processHtml(jobId, rawHtml, textSelector, imageSelectors, baseUrl = None):
 
     # Parse html with lxml library
     try:
-        parsedHtml = _parseAndCleanHtml(rawHtml);
-    except XMLSyntaxError:
+        parsedHtml = _parseAndCleanHtml(rawHtml)
+    except (XMLSyntaxError, ParserError):
         logger.warning(
             "Could not parse page html. JobId: %s", jobId)
         return ("", [])
@@ -138,7 +138,7 @@ def processHtml(jobId, rawHtml, textSelector, imageSelectors, baseUrl = None):
 def getSubHtmlEntries(jobId, fullHtml, selector):
     try:
         parsedHtml = _parseAndCleanHtml(fullHtml)
-    except XMLSyntaxError:
+    except (XMLSyntaxError, ParserError):
         logger.warning(
             "Could not parse page html. JobId: %s", jobId)
         return []
@@ -149,7 +149,7 @@ def getSubHtmlEntries(jobId, fullHtml, selector):
 def extractLink(jobId, html, selector, baseUrl):
     try:
         parsedHtml = _parseAndCleanHtml(html)
-    except XMLSyntaxError:
+    except (XMLSyntaxError, ParserError):
         logger.warning("Could not parse html. JobId: %s", jobId)
         return None
 
@@ -172,7 +172,7 @@ def extractLink(jobId, html, selector, baseUrl):
 def extractText(jobId, html, textSelector, baseUrl):
     try:
         parsedHtml = _parseAndCleanHtml(html)
-    except XMLSyntaxError:
+    except (XMLSyntaxError, ParserError):
         logger.warning("Could not parse html. JobId: %s", jobId)
         return None
 
@@ -184,7 +184,7 @@ def extractOpenGraphData(jobId, rawHtml, baseUrl):
     try:
         # not calling _parseAndCleanHtml as cleaner removes meta tags.
         parsedHtml = lh.fromstring(rawHtml)
-    except XMLSyntaxError:
+    except (XMLSyntaxError, ParserError):
         logger.warning(
             "Could not parse page html. JobId: %s", jobId)
         return { 'images' : [], 'summary' : ""}

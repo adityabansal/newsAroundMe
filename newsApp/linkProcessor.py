@@ -42,6 +42,7 @@ def _processHtmlForLink(jobId, link, publisher):
   text = ''
   images = []
 
+  pageHtmlUsed = ''
   pageStaticHtml = link.getHtmlStatic()
   logger.info("Got static html for the link. %s.", linkAndJobId)
   resultStatic = hp.processHtml(
@@ -57,6 +58,7 @@ def _processHtmlForLink(jobId, link, publisher):
       linkAndJobId)
     text = resultStatic[0]
     images = resultStatic[1]
+    pageHtmlUsed = pageStaticHtml
   else:
     pageDynamicHtml = link.getHtmlDynamic()
     logger.info("Got dynamic html for the link. %s.", linkAndJobId)
@@ -71,8 +73,9 @@ def _processHtmlForLink(jobId, link, publisher):
     if len(text) < resultStatic[0]:
       text = resultStatic[0]
     images = list(set(resultStatic[1] + resultDynamic[1]))
+    pageHtmlUsed = pageDynamicHtml
 
-  ogData = hp.extractOpenGraphData(jobId, pageStaticHtml, linkId)
+  ogData = hp.extractOpenGraphData(jobId, pageHtmlUsed, linkId)
   if len(images) == 0:
     images = ogData['images']
     logger.info("Using %i images from Open Graph metadata", len(images))
