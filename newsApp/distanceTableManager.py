@@ -15,7 +15,7 @@ class DistanceTableManager:
 
     def __init__(self):
         """
-        Instantiates a new instance of DbItemManager class
+        Instantiates a new instance of DistanceTableManager class
         """
 
         self.tableConnString = os.environ['DISTTABLE_CONNECTIONSTRING']
@@ -38,14 +38,14 @@ class DistanceTableManager:
 
         # delete existing table if it exists
         try:
-            self.__getTable().delete();
+            self.__getTable().delete()
             time.sleep(10)
         except:
             pass;# do nothing. Maybe there was no existing table
 
         # create new table
         tableConnectionParams = parseConnectionString(
-            self.tableConnString);
+            self.tableConnString)
         return Table.create(
             tableConnectionParams['name'],
             schema = [
@@ -71,7 +71,7 @@ class DistanceTableManager:
         Add a entry in the distances table.
         """
 
-        table = self.__getTable();
+        table = self.__getTable()
 
         table.put_item(data = {
             'from' : min(docId1, docId2),
@@ -101,8 +101,8 @@ class DistanceTableManager:
         Return results in a generator
         """
 
-        table = self.__getTable();
-        scanResults = table.scan();
+        table = self.__getTable()
+        scanResults = table.scan()
         return ((result['from'], result['to'], json.loads(result['distance']))
                 for result in scanResults)
 
@@ -136,7 +136,7 @@ class DistanceTableManager:
                 else:
                     closeDocs.append(entry['from'])
 
-        return closeDocs;
+        return closeDocs
 
     def cleanUpDoc(self, docId):
         """
@@ -145,7 +145,7 @@ class DistanceTableManager:
 
         docEntries = self.__queryByDocId(docId)
 
-        table = self.__getTable();
+        table = self.__getTable()
         with table.batch_write() as batch:
             for entry in docEntries:
                 batch.delete_item(**{
@@ -158,7 +158,7 @@ class DistanceTableManager:
         Delete a entry from the distances table.
         """
 
-        table = self.__getTable();
+        table = self.__getTable()
 
         table.delete_item(**{
             'from': min(docId1, docId2),
@@ -166,7 +166,7 @@ class DistanceTableManager:
         })
 
     def __queryByDocId(self, docId):
-        table = self.__getTable();
+        table = self.__getTable()
 
         entries = list(table.query_2(from__eq = docId)) +\
             list(table.query_2(to__eq = docId, index = 'reverseIndex'))
