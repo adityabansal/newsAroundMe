@@ -1,4 +1,4 @@
-var appCacheName = 'shellCache-v16';
+var appCacheName = 'shellCache-v17';
 var filesToCache = [
   '/static/ie10-viewport-bug-workaround.css',
   '/static/ie10-viewport-bug-workaround.js',
@@ -7,7 +7,7 @@ var filesToCache = [
   '/static/bootstrap-3.3.6/fonts/glyphicons-halflings-regular.woff2',
   '/static/loading.svg',
   '/static/favicon.ico',
-  'static/logoNavbar.png'
+  '/static/logoNavbar.png'
 ];
 // We have only cached those files which aren't expected to change.
 // As we can't cache html due to dynamic urls, it's safer to leave javascript and css code out.
