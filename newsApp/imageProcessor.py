@@ -26,15 +26,15 @@ class ImageProcessor:
   """
 
   def __init__(self):
-    self.blacklistTableConnString = os.environ['BLACKLISTEDIMAGESTABLE_CONNECTIONSTRING'];
+    self.blacklistTableConnString = os.environ['BLACKLISTEDIMAGESTABLE_CONNECTIONSTRING']
     self.__blacklistTable = None
     self.mappingTableConnString = os.environ['IMAGEMAPPINGSTABLE_CONNECTIONSTRING']
     self.__mappingTable = None
-    self.bucketConnString = os.environ['IMAGESBUCKET_CONNECTIONSTRING'];
+    self.bucketConnString = os.environ['IMAGESBUCKET_CONNECTIONSTRING']
 
   def __getBlacklistTable(self):
     if not self.__blacklistTable:
-      self.__blacklistTable = getDbTable(self.blacklistTableConnString);
+      self.__blacklistTable = getDbTable(self.blacklistTableConnString)
 
     return self.__blacklistTable
 
@@ -45,9 +45,9 @@ class ImageProcessor:
     return self.__mappingTable
 
   def __getBucket(self):
-    conn = getS3Connection(self.bucketConnString);
-    bucketConnParams = parseConnectionString(self.bucketConnString);
-    return conn.get_bucket(bucketConnParams['bucketName']);
+    conn = getS3Connection(self.bucketConnString)
+    bucketConnParams = parseConnectionString(self.bucketConnString)
+    return conn.get_bucket(bucketConnParams['bucketName'])
 
   def __setupTable(self):
     logger.info("Setting up the images table")
@@ -60,11 +60,11 @@ class ImageProcessor:
       time.sleep(20)
     except:
       logger.info("Delete table call failed. Maybe it didn't exist.")
-      pass;# do nothing. Maybe there was no existing table
+      pass # do nothing. Maybe there was no existing table
 
     # create new table
     logger.info("Creating the new table ...")
-    tableConnectionParams = parseConnectionString(self.blacklistTableConnString);
+    tableConnectionParams = parseConnectionString(self.blacklistTableConnString)
     return Table.create(
       tableConnectionParams['name'],
       schema = [HashKey('url')],
@@ -72,11 +72,10 @@ class ImageProcessor:
           'read': 1,
           'write': 1,
       }, connection = getDbConnection(tableConnectionParams))
-    logger.info("Created the table")
 
   def __setupBucket(self):
     connectionParams = parseConnectionString(self.bucketConnString)
-    conn = getS3Connection(self.bucketConnString);
+    conn = getS3Connection(self.bucketConnString)
     bucketName = connectionParams['bucketName']
 
     if conn.lookup(bucketName):
@@ -89,21 +88,21 @@ class ImageProcessor:
 
   def setup(self):
     # create new table
-    self.__setupTable();
+    self.__setupTable()
 
     #create new bucket
-    self.__setupBucket();
+    self.__setupBucket()
 
   def __isImageBlackListed(self, imageUrl):
-    table = self.__getBlacklistTable();
+    table = self.__getBlacklistTable()
     return (table.query_count(url__eq = imageUrl) != 0)
 
   def __getImageMapping(self, imageUrl):
-    table = self.__getMappingTable();
+    table = self.__getMappingTable()
     mappings = list(table.query(url__eq = imageUrl))
 
     if not mappings:
-      return;
+      return
     else:
       return mappings[0]['imageKey']
 
@@ -116,11 +115,11 @@ class ImageProcessor:
   def getImageContent(self, imageKey):
     try:
       k = Key(self.__getBucket())
-      k.key = imageKey;
+      k.key = imageKey
       keyContents = k.get_contents_as_string()
-      return keyContents;
+      return keyContents
     except S3ResponseError:
-      return None;
+      return None
 
   def processImage(self, jobId, imageUrl):
     jobIdLog = "JobId: " + jobId
@@ -153,10 +152,10 @@ class ImageProcessor:
       r = requests.get(imageUrl, stream=True, timeout = 10)
       r.raw.decode_content = True
       imageRaw = r.raw
-      logger.info("Feteched image using url. %s.", jobIdLog);
+      logger.info("Feteched image using url. %s.", jobIdLog)
     except Exception:
       logger.info("Could not fetch the image url %s. %s", imageUrl, jobIdLog)
-      return;
+      return
 
     try:
       image = Image.open(imageRaw)
@@ -169,15 +168,20 @@ class ImageProcessor:
           width,
           height,
           jobIdLog)
-        return;
+        return
 
       # crop image if its too long
       if height > width:
-        image.crop(0, 0, width, width)
+        image = image.crop((0, 0, width, width))
         logger.info("Image too long. Cropped bottom part. %s", jobIdLog)
 
+      # crop image if its too wide
+      if width > 2*height:
+        image = image.crop((0, 0, 2*height, height))
+        logger.info("Image too wide. Cropped right part. %s", jobIdLog)
+
       #Resize the image
-      newSize = 300, 300
+      newSize = 350, 350
       image.thumbnail(newSize, Image.ANTIALIAS)
       logger.info("Image successfully resized. %s", jobIdLog)
 
@@ -191,18 +195,23 @@ class ImageProcessor:
 
       logger.info("Saving the image in the bucket %s", jobIdLog)
       imageKey = ''.join(random.choice('0123456789ABCDEF') for i in range(16)) + ".jpg"
-      bucket = self.__getBucket();
-      k = bucket.new_key(imageKey);
+      bucket = self.__getBucket()
+      k = bucket.new_key(imageKey)
       k.set_contents_from_string(outImage.getvalue())
       logger.info("Saved image in the bucket with key %s. %s", imageKey, jobIdLog)
 
-      self.__addImageMapping(imageUrl, imageKey);
-      logger.info("Added entry in image mappings table");
+      self.__addImageMapping(imageUrl, imageKey)
+      logger.info("Added entry in image mappings table")
 
-      return imageKey;
-    except Exception, e:
+      return imageKey
+    except IOError:
       logger.info(
+        "Encountered IO error in processing image with url %s. %s",
+        imageUrl,
+        jobIdLog)
+    except Exception:
+      logger.exception(
         "Could not process image with url %s. %s",
         imageUrl,
-        jobIdLog);
-      pass;
+        jobIdLog)
+      pass
