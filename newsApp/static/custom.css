@@ -144,6 +144,7 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
 
 .cs-item {
   margin-bottom:15px;
+  padding-top:15px;
   padding-left:15px;
   padding-right:15px;
   border:2px solid #777;
@@ -153,14 +154,16 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
 }
 
 .cs-item .cs-content {
-  height:20em;
-  overflow-y:auto;
-  padding-left:15px;
-  padding-right:15px;
+  height:9em;
+  overflow-y:hidden;
 }
 
-.cs-item .cs-image-container {
-  padding-top: 1em;
+.cs-item .cs-image {
+  max-width:80px;
+}
+
+.cs-title-container {
+  margin-top:0px;
 }
 
 .cs-item .cs-title {
@@ -168,25 +171,16 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
   font-weight: 600;
 }
 
-.cs-item .cs-image {
-  max-height: 12em;
-}
-
 .cs-item .cs-publisher {
   color:#171717;
 }
 
-.cs-city-link, .cs-story-link {
+.cs-city-link {
   color: #6b0000;
 }
 
-.cs-city-link:hover, .cs-story-link:hover {
+.cs-city-link:hover {
   color: #5b0000;
-}
-
-.cs-bottom {
-  background-color:#f4f4f4;
-  text-align: center;
 }
 
 .show-more-button {
