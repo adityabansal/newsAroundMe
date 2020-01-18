@@ -110,43 +110,43 @@
   </div>
   {{ languageFilterMacro() }}
 
-  <ul class="list-group" data-bind="foreach: articles">
-    <li class="list-group-item row baseCard articleCard">
-      <div class="col-xs-12">
-        <div class="card-header">
-          <span class="glyphicon glyphicon-time"></span>
-          <span data-bind="text: timeString"></span>
-          <span> by </span>
-          <a class="publisher-link" target="_blank" data-bind="text: publisher.name, attr: {href:link}"></a>
-        </div>
+  <div class="row center-block" data-bind="foreach: articles">
+    <div class="col-xs-12 col-xsl-6 col-sm-6 col-md-4 articleCard-Container">
+      <div class="baseCard articleCard">
+      <!-- ko if: images.length > 0 -->
+      <div class="articlePic-container" data-bind="with: images[0]">
+        <a target="_blank" data-bind="attr: {href:$parent.link}">
+          <img class="img-responsive center-block articlePic" data-bind="attr:{'src': $data}">
+        </a>
+      </div>
+      <!-- /ko -->
+
+      <div class="article-desc-header">
+        <span class="glyphicon glyphicon-time"></span>
+        <span data-bind="text: timeString"></span>
+        <span> by </span>
+        <a class="publisher-link" target="_blank" data-bind="text: publisher.name, attr: {href:link}"></a>
       </div>
 
-      <div class="col-xs-12 col-xsl-6 col-sm-4" data-bind="if: images.length > 0">
-        <div data-bind="with: images[0]">
-          <div class="storyPic-container">
-            <a target="_blank" data-bind="attr: {href:$parent.link}">
-              <img class="img-responsive center-block storyPic" data-bind="attr:{'src': $data}">
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-xs-12" data-bind="css:{'col-sm-8 col-xsl-6' : images.length > 0}">
-        <h4>
+      <div class="article-desc">
+        <h4 class="headline-container">
           <a class="headline" target="_blank" data-bind="text: title, attr: {href:link}"></a>
         </h4>
+        <!-- ko if: images.length == 0 -->
         <p data-bind="visible: highlights.length === 0, text: summaryTextToDisplay"></p>
 
         <div data-bind="if: highlights.length > 0">
           <ul data-bind="foreach: highlights">
-            <li data-bind="css:{'hidden-xs' : $index() > 2}">
+            <li data-bind="css:{'hidden' : $index() > 2}">
               <p data-bind="text: $data"></p>
             </li>
           </ul>
         </div>
+        <!-- /ko -->
       </div>
-    </li>
-  </ul>
+      </div>
+    </div>
+  </div>
 
   <div class="cs-section" data-bind="if: cityStories().length > 0">
     <h3 data-bind="with: mainCity">
