@@ -4,7 +4,6 @@ import time
 import logging
 
 import feedparser
-import requests
 
 from constants import *
 from feed import Feed
@@ -37,7 +36,6 @@ def _deleteUnecessaryFeedTags(feedTags):
 
 def _putNewLinks(feedAndJobId, linksToAdd):
   linkManager = LinkManager()
-  jobManager = MinerJobManager()
   latestPubTime = 0
 
   for link in linksToAdd:
@@ -72,7 +70,7 @@ def _putNewLinks(feedAndJobId, linksToAdd):
     if latestPubTime < link.tags[LINKTAG_PUBTIME]:
       latestPubTime  = link.tags[LINKTAG_PUBTIME]
 
-  return latestPubTime;
+  return latestPubTime
 
 def _retrieveNewTagsFromFeedEntry(jobId, entry):
   """
@@ -80,7 +78,7 @@ def _retrieveNewTagsFromFeedEntry(jobId, entry):
   Computes tags for the link object being prepared from the feed entry.
   """
 
-  newTags = {};
+  newTags = {}
 
   # add title
   newTags[LINKTAG_TITLE] = entry.title
@@ -90,19 +88,32 @@ def _retrieveNewTagsFromFeedEntry(jobId, entry):
       jobId,
       entry.summary,
       ":not(script)",
-      ["img"]);
-  newTags[LINKTAG_SUMMARY] = entry.summary;
-  newTags[LINKTAG_SUMMARYTEXT] = processingResult[0];
-  newTags[LINKTAG_SUMMARYIMAGES] = processingResult[1];
+      ["img"])
+  newTags[LINKTAG_SUMMARY] = entry.summary
+  newTags[LINKTAG_SUMMARYTEXT] = processingResult[0]
+  newTags[LINKTAG_SUMMARYIMAGES] = processingResult[1]
 
   if entry.published_parsed:
-    newTags[LINKTAG_PUBTIME] = calendar.timegm(entry.published_parsed);
+    newTags[LINKTAG_PUBTIME] = calendar.timegm(entry.published_parsed)
   else:
     newTags[LINKTAG_PUBTIME] = int(time.time())
 
   newTags[LINKTAG_ISPROCESSED] = 'false'
   return newTags
 
+def _putNewLinksAndUpdateFeed(feedAndJobId, feed, newLinks):
+  # for each newLink, add link in link database.
+  latestPubTime = _putNewLinks(feedAndJobId, newLinks)
+
+  # last step update the feed on successful completion of poll
+  if latestPubTime > 0:
+    feed.tags[FEEDTAG_LASTPUBDATE] = latestPubTime
+
+  feedManager = FeedManager()
+  feedManager.updateFeedOnSuccessfullPoll(feed)
+  logger.info(
+    "Feed updated after being successfully processed. %s.",
+    feedAndJobId)
 
 def _linkFromFeedEntry(jobId, entry, feed):
   """
@@ -122,17 +133,13 @@ def _linkFromFeedEntry(jobId, entry, feed):
   else:
     return None
 
-def processRssFeed(jobId, feed):
-  """
-  Processes a rss feed (takes as input the feed)
-  """
-
-  feedAndJobId = "Feed id: " + feed.id + ". Job id: " + jobId;
+def getNewLinksFromRssFeed(jobId, feed):
+  feedAndJobId = "Feed id: " + feed.id + ". Job id: " + jobId
 
   # compute the last pubDate
-  lastPubDate = 0;
+  lastPubDate = 0
   if FEEDTAG_LASTPUBDATE in feed.tags:
-      lastPubDate = feed.tags[FEEDTAG_LASTPUBDATE]
+    lastPubDate = feed.tags[FEEDTAG_LASTPUBDATE]
 
   # get all feed entries since last poll time
   parsedFeed = feedparser.parse(feed.tags[FEEDTAG_URL])
@@ -140,23 +147,24 @@ def processRssFeed(jobId, feed):
                 if (not entry.published_parsed) or (entry.published_parsed > time.gmtime(lastPubDate))]
   logger.info("Got %i new entries. %s", len(newEntries), feedAndJobId)
 
-  # for each entry add link in link database and a process link job
-  linksToAdd = []
+  newLinks = []
   for entry in newEntries:
     link = _linkFromFeedEntry(jobId, entry, feed)
     if link:
-      linksToAdd.append(link);
-  latestPubTime = _putNewLinks(feedAndJobId, linksToAdd)
+      newLinks.append(link)
 
-  # last step update the feed on successful completion of poll
-  if latestPubTime > 0:
-    feed.tags[FEEDTAG_LASTPUBDATE] = latestPubTime
+  return newLinks
 
-  feedManager = FeedManager()
-  feedManager.updateFeedOnSuccessfullPoll(feed)
-  logger.info(
-    "Feed updated after being successfully processed. %s.",
-    feedAndJobId)
+def processRssFeed(jobId, feed):
+  """
+  Processes a rss feed (takes as input the feed)
+  """
+
+  feedAndJobId = "Feed id: " + feed.id + ". Job id: " + jobId
+
+  newLinks = getNewLinksFromRssFeed(jobId, feed)
+
+  _putNewLinksAndUpdateFeed(feedAndJobId, feed, newLinks)
 
   logger.info("Completed processing rss feed. %s.", feedAndJobId)
 
@@ -238,17 +246,7 @@ def processWebFeed(jobId, feed):
   else:
     logger.info("Number of links found: %i. %s", len(linksToAdd), feedAndJobId)
 
-  # put links and processLink jobs
-  latestPubTime = _putNewLinks(feedAndJobId, linksToAdd)
-  if latestPubTime > 0:
-    feed.tags[FEEDTAG_LASTPUBDATE] = latestPubTime
-
-  # update Feed on successfull poll
-  feedManager = FeedManager()
-  feedManager.updateFeedOnSuccessfullPoll(feed)
-  logger.info(
-    "Feed updated after being successfully processed. %s.",
-    feedAndJobId)
+  _putNewLinksAndUpdateFeed(feedAndJobId, feed, linksToAdd)
 
   logger.info("Completed processing webPage feed. %s.", feedAndJobId)
 
