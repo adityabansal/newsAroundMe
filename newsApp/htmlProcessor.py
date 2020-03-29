@@ -16,7 +16,7 @@ def _isAbsolute(url):
     return bool(urlparse.urlparse(url).netloc)
 
 def _getUrlDomain(url):
-    return urlparse.urlparse(url).hostname.lower();
+    return urlparse.urlparse(url).hostname.lower()
 
 def _addHttpToUrlIfNeeded(url):
     if not bool(urlparse.urlparse(url).scheme):
@@ -35,7 +35,7 @@ def _getCompleteUrl(url, baseUrl):
 
 def _parseAndCleanHtml(rawHtml):
     # Parse html with lxml library
-    parsedHtml = lh.fromstring(rawHtml);
+    parsedHtml = lh.fromstring(rawHtml)
 
     cleaner = Cleaner()
     cleaner.javascript = True
@@ -46,51 +46,51 @@ def _parseAndCleanHtml(rawHtml):
 def _extractTextFromElement(element, baseUrl):
     if baseUrl and element.tag == 'a':
         if 'href' in element.attrib:
-            baseDomain = _getUrlDomain(baseUrl);
-            link = element.attrib['href'];
+            baseDomain = _getUrlDomain(baseUrl)
+            link = element.attrib['href']
             #don't extract text from foreign links, likely to be ads
             if _isAbsolute(link) and len(link) > 200\
                 and baseDomain != _getUrlDomain(link):
                     logger.info(
                         "Filtered out element with link %s while extracting text",
                         link[:50] + "...")
-                    return "";
+                    return ""
 
-    text_content = "";
+    text_content = ""
     if element.text:
-        text_content = element.text;
+        text_content = element.text
 
     if len(element):
         for child in element:
-            childText = _extractTextFromElement(child, baseUrl);
+            childText = _extractTextFromElement(child, baseUrl)
             if childText:
-                text_content += childText + " ";
+                text_content += childText + " "
 
             if child.tail:
                 text_content += child.tail + " "
 
-    return text_content.strip();
+    return text_content.strip()
 
 def _extractText(html, textSelector, baseUrl):
-    text = "";
-    textDivs = html.cssselect(textSelector);
+    text = ""
+    textDivs = html.cssselect(textSelector)
     for textDiv in textDivs:
         textContent = _extractTextFromElement(textDiv, baseUrl)
-        text += textContent + " ";
-    return text.strip();
+        text += textContent + " "
+    return text.strip()
 
 def _extractImages(html, imageSelector, baseUrl):
-    images = html.cssselect(imageSelector);
+    images = html.cssselect(imageSelector)
     return [_getCompleteUrl(img.attrib['src'], baseUrl) \
-        for img in images if 'src' in img.attrib];
+        for img in images if 'src' in img.attrib]
 
 def _processImage(jobId, url):
     imageKey = __imageProcessor.processImage(jobId, url)
 
     if not imageKey:
-      return "";
+      return ""
     else:
-      return "images/" + imageKey;
+      return "images/" + imageKey
 
 def processHtml(jobId, rawHtml, textSelector, imageSelectors, baseUrl = None):
     """
@@ -108,7 +108,7 @@ def processHtml(jobId, rawHtml, textSelector, imageSelectors, baseUrl = None):
     try:
         parsedHtml = _parseAndCleanHtml(rawHtml)
     except (XMLSyntaxError, ParserError):
-        logger.warning(
+        logger.info(
             "Could not parse page html. JobId: %s", jobId)
         return ("", [])
 
@@ -118,22 +118,23 @@ def processHtml(jobId, rawHtml, textSelector, imageSelectors, baseUrl = None):
         logger.info(
             "Did not find any text for selector: %s. JobId: %s",
             textSelector,
-            jobId);
+            jobId)
     else:
         logger.info(
-            "Sucessfully extracted out text from html. JobId: %s",
-            jobId);
+            "Sucessfully extracted out text of length %i from html. JobId: %s",
+            len(text),
+            jobId)
 
     # Extract out images
-    images = [];
+    images = []
     for imageSelector in imageSelectors:
-        images += _extractImages(parsedHtml, imageSelector, baseUrl);
+        images += _extractImages(parsedHtml, imageSelector, baseUrl)
     images = list(set(images)) # remove duplicates
     images = [_processImage(jobId, img) for img in images] #process images
     images = filter(None, images) #filter out unprocessed images
-    logger.info("Extracted out %i images. JobId: %s", len(images), jobId);
+    logger.info("Extracted out %i images. JobId: %s", len(images), jobId)
 
-    return (text, images);
+    return (text, images)
 
 def getSubHtmlEntries(jobId, fullHtml, selector):
     try:

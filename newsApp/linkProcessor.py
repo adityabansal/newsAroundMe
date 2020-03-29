@@ -70,7 +70,7 @@ def _processHtmlForLink(jobId, link, publisher):
       linkId)
 
     text = resultDynamic[0]
-    if len(text) < resultStatic[0]:
+    if len(text) < len(resultStatic[0]):
       text = resultStatic[0]
     images = list(set(resultStatic[1] + resultDynamic[1]))
     pageHtmlUsed = pageDynamicHtml
