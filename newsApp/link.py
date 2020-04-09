@@ -3,17 +3,17 @@ from webPageLoader import loadPageAndGetHtml, getHtmlStatic
 import time
 import requests
 
-def _openUrlWithRetries(url, max_retries = 2):
+def _openUrlWithRetries(url, max_retries = 1):
     nRetries = 0
     while (True):
         try:
-            response = requests.get(url, timeout = 10)
+            response = requests.get(url, timeout = 20)
             return response
         except Exception as e:
             if (nRetries >= max_retries):
                 raise e
             else:
-                time.sleep(10)
+                time.sleep(5)
                 nRetries = nRetries + 1
 
 def getIdentifierUrl(url):

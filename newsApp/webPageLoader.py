@@ -6,17 +6,17 @@ from selenium import webdriver
 
 logger = logging.getLogger('webPageLoader')
 
-def getHtmlStatic(url, max_retries = 2):
+def getHtmlStatic(url, max_retries = 1):
     nRetries = 0
     headers = {'User-Agent': 'newsbot'}
     while (True):
         try:
-            return requests.get(url, headers = headers, timeout = 10).text
+            return requests.get(url, headers = headers, timeout = 20).text
         except Exception as e:
             if (nRetries >= max_retries):
                 raise e
             else:
-                time.sleep(10)
+                time.sleep(5)
                 nRetries = nRetries + 1
 
 def loadPageAndGetHtml(url):
