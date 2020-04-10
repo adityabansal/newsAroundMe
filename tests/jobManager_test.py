@@ -19,11 +19,11 @@ class JobManagerTests(unittest.TestCase):
             { 'param1Name' : 'dummy3', 'param2Name' : 'dummy4', 'param3Name' : 'dummy5' })
 
         # enqueue jobs
-        testJobManager = JobManager('testJobQueue')
+        testJobManager = JobManager('TEST_JOBSQUEUE_CONNECTIONSTRING')
         testJobManager.enqueueJob(testJob1)
         testJobManager.enqueueJob(testJob2)
 
-	# dequeue jobs
+        # dequeue jobs
         retrievedJob1 = testJobManager.dequeueJob()
         retrievedJob2 = testJobManager.dequeueJob()
 

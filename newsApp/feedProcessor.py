@@ -207,7 +207,7 @@ def _linkFromWebPageEntry(jobId, entry, feed, entrySelector):
   else:
     return None
 
-def processWebFeed(jobId, feed):
+def getLinksFromWebFeed(jobId, feed):
   feedAndJobId = "Feed id: " + feed.id + ". Job id: " + jobId
 
   # get page html
@@ -226,7 +226,7 @@ def processWebFeed(jobId, feed):
     feedAndJobId)
 
   # Use entry selector to get entries
-  linksToAdd = []
+  links = []
   for entrySelector in entrySelectors:
     entries = hp.getSubHtmlEntries(jobId, pageHtml, entrySelector['overall'])
     logger.info(
@@ -239,14 +239,21 @@ def processWebFeed(jobId, feed):
     for entry in entries[:30]:
       link = _linkFromWebPageEntry(jobId, entry, feed, entrySelector)
       if link:
-        linksToAdd.append(link)
+        links.append(link)
 
-  if len(linksToAdd) == 0:
+  if len(links) == 0:
     logger.warning("No links found while processing webPage. %s", feedAndJobId)
   else:
-    logger.info("Number of links found: %i. %s", len(linksToAdd), feedAndJobId)
+    logger.info("Number of links found: %i. %s", len(links), feedAndJobId)
 
-  _putNewLinksAndUpdateFeed(feedAndJobId, feed, linksToAdd)
+  return links
+
+def processWebFeed(jobId, feed):
+  feedAndJobId = "Feed id: " + feed.id + ". Job id: " + jobId
+
+  links = getLinksFromWebFeed(jobId, feed)
+
+  _putNewLinksAndUpdateFeed(feedAndJobId, feed, links)
 
   logger.info("Completed processing webPage feed. %s.", feedAndJobId)
 
