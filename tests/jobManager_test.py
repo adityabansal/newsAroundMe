@@ -6,9 +6,9 @@ from newsApp.jobManager import JobManager
 class JobManagerTests(unittest.TestCase):
 
     def __compareJobs(self, job1, job2):
-        self.failUnless(job1.jobId, job2.jobId)
-        self.failUnless(job1.jobName, job2.jobName)
-        self.failUnless(job1.jobParams, job2.jobParams)
+        self.assertTrue(job1.jobId, job2.jobId)
+        self.assertTrue(job1.jobName, job2.jobName)
+        self.assertTrue(job1.jobParams, job2.jobParams)
 
     def testEnqueueDequeueJobs(self):
         testJob1 = WorkerJob(
@@ -32,4 +32,4 @@ class JobManagerTests(unittest.TestCase):
         self.__compareJobs(testJob2, retrievedJob2)
 
         # validate there is no job in the queue
-        self.failUnless(testJobManager.dequeueJob() is None)
+        self.assertTrue(testJobManager.dequeueJob() is None)

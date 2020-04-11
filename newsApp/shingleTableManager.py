@@ -4,7 +4,7 @@ import time
 from boto.dynamodb2.table import Table
 from boto.dynamodb2.fields import HashKey, RangeKey, GlobalAllIndex
 
-from dbhelper import *
+from .dbhelper import *
 
 MAX_SHINGLES_PER_DOC = 300
 

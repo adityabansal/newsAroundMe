@@ -4,20 +4,20 @@ import json
 
 from retrying import retry
 
-from constants import *
-from cluster import Cluster
-from clusterManager import ClusterManager
-from distanceTableManager import DistanceTableManager
-from doc import Doc
-from docHelper import getDocEnglishTitle, getDocEnglishSummaryText, \
+from .constants import *
+from .cluster import Cluster
+from .clusterManager import ClusterManager
+from .distanceTableManager import DistanceTableManager
+from .doc import Doc
+from .docHelper import getDocEnglishTitle, getDocEnglishSummaryText, \
   getDocEnglishContent, getDocComparisionScore
-from docManager import DocManager
-from entityTableManager import EntityTableManager
-from minerJobManager import MinerJobManager
-from loggingHelper import *
-from shingleTableManager import ShingleTableManager
-from workerJob import WorkerJob
-import textHelperNltk as th
+from .docManager import DocManager
+from .entityTableManager import EntityTableManager
+from .minerJobManager import MinerJobManager
+from .loggingHelper import *
+from .shingleTableManager import ShingleTableManager
+from .workerJob import WorkerJob
+from . import textHelperNltk as th
 
 logger = logging.getLogger('clusteringJobs')
 
@@ -237,7 +237,7 @@ def getCandidateDocsUsingShingles(jobId, docId, docAndJobId):
         else:
             matchFreq[match] = 1
 
-    matches = [match for match in matchFreq.keys() if matchFreq[match] > 4]
+    matches = [match for match in list(matchFreq.keys()) if matchFreq[match] > 4]
 
     logger.info("%i matching docs found using shingles. %s.", len(matches), docAndJobId)
     return matches
@@ -256,7 +256,7 @@ def getCandidateDocsUsingEntities(jobId, docId, docAndJobId):
             else:
                 matchFreq[match] = 1
 
-    matches = [match for match in matchFreq.keys() if matchFreq[match] > 2]
+    matches = [match for match in list(matchFreq.keys()) if matchFreq[match] > 2]
 
     logger.info("%i matching docs found using entities. %s.", len(matches), docAndJobId)
     return matches

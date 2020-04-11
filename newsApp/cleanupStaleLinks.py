@@ -1,5 +1,5 @@
-from linkManager import LinkManager
-from loggingHelper import *
+from .linkManager import LinkManager
+from .loggingHelper import *
 
 InitLogging()
 

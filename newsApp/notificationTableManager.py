@@ -5,9 +5,9 @@ from enum import Enum
 
 from boto.dynamodb2.table import Table
 
-from cluster import Cluster
-from dbhelper import *
-from constants import *
+from .cluster import Cluster
+from .dbhelper import *
+from .constants import *
 
 class Notifier(Enum):
   twitter = 1

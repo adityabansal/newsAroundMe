@@ -1,5 +1,5 @@
-from clusterManager import ClusterManager
-from loggingHelper import *
+from .clusterManager import ClusterManager
+from .loggingHelper import *
 
 InitLogging()
 

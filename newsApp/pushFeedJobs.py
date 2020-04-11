@@ -1,8 +1,8 @@
-from constants import *
-from loggingHelper import *
-from feedManager import FeedManager
-from workerJob import WorkerJob
-from minerJobManager import MinerJobManager
+from .constants import *
+from .loggingHelper import *
+from .feedManager import FeedManager
+from .workerJob import WorkerJob
+from .minerJobManager import MinerJobManager
 
 InitLogging()
 

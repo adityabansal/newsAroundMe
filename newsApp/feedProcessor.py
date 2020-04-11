@@ -5,15 +5,15 @@ import logging
 
 import feedparser
 
-from constants import *
-from feed import Feed
-from feedManager import FeedManager
-from webPageLoader import *
-import htmlProcessor as hp
-from minerJobManager import MinerJobManager
-from link import Link
-from linkManager import LinkManager
-from workerJob import WorkerJob
+from .constants import *
+from .feed import Feed
+from .feedManager import FeedManager
+from .webPageLoader import *
+from . import htmlProcessor as hp
+from .minerJobManager import MinerJobManager
+from .link import Link
+from .linkManager import LinkManager
+from .workerJob import WorkerJob
 
 UNECESSARY_FEED_TAGS = [
   FEEDTAG_TYPE,

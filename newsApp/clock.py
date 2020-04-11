@@ -2,14 +2,14 @@ import datetime
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 
-from pushFeedJobs import pushFeedJobs
-from pushLinkJobs import pushLinkJobs
-from clusterDocsJob import clusterDocsJob
-from archiveStaleDocs import archiveStaleDocs
-from reprocessCurrentClusters import reprocessCurrentClusters
-from notifyTwitter import notifyTwitter
-from clusteringJobs import getCandidateDocsThroughClusters, cleanUpDistanceTable
-from deepCleanStaleDocs import deepCleanStaleDocs
+from .pushFeedJobs import pushFeedJobs
+from .pushLinkJobs import pushLinkJobs
+from .clusterDocsJob import clusterDocsJob
+from .archiveStaleDocs import archiveStaleDocs
+from .reprocessCurrentClusters import reprocessCurrentClusters
+from .notifyTwitter import notifyTwitter
+from .clusteringJobs import getCandidateDocsThroughClusters, cleanUpDistanceTable
+from .deepCleanStaleDocs import deepCleanStaleDocs
 
 now = datetime.datetime.now()
 clusteringInterval = 10

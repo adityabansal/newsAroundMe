@@ -2,20 +2,20 @@ import json
 import logging
 import random
 
-from constants import *
-from doc import Doc
-from docManager import DocManager
-from link import Link
-from linkManager import LinkManager
-from minerJobManager import MinerJobManager
-from clusterJobManager import ClusterJobManager
-from cluster import Cluster
-import htmlProcessor as hp
-import textHelperNltk as th
-from publisher import Publisher
-from publisherManager import PublisherManager
-from translation import translate
-from workerJob import WorkerJob
+from .constants import *
+from .doc import Doc
+from .docManager import DocManager
+from .link import Link
+from .linkManager import LinkManager
+from .minerJobManager import MinerJobManager
+from .clusterJobManager import ClusterJobManager
+from .cluster import Cluster
+from . import htmlProcessor as hp
+from . import textHelperNltk as th
+from .publisher import Publisher
+from .publisherManager import PublisherManager
+from .translation import translate
+from .workerJob import WorkerJob
 
 logger = logging.getLogger('linkProcessor')
 

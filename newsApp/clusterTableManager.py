@@ -5,9 +5,9 @@ import json
 from boto.dynamodb2.table import Table
 from boto.dynamodb2.fields import HashKey, RangeKey, GlobalAllIndex
 
-from cluster import Cluster
-from dbhelper import getDbTableWithSchemaAndGlobalIndexes
-from constants import *
+from .cluster import Cluster
+from .dbhelper import getDbTableWithSchemaAndGlobalIndexes
+from .constants import *
 
 class ClusterTableManager:
   """

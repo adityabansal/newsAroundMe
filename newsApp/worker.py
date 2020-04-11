@@ -6,14 +6,14 @@ import time
 import threading
 from multiprocessing import Process
 
-from constants import *
-from loggingHelper import *
-from jobManager import JobManager
-from workerJob import WorkerJob
-from feedProcessor import *
-from linkProcessor import *
-import clusteringJobs as cj
-import dbJobs as dj
+from .constants import *
+from .loggingHelper import *
+from .jobManager import JobManager
+from .workerJob import WorkerJob
+from .feedProcessor import *
+from .linkProcessor import *
+from . import clusteringJobs as cj
+from . import dbJobs as dj
 
 def RunJob(job):
     "Run a job taking care of error handling."
@@ -120,7 +120,7 @@ if __name__ == '__main__':
         try:
             opts, args = getopt.getopt(sys.argv[1:], "q:", ["queue"])
         except getopt.GetoptError as err:
-            print str(err)
+            print(str(err))
             sys.exit(2)
         for o, a in opts:
             if o in ("-q", "--queue"):

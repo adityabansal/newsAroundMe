@@ -1,4 +1,4 @@
-from jobManager import JobManager
+from .jobManager import JobManager
 
 class MinerJobManager(JobManager):
     """

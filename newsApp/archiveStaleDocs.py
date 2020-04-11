@@ -1,8 +1,8 @@
-from constants import *
-from clusterManager import ClusterManager
-from loggingHelper import *
-from minerJobManager import MinerJobManager
-from workerJob import WorkerJob
+from .constants import *
+from .clusterManager import ClusterManager
+from .loggingHelper import *
+from .minerJobManager import MinerJobManager
+from .workerJob import WorkerJob
 
 InitLogging()
 

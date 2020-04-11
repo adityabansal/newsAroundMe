@@ -1,7 +1,7 @@
 import os
 
-from queueHelper import *
-from workerJob import WorkerJob
+from .queueHelper import *
+from .workerJob import WorkerJob
 
 class JobManager:
     """

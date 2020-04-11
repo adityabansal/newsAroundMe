@@ -1,13 +1,13 @@
 import time
 from boto.exception import S3ResponseError
 
-from constants import *
-from docManager import DocManager
-from loggingHelper import *
-from minerJobManager import MinerJobManager
-from workerJob import WorkerJob
-from shingleTableManager import ShingleTableManager
-from clusterManager import ClusterManager
+from .constants import *
+from .docManager import DocManager
+from .loggingHelper import *
+from .minerJobManager import MinerJobManager
+from .workerJob import WorkerJob
+from .shingleTableManager import ShingleTableManager
+from .clusterManager import ClusterManager
 
 InitLogging()
 

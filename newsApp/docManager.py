@@ -6,10 +6,10 @@ import time
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 
-from cachingHelper import getCache
-from constants import LINKTAG_PUBTIME, FEEDTAG_DO_NOT_CLUSTER
-from dbhelper import parseConnectionString, getS3Connection
-from doc import Doc
+from .cachingHelper import getCache
+from .constants import LINKTAG_PUBTIME, FEEDTAG_DO_NOT_CLUSTER
+from .dbhelper import parseConnectionString, getS3Connection
+from .doc import Doc
 
 def _getEpochSecs(t):
     return calendar.timegm(time.strptime(t[:19], "%Y-%m-%dT%H:%M:%S"))

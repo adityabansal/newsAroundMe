@@ -18,14 +18,14 @@ class ShingleTableManagerTests(unittest.TestCase):
 
         #query by shingle
         result = testShingleTableManager.queryByShingle('a')
-        self.failUnless(result, ['testDoc1', 'testDoc2'])
+        self.assertTrue(result, ['testDoc1', 'testDoc2'])
         result = testShingleTableManager.queryByShingle('d')
-        self.failUnless(result, ['testDoc2'])
+        self.assertTrue(result, ['testDoc2'])
 
         #query by docId
         result = testShingleTableManager.queryByDocId('testDoc1')
-        self.failUnless(result, ['a', 'b', 'c'])
+        self.assertTrue(result, ['a', 'b', 'c'])
 
         #delete by docId
         testShingleTableManager.cleanUpDocShingles('testDoc1')
-        self.failUnless(result, [])
+        self.assertTrue(result, [])

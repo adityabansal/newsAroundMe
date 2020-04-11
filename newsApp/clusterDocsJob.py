@@ -1,6 +1,6 @@
-from constants import *
-from loggingHelper import *
-from clusteringJobs import clusterDocs
+from .constants import *
+from .loggingHelper import *
+from .clusteringJobs import clusterDocs
 
 InitLogging()
 

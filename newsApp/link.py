@@ -1,5 +1,5 @@
-from dbItem import DbItem
-from webPageLoader import loadPageAndGetHtml, getHtmlStatic
+from .dbItem import DbItem
+from .webPageLoader import loadPageAndGetHtml, getHtmlStatic
 import time
 import requests
 

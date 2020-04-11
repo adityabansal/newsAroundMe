@@ -6,8 +6,8 @@ import math
 from retrying import retry
 import nltk
 
-from encodedEntity import EncodedEntity
-from textHelper import removeNonAsciiChars
+from .encodedEntity import EncodedEntity
+from .textHelper import removeNonAsciiChars
 
 #nltk.download('punkt')
 #nltk.download('stopwords')
@@ -19,9 +19,6 @@ from textHelper import removeNonAsciiChars
 def _removePuntuation(text):
     if isinstance(text, str):
         return text.translate(None, string.punctuation)
-    elif isinstance(text, unicode):
-        remove_punctuation_map = dict((ord(char), None) for char in string.punctuation)
-        return text.translate(remove_punctuation_map)
 
 def hasNumbers(inputString):
     return any(char.isdigit() for char in inputString)

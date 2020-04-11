@@ -8,13 +8,13 @@ from boto.s3.connection import S3Connection
 from boto.exception import S3ResponseError
 from boto.s3.key import Key
 
-from constants import *
-from docManager import DocManager
-from cluster import Cluster
-from clusterTableManager import ClusterTableManager
-from processedClusterStore import ProcessedClusterStore
-from clusterJobManager import ClusterJobManager
-from workerJob import WorkerJob
+from .constants import *
+from .docManager import DocManager
+from .cluster import Cluster
+from .clusterTableManager import ClusterTableManager
+from .processedClusterStore import ProcessedClusterStore
+from .clusterJobManager import ClusterJobManager
+from .workerJob import WorkerJob
 
 NOTIFICATION_IMPORTANCE_THRESHOLD = 1.85
 NOTIFICATION_IMPORTANCE_THRESHOLD_LOW = 1.1
@@ -116,7 +116,7 @@ class ClusterManager:
             try:
                 response.append(self.__getClusterResponse(cluster, filters))
 
-            except Exception, e:
+            except Exception as e:
                 logging.exception(
                     "Could not construct query response for cluster id %s",
                     cluster.id);

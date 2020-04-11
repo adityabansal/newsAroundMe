@@ -4,9 +4,9 @@ from flask import Flask, abort, redirect, url_for
 from flask import make_response, request, render_template
 from flask_assets import Environment, Bundle
 
-from constants import *
-from clusterManager import ClusterManager
-from imageProcessor import ImageProcessor
+from .constants import *
+from .clusterManager import ClusterManager
+from .imageProcessor import ImageProcessor
 
 app = Flask(__name__)
 
@@ -43,15 +43,15 @@ def getSharingMetaTags(title, description, imageUrl, ogType):
     ogType = 'website'
 
   metaTags = [
-    { 'tagType': u'name="twitter:card"', 'content': 'summary' },
-    { 'tagType': u'property="og:url"', 'content': request.base_url },
-    { 'tagType': u'property="og:type"', 'content': ogType},
-    { 'tagType': u'property="og:title"', 'content': title },
-    { 'tagType': u'property="og:description"', 'content': description }]
+    { 'tagType': 'name="twitter:card"', 'content': 'summary' },
+    { 'tagType': 'property="og:url"', 'content': request.base_url },
+    { 'tagType': 'property="og:type"', 'content': ogType},
+    { 'tagType': 'property="og:title"', 'content': title },
+    { 'tagType': 'property="og:description"', 'content': description }]
 
   if imageUrl:
     imageUrl = request.host_url + imageUrl
-    metaTags.append({ 'tagType': u'property="og:image"', 'content': imageUrl })
+    metaTags.append({ 'tagType': 'property="og:image"', 'content': imageUrl })
 
   return metaTags
 

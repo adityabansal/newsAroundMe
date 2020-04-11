@@ -3,15 +3,15 @@ import os
 import random
 import requests
 import time
-import cStringIO
+import io
 
 from PIL import Image
 from boto.s3.key import Key
 from boto.dynamodb2.fields import HashKey
 from boto.exception import S3ResponseError
 
-from cachingHelper import getCache
-from dbhelper import *
+from .cachingHelper import getCache
+from .dbhelper import *
 
 logger = logging.getLogger('imageProcessor')
 
@@ -186,7 +186,7 @@ class ImageProcessor:
       logger.info("Image successfully resized. %s", jobIdLog)
 
       #NOTE, we're saving the image into a cStringIO object to avoid writing to disk
-      outImage = cStringIO.StringIO()
+      outImage = io.StringIO()
       #You MUST specify the file type because there is no file name to discern it from
       try:
         image.save(outImage, 'JPEG')

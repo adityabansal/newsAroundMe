@@ -17,13 +17,13 @@ class DocManagerTests(unittest.TestCase):
 
         # get the doc and validate it's same as one you put
         retrievedDoc = testDocManager.get(testDoc.key)
-        self.failUnless(retrievedDoc.key == testDoc.key)
-        self.failUnless(retrievedDoc.content == testDoc.content)
-        self.failUnless(retrievedDoc.tags == testDoc.tags)
+        self.assertTrue(retrievedDoc.key == testDoc.key)
+        self.assertTrue(retrievedDoc.content == testDoc.content)
+        self.assertTrue(retrievedDoc.tags == testDoc.tags)
 
         # get new doc keys
         retrievedDocKeys = testDocManager.getNewDocKeys()
-        self.failUnless(len(list(retrievedDocKeys)) == 1)
+        self.assertTrue(len(list(retrievedDocKeys)) == 1)
 
         # delete doc
         testDocManager.delete(testDoc.key)

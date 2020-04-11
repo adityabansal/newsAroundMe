@@ -1,10 +1,10 @@
 import os
 import time
 
-from constants import *
-from dbhelper import *
-from dbItemManagerV2 import DbItemManagerV2
-from link import Link
+from .constants import *
+from .dbhelper import *
+from .dbItemManagerV2 import DbItemManagerV2
+from .link import Link
 
 LINK_EXPIRY_TIME_IN_DAYS = 80
 

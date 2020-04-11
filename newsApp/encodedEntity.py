@@ -12,7 +12,7 @@ class EncodedEntity:
     """
 
     if isinstance(plainEntity, str):
-      plainEntity = unicode(plainEntity, 'utf-8')
+      plainEntity = str(plainEntity, 'utf-8')
 
     self.plain = plainEntity
     self.encoded = jellyfish.metaphone(plainEntity)

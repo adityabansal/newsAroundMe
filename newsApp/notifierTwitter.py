@@ -7,8 +7,8 @@ import time
 from boto.dynamodb2.table import Table
 import tweepy
 
-from dbhelper import getDbTable, decryptSecret, encryptSecret
-from notifierBase import NotifierBase
+from .dbhelper import getDbTable, decryptSecret, encryptSecret
+from .notifierBase import NotifierBase
 
 logger = logging.getLogger('notifierTwitter')
 

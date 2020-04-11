@@ -2,7 +2,7 @@ import os
 import logging
 import json
 import requests
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from googleapiclient.discovery import build
 
@@ -55,12 +55,12 @@ def translateMicrosoft(jobInfo, text, fromLang, toLang = 'en'):
     auth_token = _getMicrosoftAccessToken(jobInfo)
 
     # make the translate api call
-    strText = text
-    if isinstance(text, unicode):
-      strText = text.encode('utf-8')
+    #strText = text
+    #if isinstance(text, str):
+    #  strText = text.encode('utf-8')
 
     translation_args = {
-      'text': strText,
+      'text': text,
       'to': toLang,
       'from': fromLang
     }
@@ -68,7 +68,7 @@ def translateMicrosoft(jobInfo, text, fromLang, toLang = 'en'):
     headers={'Authorization': 'Bearer '+ auth_token}
     translate_url = 'https://api.microsofttranslator.com/V2/Ajax.svc/Translate?'
     translation_result = requests.get(
-      translate_url + urllib.urlencode(translation_args),
+      translate_url + urllib.parse.urlencode(translation_args),
       headers=headers)
 
     if translation_result.status_code == 200 and \

@@ -5,8 +5,8 @@ from boto.dynamodb2.table import Table
 from boto.dynamodb2.fields import HashKey, RangeKey
 from retrying import retry
 
-from dbItem import DbItem
-from dbhelper import *
+from .dbItem import DbItem
+from .dbhelper import *
 
 class DbItemManagerV2:
     """
@@ -43,7 +43,7 @@ class DbItemManagerV2:
     def __getItemFromTableRow(self, tableRow):
         tags  = {}
 
-        for field, value in tableRow.items():
+        for field, value in list(tableRow.items()):
             if field != 'itemId':
                 # boto retrieves numbers as decimals. Convert them to float
                 # else we'll have json serialization issues down the pipeline
