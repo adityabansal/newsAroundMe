@@ -9,10 +9,10 @@ import nltk
 from encodedEntity import EncodedEntity
 from textHelper import removeNonAsciiChars
 
-#nltk.download('punkt');
-#nltk.download('stopwords');
-#nltk.download('maxent_treebank_pos_tagger');
-#nltk.download('maxent_ne_chunker');
+#nltk.download('punkt')
+#nltk.download('stopwords')
+#nltk.download('maxent_treebank_pos_tagger')
+#nltk.download('maxent_ne_chunker')
 #nltk.download('averaged_perceptron_tagger')
 #nltk.download('words')
 
@@ -185,5 +185,10 @@ def getImportantSentences(text):
 
     # Filter out sentences that are too long.
     importantSentences = [s for s in importantSentences if len(s)<350]
+
+    # Filter out marketing sentences.
+    wordsToFilter = ['download', 'android']
+    for wordToFilter in wordsToFilter:
+        importantSentences = [s for s in importantSentences if wordToFilter not in s.lower()]
 
     return importantSentences

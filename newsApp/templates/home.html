@@ -69,7 +69,7 @@
             <a class="publisher-link" target="_blank" data-bind="text: mainArticle.publisher.name, attr: {href:mainArticle.publisher.homepage}"></a>
           </small>
         </h4>
-        <p data-bind="text : mainArticle.summaryTextToDisplay"></p>
+        <p data-bind="text : mainArticle.summaryTextTruncated"></p>
 
         <div data-bind="if: relatedArticles">
           <ul data-bind="foreach: relatedArticles">
@@ -133,7 +133,7 @@
           <a class="headline" target="_blank" data-bind="text: title, attr: {href:link}"></a>
         </h4>
         <!-- ko if: images.length == 0 -->
-        <p data-bind="visible: highlights.length === 0, text: summaryTextToDisplay"></p>
+        <p data-bind="visible: highlights.length === 0, text: summaryText"></p>
 
         <div data-bind="if: highlights.length > 0">
           <ul data-bind="foreach: highlights">

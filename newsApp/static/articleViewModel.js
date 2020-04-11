@@ -4,7 +4,7 @@ $(function() {
   function ArticleViewModel(article) {
     var self = this;
     $.extend(this, article)
-    self.summaryTextToDisplay = window.AppUtils.cropText(article.summaryText, 100);
+    self.summaryTextTruncated = window.AppUtils.cropText(article.summaryText, 100);
 
     // add / before image url to make it relative to site root
     self.images = self.images.map(function(image) {

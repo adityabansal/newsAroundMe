@@ -9,8 +9,8 @@ from docHelper import getDocComparisionScore,getDocEnglishContentSimilarity
 from docManager import DocManager
 import textHelper as th
 
-DOC_DUPLICATION_SCORE_THRESHOLD = 0.85
-DOC_DUPLICATION_CONTENT_THRESHOLD = 0.7
+DOC_DUPLICATION_SCORE_THRESHOLD = 0.9
+DOC_DUPLICATION_CONTENT_THRESHOLD = 0.8
 def _removeDuplicatesAndOutliers(items, articleCount):
   d = {}
   for item in items:
@@ -24,9 +24,13 @@ def _removeDuplicatesAndOutliers(items, articleCount):
 def _isDuplicateArticle(doc, docsAdded):
   for addedDoc in docsAdded:
     if doc.tags[FEEDTAG_LANG] == addedDoc.tags[FEEDTAG_LANG]:
+      if doc.tags[TAG_PUBLISHER] != addedDoc.tags[TAG_PUBLISHER]:
+        return False
+
       distance = getDocComparisionScore("processCluster", doc, addedDoc)
       if distance >= DOC_DUPLICATION_SCORE_THRESHOLD:
         return True
+
       englishContentSim = getDocEnglishContentSimilarity(doc, addedDoc)
       if englishContentSim >= DOC_DUPLICATION_CONTENT_THRESHOLD:
         return True
