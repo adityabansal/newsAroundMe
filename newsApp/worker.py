@@ -21,6 +21,7 @@ def RunJob(job):
     try:
         if job.jobName == JOB_PROCESSFEED:
             processFeed(job.jobId, job.jobParams[JOBARG_PROCESSFEED_FEEDID])
+        """
         if job.jobName == JOB_PROCESSLINK:
             processLink(job.jobId, job.jobParams[JOBARG_PROCESSLINK_LINKID])
         if job.jobName == JOB_PARSEDOC:
@@ -58,6 +59,7 @@ def RunJob(job):
             cj.cleanUpDocDistances(job.jobId, job.jobParams[JOBARG_CLEANUPDOCDISTANCES_DOCID])
         if job.jobName == JOB_PROCESSNEWCLUSTER:
             cj.processNewCluster(job.jobId, job.jobParams[JOBARG_PROCESSNEWCLUSTER_CLUSTER])
+        """
     except:
         logging.exception('Failed to execute worker job')
 
@@ -66,9 +68,10 @@ def DequeueAndStartJob(connectionStringKey):
     Dequeue a job from the queue and start executing it.
     """
 
-    logging.info("Dequeing a job.");
+    logging.info("Dequeing a job.")
+    allowedJobs = [JOB_PROCESSFEED]
     jobManager = JobManager(connectionStringKey)
-    job = jobManager.dequeueJob()
+    job = jobManager.dequeueJobOfType(allowedJobs)
 
     if job is None:
         logging.info("No job found.")
@@ -83,7 +86,7 @@ def DequeueAndStartJob(connectionStringKey):
 class JobThread(threading.Thread):
    def __init__ (self, connectionStringKey):
       threading.Thread.__init__(self)
-      self.connectionStringKey = connectionStringKey;
+      self.connectionStringKey = connectionStringKey
    def run(self):
       DequeueAndStartJob(self.connectionStringKey)
 
@@ -127,5 +130,5 @@ if __name__ == '__main__':
                 RunWorker(a)
                 sys.exit()
 
-    print("Specify the queue connection string key with -q option");
-    sys.exit(2);
+    print("Specify the queue connection string key with -q option")
+    sys.exit(2)
