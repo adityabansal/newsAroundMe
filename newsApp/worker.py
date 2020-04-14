@@ -21,9 +21,9 @@ def RunJob(job):
     try:
         if job.jobName == JOB_PROCESSFEED:
             processFeed(job.jobId, job.jobParams[JOBARG_PROCESSFEED_FEEDID])
-        """
         if job.jobName == JOB_PROCESSLINK:
             processLink(job.jobId, job.jobParams[JOBARG_PROCESSLINK_LINKID])
+        """
         if job.jobName == JOB_PARSEDOC:
             cj.parseDoc(job.jobId, job.jobParams[JOBARG_PARSEDOC_DOCID])
         if job.jobName == JOB_GETCANDIDATEDOCS:
@@ -69,7 +69,7 @@ def DequeueAndStartJob(connectionStringKey):
     """
 
     logging.info("Dequeing a job.")
-    allowedJobs = [JOB_PROCESSFEED]
+    allowedJobs = [JOB_PROCESSFEED, JOB_PROCESSLINK]
     jobManager = JobManager(connectionStringKey)
     job = jobManager.dequeueJobOfType(allowedJobs)
 

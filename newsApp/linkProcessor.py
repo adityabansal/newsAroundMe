@@ -182,7 +182,9 @@ def processLink(jobId, linkId):
     parseDocJob.jobId,
     linkAndJobId)
 
-  if FEEDTAG_DO_NOT_CLUSTER not in doc.tags:
+  isLinkNotProcessed = (link.tags[LINKTAG_ISPROCESSED] != 'true')
+  isClusteringAllowed = (FEEDTAG_DO_NOT_CLUSTER not in doc.tags)
+  if isLinkNotProcessed and isClusteringAllowed:
     newCluster = Cluster([doc.key])
     processNewClusterJob = WorkerJob(
       JOB_PROCESSNEWCLUSTER,
