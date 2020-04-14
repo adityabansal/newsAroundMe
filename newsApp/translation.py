@@ -54,32 +54,28 @@ def translateMicrosoft(jobInfo, text, fromLang, toLang = 'en'):
     # get the access token
     auth_token = _getMicrosoftAccessToken(jobInfo)
 
-    # make the translate api call
-    #strText = text
-    #if isinstance(text, str):
-    #  strText = text.encode('utf-8')
-
     translation_args = {
-      'text': text,
+      'text': text.encode(),
       'to': toLang,
       'from': fromLang
     }
 
-    headers={'Authorization': 'Bearer '+ auth_token}
+    headers={'Authorization': 'Bearer ' + auth_token.decode()}
     translate_url = 'https://api.microsofttranslator.com/V2/Ajax.svc/Translate?'
     translation_result = requests.get(
       translate_url + urllib.parse.urlencode(translation_args),
       headers=headers)
+    response = translation_result.content.decode()
 
     if translation_result.status_code == 200 and \
-      'Exception:' not in translation_result.content:
+      'Exception:' not in response:
       logger.info("Completed microsoft translation. %s", jobInfo)
-      return translation_result.content
+      return response
     else:
       logger.info(
         "Microsoft translation call failed. Status code %i. Response: %s",
         translation_result.status_code,
-        translation_result.content)
+        response)
       return ""
   except Exception:
     logging.exception("Microsoft translation failed. %s", jobInfo)

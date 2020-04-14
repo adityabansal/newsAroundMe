@@ -6,24 +6,20 @@ from newsApp.docManager import DocManager
 class DocManagerTests(unittest.TestCase):
 
     def testPutGetDeleteDoc(self):
-        testDocManager = DocManager();
+        testDocManager = DocManager()
         testDoc = Doc(
             'unittest',
             'docContent',
-            { 'tag1' : 'value1', 'tag2' : 'value2' });
+            { 'tag1' : 'value1', 'tag2' : 'value2' })
 
         # put the doc
-        testDocManager.put(testDoc);
+        testDocManager.put(testDoc)
 
         # get the doc and validate it's same as one you put
         retrievedDoc = testDocManager.get(testDoc.key)
         self.assertTrue(retrievedDoc.key == testDoc.key)
         self.assertTrue(retrievedDoc.content == testDoc.content)
         self.assertTrue(retrievedDoc.tags == testDoc.tags)
-
-        # get new doc keys
-        retrievedDocKeys = testDocManager.getNewDocKeys()
-        self.assertTrue(len(list(retrievedDocKeys)) == 1)
 
         # delete doc
         testDocManager.delete(testDoc.key)
