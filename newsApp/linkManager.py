@@ -36,15 +36,6 @@ class LinkManager(DbItemManagerV2):
 
         return link
 
-    def getStaleLinks(self):
-        """
-        Returns a list of linkIds of stale links.
-        """
-
-        linkExpiryCutoff = int(time.time()) - LINK_EXPIRY_TIME_IN_DAYS*24*60*60;
-        scanResults = DbItemManagerV2.scan(self, pubtime__lte = linkExpiryCutoff)
-        return (result.id for result in scanResults)
-
     def getUnprocessedLinks(self):
         return DbItemManagerV2.query_2(
             self,
