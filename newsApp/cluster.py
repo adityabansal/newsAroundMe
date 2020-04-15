@@ -96,7 +96,7 @@ class Cluster(set):
     set.__init__(self, docList)
 
     docList.sort()
-    self.id = hashlib.md5("-".join(docList)).hexdigest().upper()
+    self.id = hashlib.md5("-".join(docList).encode("latin1")).hexdigest().upper()
     self.isCurrent = 'unknown'
     self.isProcessed = False
 

@@ -185,8 +185,8 @@ class ImageProcessor:
       image.thumbnail(newSize, Image.ANTIALIAS)
       logger.info("Image successfully resized. %s", jobIdLog)
 
-      #NOTE, we're saving the image into a cStringIO object to avoid writing to disk
-      outImage = io.StringIO()
+      #NOTE, we're saving the image into a BytesIO object to avoid writing to disk
+      outImage = io.BytesIO()
       #You MUST specify the file type because there is no file name to discern it from
       try:
         image.save(outImage, 'JPEG')
