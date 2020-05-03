@@ -23,13 +23,13 @@ def RunJob(job):
             processFeed(job.jobId, job.jobParams[JOBARG_PROCESSFEED_FEEDID])
         if job.jobName == JOB_PROCESSLINK:
             processLink(job.jobId, job.jobParams[JOBARG_PROCESSLINK_LINKID])
-        """
         if job.jobName == JOB_PARSEDOC:
             cj.parseDoc(job.jobId, job.jobParams[JOBARG_PARSEDOC_DOCID])
         if job.jobName == JOB_GETCANDIDATEDOCS:
             cj.getCandidateDocs(
                 job.jobId,
                 job.jobParams[JOBARG_GETCANDIDATEDOCS_DOCID])
+        """
         if job.jobName == JOB_COMPAREDOCS:
             cj.compareDocs(
                 job.jobId,
@@ -49,6 +49,7 @@ def RunJob(job):
                 job.jobParams[JOB_UPDATEDBTHROUGHPUT_READTHOUGHPUT],
                 job.jobParams[JOB_UPDATEDBTHROUGHPUT_WRITETHOUGHPUT],
                 job.jobParams[JOB_UPDATEDBTHROUGHPUT_INDEXNAME])
+        """
         if job.jobName == JOB_CLEANUPDOC:
             cj.cleanUpDoc(job.jobId, job.jobParams[JOBARG_CLEANUPDOC_DOCID])
         if job.jobName == JOB_CLEANUPDOCSHINGLES:
@@ -57,6 +58,7 @@ def RunJob(job):
             cj.cleanUpDocEntities(job.jobId, job.jobParams[JOBARG_CLEANUPDOCENTITIES_DOCID])
         if job.jobName == JOB_CLEANUPDOCDISTANCES:
             cj.cleanUpDocDistances(job.jobId, job.jobParams[JOBARG_CLEANUPDOCDISTANCES_DOCID])
+        """
         if job.jobName == JOB_PROCESSNEWCLUSTER:
             cj.processNewCluster(job.jobId, job.jobParams[JOBARG_PROCESSNEWCLUSTER_CLUSTER])
         """
@@ -69,7 +71,15 @@ def DequeueAndStartJob(connectionStringKey):
     """
 
     logging.info("Dequeing a job.")
-    allowedJobs = [JOB_PROCESSFEED, JOB_PROCESSLINK]
+    allowedJobs = [
+        JOB_PROCESSFEED,
+        JOB_PROCESSLINK,
+        JOB_PARSEDOC,
+        JOB_GETCANDIDATEDOCS,
+        JOB_CLEANUPDOC,
+        JOB_CLEANUPDOCSHINGLES,
+        JOB_CLEANUPDOCENTITIES,
+        JOB_CLEANUPDOCDISTANCES]
     jobManager = JobManager(connectionStringKey)
     job = jobManager.dequeueJobOfType(allowedJobs)
 
