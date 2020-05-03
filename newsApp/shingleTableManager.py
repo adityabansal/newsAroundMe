@@ -38,41 +38,6 @@ class ShingleTableManager:
 
         return self.__table;
 
-    def createFreshTable(self):
-        """
-        Create a fresh empty shingle table.
-        """
-
-        # delete existing table if it exists
-        try:
-            self.__getTable().delete();
-            time.sleep(10)
-        except:
-            pass;# do nothing. Maybe there was no existing table
-
-        # create new table
-        shingleTableConnectionParams = parseConnectionString(
-            self.tableConnString);
-        return Table.create(
-            shingleTableConnectionParams['name'],
-            schema = [
-                HashKey('shingle'),
-                RangeKey('docId')
-            ], throughput = {
-                'read': 14,
-                'write': 20,
-            }, global_indexes = [
-                GlobalAllIndex('docIdIndex', parts = [
-                    HashKey('docId'),
-                    RangeKey('shingle')
-                ],
-                throughput = {
-                    'read': 1,
-                    'write': 20,
-                })
-            ],
-            connection = getDbConnection(shingleTableConnectionParams))
-
     def addEntries(self, docId, shingles):
         """
         Add a entries in shingles table for shingles and docId passed.
