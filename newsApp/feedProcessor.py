@@ -4,6 +4,7 @@ import time
 import logging
 
 import feedparser
+import requests
 
 from .constants import *
 from .feed import Feed
@@ -213,7 +214,14 @@ def getLinksFromWebFeed(jobId, feed):
   # get page html
   pageHtml = ""
   if FEEDTAG_IS_FEEDPAGE_STATIC in feed.tags:
-    pageHtml = getHtmlStatic(feed.tags[FEEDTAG_URL])
+    try:
+      pageHtml = getHtmlStatic(feed.tags[FEEDTAG_URL])
+    except (requests.ReadTimeout, requests.ConnectTimeout, requests.ConnectionError):
+      logger.warning(
+        "Timed out or could not connect while getting web feed page %s. Returning zero links. %s",
+        feed.tags[FEEDTAG_URL],
+        feedAndJobId)
+      return []
   else:
     pageHtml = loadPageAndGetHtml(feed.tags[FEEDTAG_URL])
   logger.info("Got html for web page. %s.", feedAndJobId)

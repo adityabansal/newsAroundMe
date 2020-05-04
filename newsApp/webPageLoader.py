@@ -23,9 +23,13 @@ def loadPageAndGetHtml(url):
   pageHtml = ""
 
   try:
-    driver = webdriver.PhantomJS(executable_path='node_modules/phantomjs-prebuilt/bin/phantomjs')
-    driver.implicitly_wait(30)
-    driver.set_page_load_timeout(30)
+    with warnings.catch_warnings():
+      #ignore PhantomJS deprecated warning.
+      warnings.simplefilter("ignore")
+
+      driver = webdriver.PhantomJS(executable_path='node_modules/phantomjs-prebuilt/bin/phantomjs')
+      driver.implicitly_wait(30)
+      driver.set_page_load_timeout(30)
 
     try:
       driver.get(url)
@@ -37,7 +41,7 @@ def loadPageAndGetHtml(url):
       except:
         pass
   except:
-    logger.info("Could not load page with url %s through selenium", url)
+    logger.warning("Could not load page with url %s through selenium", url)
     pass
 
   if not pageHtml:

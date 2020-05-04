@@ -228,7 +228,6 @@ def getCandidateDocsUsingShingles(jobId, docId, docAndJobId):
 
     matchingDocs = []
     for shingle in shingles:
-      logger.info("Querying docs for shingle %s. %s", shingle, docAndJobId)
       matchingDocs = matchingDocs + list(shingleTableManager.queryByShingle(shingle))
 
     for match in matchingDocs:
