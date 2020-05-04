@@ -17,8 +17,7 @@ from .textHelper import removeNonAsciiChars
 #nltk.download('words')
 
 def _removePuntuation(text):
-    if isinstance(text, str):
-        return text.translate(None, string.punctuation)
+    return text.translate(str.maketrans('','',string.punctuation))
 
 def hasNumbers(inputString):
     return any(char.isdigit() for char in inputString)

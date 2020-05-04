@@ -11,8 +11,5 @@ class EncodedEntity:
     Requires 'plainEntity': plain text entity to encode
     """
 
-    if isinstance(plainEntity, str):
-      plainEntity = str(plainEntity, 'utf-8')
-
     self.plain = plainEntity
     self.encoded = jellyfish.metaphone(plainEntity)
