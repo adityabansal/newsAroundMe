@@ -21,47 +21,38 @@ def RunJob(job):
     try:
         if job.jobName == JOB_PROCESSFEED:
             processFeed(job.jobId, job.jobParams[JOBARG_PROCESSFEED_FEEDID])
-        if job.jobName == JOB_PROCESSLINK:
+        elif job.jobName == JOB_PROCESSLINK:
             processLink(job.jobId, job.jobParams[JOBARG_PROCESSLINK_LINKID])
-        if job.jobName == JOB_PARSEDOC:
+        elif job.jobName == JOB_PARSEDOC:
             cj.parseDoc(job.jobId, job.jobParams[JOBARG_PARSEDOC_DOCID])
-        if job.jobName == JOB_GETCANDIDATEDOCS:
+        elif job.jobName == JOB_GETCANDIDATEDOCS:
             cj.getCandidateDocs(
                 job.jobId,
                 job.jobParams[JOBARG_GETCANDIDATEDOCS_DOCID])
-        """
-        if job.jobName == JOB_COMPAREDOCS:
+        elif job.jobName == JOB_COMPAREDOCS:
             cj.compareDocs(
                 job.jobId,
                 job.jobParams[JOBARG_COMPAREDOCS_DOC1ID],
                 job.jobParams[JOBARG_COMPAREDOCS_DOC2ID])
-        if job.jobName == JOB_COMPAREDOCSBATCH:
+        elif job.jobName == JOB_COMPAREDOCSBATCH:
             cj.compareDocsBatch(
                 job.jobId,
                 job.jobParams[JOBARG_COMPAREDOCSBATCH_DOCID],
                 job.jobParams[JOBARG_COMPAREDOCSBATCH_OTHERDOCS])
-        if job.jobName == JOB_CLUSTERDOCS:
+        elif job.jobName == JOB_CLUSTERDOCS:
             cj.clusterDocs(job.jobId)
-        if job.jobName == JOB_UPDATEDBTHROUGHPUT:
-            dj.updateDbThroughput(
-                job.jobId,
-                job.jobParams[JOB_UPDATEDBTHROUGHPUT_CONNECTIONSTRING],
-                job.jobParams[JOB_UPDATEDBTHROUGHPUT_READTHOUGHPUT],
-                job.jobParams[JOB_UPDATEDBTHROUGHPUT_WRITETHOUGHPUT],
-                job.jobParams[JOB_UPDATEDBTHROUGHPUT_INDEXNAME])
-        """
-        if job.jobName == JOB_CLEANUPDOC:
+        elif job.jobName == JOB_CLEANUPDOC:
             cj.cleanUpDoc(job.jobId, job.jobParams[JOBARG_CLEANUPDOC_DOCID])
-        if job.jobName == JOB_CLEANUPDOCSHINGLES:
+        elif job.jobName == JOB_CLEANUPDOCSHINGLES:
             cj.cleanUpDocShingles(job.jobId, job.jobParams[JOBARG_CLEANUPDOCSHINGLES_DOCID])
-        if job.jobName == JOB_CLEANUPDOCENTITIES:
+        elif job.jobName == JOB_CLEANUPDOCENTITIES:
             cj.cleanUpDocEntities(job.jobId, job.jobParams[JOBARG_CLEANUPDOCENTITIES_DOCID])
-        if job.jobName == JOB_CLEANUPDOCDISTANCES:
+        elif job.jobName == JOB_CLEANUPDOCDISTANCES:
             cj.cleanUpDocDistances(job.jobId, job.jobParams[JOBARG_CLEANUPDOCDISTANCES_DOCID])
-        """
-        if job.jobName == JOB_PROCESSNEWCLUSTER:
+        elif job.jobName == JOB_PROCESSNEWCLUSTER:
             cj.processNewCluster(job.jobId, job.jobParams[JOBARG_PROCESSNEWCLUSTER_CLUSTER])
-        """
+        else:
+            logging.exception("Unknown job type %s", job.jobName)
     except:
         logging.exception('Failed to execute worker job')
 
@@ -71,17 +62,8 @@ def DequeueAndStartJob(connectionStringKey):
     """
 
     logging.info("Dequeing a job.")
-    allowedJobs = [
-        JOB_PROCESSFEED,
-        JOB_PROCESSLINK,
-        JOB_PARSEDOC,
-        JOB_GETCANDIDATEDOCS,
-        JOB_CLEANUPDOC,
-        JOB_CLEANUPDOCSHINGLES,
-        JOB_CLEANUPDOCENTITIES,
-        JOB_CLEANUPDOCDISTANCES]
     jobManager = JobManager(connectionStringKey)
-    job = jobManager.dequeueJobOfType(allowedJobs)
+    job = jobManager.dequeueJob()
 
     if job is None:
         logging.info("No job found.")
