@@ -40,15 +40,6 @@ class JobManager:
         dequeuedMessage = dequeueMessage(self.queue)
         return self.convertDequeuedMessageToJob(dequeuedMessage)
 
-    def dequeueJobOfType(self, allowedJobTypes):
-        def checkMessageAllowed(messageBody):
-            jobToCheck = WorkerJob(None, None)
-            jobToCheck.deserializeFromString(messageBody)
-            return jobToCheck.jobName in allowedJobTypes
-
-        dequeuedMessage = dequeMessageWithFilter(self.queue, checkMessageAllowed)
-        return self.convertDequeuedMessageToJob(dequeuedMessage)
-
     def count(self):
         """
         Return the count of messages in queue.

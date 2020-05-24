@@ -32,31 +32,14 @@ class JobManagerTests(unittest.TestCase):
         # enqueue rest of jobs
         testJobManager.enqueueJob(testJob2)
         testJobManager.enqueueJob(testJob3)
-        testJobManager.enqueueJob(testJob3)
 
         # validate count()
         time.sleep(15)
         nJobs = testJobManager.count()
-        self.assertEqual(nJobs, 3)
-
-        # validate dequeueJobOfType()
-        nonExistingJob = testJobManager.dequeueJobOfType(['nonExistingType'])
-        self.assertIsNone(nonExistingJob)
-        time.sleep(55)
-        nJobs = testJobManager.count()
-        self.assertEqual(nJobs, 3)
-
-        retrievedJob3 = testJobManager.dequeueJobOfType(['jobType3'])
-        self.__compareJobs(testJob3, retrievedJob3)
-        time.sleep(55)
-        nJobs = testJobManager.count()
         self.assertEqual(nJobs, 2)
 
-        retrievedJob2 = testJobManager.dequeueJobOfType(['jobType2'])
+        retrievedJob2 = testJobManager.dequeueJob()
         self.__compareJobs(testJob2, retrievedJob2)
-        time.sleep(55)
-        nJobs = testJobManager.count()
-        self.assertEqual(nJobs, 1)
 
         retrievedJob3 = testJobManager.dequeueJob()
         self.__compareJobs(testJob3, retrievedJob3)

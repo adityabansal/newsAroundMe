@@ -44,15 +44,3 @@ def dequeueMessage(queue):
     else:
         queue.delete_message(m)
         return m.get_body()
-
-def dequeMessageWithFilter(queue, filterFunction):
-    messages = queue.get_messages(num_messages=10, visibility_timeout=5)
-    if not messages:
-        return None
-
-    for m in messages:
-        mBody = m.get_body()
-        isAllowedJob = filterFunction(mBody)
-        if isAllowedJob:
-            queue.delete_message(m)
-            return mBody
