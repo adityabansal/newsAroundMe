@@ -54,8 +54,8 @@ class FeedManagerTests(unittest.TestCase):
 
         # get the feed and validate it's same as one you put the 2nd time
         retrievedFeed = testFeedManager.get(testFeed.id)
-        self.failUnless(retrievedFeed.tags == testFeed.tags)
-        self.failUnless(retrievedFeed.id == testFeed.id)
+        self.assertTrue(retrievedFeed.tags == testFeed.tags)
+        self.assertTrue(retrievedFeed.id == testFeed.id)
 
         # Cleanup - delete feed.
         testFeedManager.delete(testFeed.id)

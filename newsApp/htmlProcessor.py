@@ -1,25 +1,25 @@
 
 import logging
 import requests
-import urlparse
+import urllib.parse
 
 from lxml.etree import XMLSyntaxError,ParserError
 import lxml.html as lh
 from lxml.html.clean import Cleaner
 
-from imageProcessor import ImageProcessor
+from .imageProcessor import ImageProcessor
 
 logger = logging.getLogger('htmlProcessor')
 __imageProcessor = ImageProcessor()
 
 def _isAbsolute(url):
-    return bool(urlparse.urlparse(url).netloc)
+    return bool(urllib.parse.urlparse(url).netloc)
 
 def _getUrlDomain(url):
-    return urlparse.urlparse(url).hostname.lower()
+    return urllib.parse.urlparse(url).hostname.lower()
 
 def _addHttpToUrlIfNeeded(url):
-    if not bool(urlparse.urlparse(url).scheme):
+    if not bool(urllib.parse.urlparse(url).scheme):
         return "http:" + url
     else:
         return url
@@ -31,7 +31,7 @@ def _getCompleteUrl(url, baseUrl):
     if _isAbsolute(url):
         return _addHttpToUrlIfNeeded(url)
     else:
-        return urlparse.urljoin(baseUrl, url)
+        return urllib.parse.urljoin(baseUrl, url)
 
 def _parseAndCleanHtml(rawHtml):
     # Parse html with lxml library
@@ -131,7 +131,7 @@ def processHtml(jobId, rawHtml, textSelector, imageSelectors, baseUrl = None):
         images += _extractImages(parsedHtml, imageSelector, baseUrl)
     images = list(set(images)) # remove duplicates
     images = [_processImage(jobId, img) for img in images] #process images
-    images = filter(None, images) #filter out unprocessed images
+    images = [_f for _f in images if _f] #filter out unprocessed images
     logger.info("Extracted out %i images. JobId: %s", len(images), jobId)
 
     return (text, images)
@@ -195,7 +195,7 @@ def extractOpenGraphData(jobId, rawHtml, baseUrl):
         for img in ogImageElements if 'content' in img.attrib]
     ogImages = list(set(ogImages)) # remove duplicates
     ogImages = [_processImage(jobId, img) for img in ogImages] #process images
-    ogImages = filter(None, ogImages) #filter out unprocessed images
+    ogImages = [_f for _f in ogImages if _f] #filter out unprocessed images
     logger.info("Extracted out %i og images. JobId: %s", len(ogImages), jobId)
 
     ogDescElement = parsedHtml.cssselect('meta[property="og:description"]')

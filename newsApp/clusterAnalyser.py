@@ -1,5 +1,5 @@
-from cluster import Cluster
-import docHelper
+from .cluster import Cluster
+from . import docHelper
 
 class ClusterAnalyser:
   @staticmethod

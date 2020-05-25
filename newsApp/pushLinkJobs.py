@@ -1,8 +1,8 @@
-from linkManager import LinkManager
-from workerJob import WorkerJob
-from minerJobManager import MinerJobManager
-from constants import *
-from loggingHelper import *
+from .linkManager import LinkManager
+from .workerJob import WorkerJob
+from .minerJobManager import MinerJobManager
+from .constants import *
+from .loggingHelper import *
 
 InitLogging()
 

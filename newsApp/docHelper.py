@@ -1,8 +1,8 @@
 import json
 import logging
 
-from constants import *
-import textHelperNltk as th
+from .constants import *
+from . import textHelperNltk as th
 
 logger = logging.getLogger('docHelper')
 

@@ -1,7 +1,7 @@
 import os
 
-from publisher import Publisher
-from dbItemManagerV2 import DbItemManagerV2
+from .publisher import Publisher
+from .dbItemManagerV2 import DbItemManagerV2
 
 class PublisherManager(DbItemManagerV2):
     """

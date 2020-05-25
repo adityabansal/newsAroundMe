@@ -1,9 +1,9 @@
 import os
 import time
 
-from constants import *
-from feed import Feed
-from dbItemManagerV2 import DbItemManagerV2
+from .constants import *
+from .feed import Feed
+from .dbItemManagerV2 import DbItemManagerV2
 
 DEFAULT_FEED_POLLING_FREQUENCY = 10
 

@@ -1,4 +1,4 @@
-minerWorker: python ./newsApp/worker.py -q MINER_JOBSQUEUE_CONNECTIONSTRING
-minerWorker2: python ./newsApp/worker.py -q MINER_JOBSQUEUE_CONNECTIONSTRING
-clusterworker: python ./newsApp/worker.py -q CLUSTER_JOBSQUEUE_CONNECTIONSTRING
-clock: python ./newsApp/clock.py
+minerWorker: python -m newsApp.worker -q MINER_JOBSQUEUE_CONNECTIONSTRING
+minerWorker2: python -m newsApp.worker -q MINER_JOBSQUEUE_CONNECTIONSTRING
+clusterworker: python -m newsApp.worker -q CLUSTER_JOBSQUEUE_CONNECTIONSTRING
+clock: python -m newsApp.clock

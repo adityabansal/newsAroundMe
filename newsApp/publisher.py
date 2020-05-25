@@ -1,4 +1,4 @@
-from dbItem import DbItem
+from .dbItem import DbItem
 
 class Publisher(DbItem):
   """

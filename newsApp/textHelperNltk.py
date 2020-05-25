@@ -6,8 +6,8 @@ import math
 from retrying import retry
 import nltk
 
-from encodedEntity import EncodedEntity
-from textHelper import removeNonAsciiChars
+from .encodedEntity import EncodedEntity
+from .textHelper import removeNonAsciiChars
 
 #nltk.download('punkt')
 #nltk.download('stopwords')
@@ -17,11 +17,7 @@ from textHelper import removeNonAsciiChars
 #nltk.download('words')
 
 def _removePuntuation(text):
-    if isinstance(text, str):
-        return text.translate(None, string.punctuation)
-    elif isinstance(text, unicode):
-        remove_punctuation_map = dict((ord(char), None) for char in string.punctuation)
-        return text.translate(remove_punctuation_map)
+    return text.translate(str.maketrans('','',string.punctuation))
 
 def hasNumbers(inputString):
     return any(char.isdigit() for char in inputString)
@@ -88,7 +84,7 @@ def compareUsingShingles(text1, text2):
     if shorterLen == 0:
         return 0
     else:
-        denominator = min(shorterLen, 250)
+        denominator = max(shorterLen, 250)
         comparisionScore = float(len(intersection))/denominator
         comparisionScore = min(comparisionScore, 1.0)
         return comparisionScore

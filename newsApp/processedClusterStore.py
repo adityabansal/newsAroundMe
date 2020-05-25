@@ -6,9 +6,9 @@ from boto.s3.connection import S3Connection
 from boto.exception import S3ResponseError
 from boto.s3.key import Key
 
-from cachingHelper import getCache
-from cluster import Cluster
-from dbhelper import parseConnectionString, getS3Connection
+from .cachingHelper import getCache
+from .cluster import Cluster
+from .dbhelper import parseConnectionString, getS3Connection
 
 class ProcessedClusterStore:
   """

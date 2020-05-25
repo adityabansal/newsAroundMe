@@ -1,7 +1,7 @@
 import os
 
-from queueHelper import *
-from workerJob import WorkerJob
+from .queueHelper import *
+from .workerJob import WorkerJob
 
 class JobManager:
     """
@@ -25,21 +25,24 @@ class JobManager:
 
         enqueueMessage(self.queue, job.serializeToString())
 
+    def convertDequeuedMessageToJob(self, dequeuedMessage):
+        if dequeuedMessage is None:
+            return None
+        dequeuedJob = WorkerJob(None, None)
+        dequeuedJob.deserializeFromString(dequeuedMessage)
+        return dequeuedJob
+
     def dequeueJob(self):
         """
         Dequeue a job from the job queue.
         """
 
         dequeuedMessage = dequeueMessage(self.queue)
-        if dequeuedMessage is None:
-             return None
-        dequeuedJob = WorkerJob(None, None);
-        dequeuedJob.deserializeFromString(dequeuedMessage);
-        return dequeuedJob
+        return self.convertDequeuedMessageToJob(dequeuedMessage)
 
     def count(self):
         """
         Return the count of messages in queue.
         """
 
-        return self.queue.count();
+        return self.queue.count()

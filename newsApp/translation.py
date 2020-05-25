@@ -2,14 +2,14 @@ import os
 import logging
 import json
 import requests
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from googleapiclient.discovery import build
 
 logger = logging.getLogger('translation')
 
-MSTRANSLATE_LANGS = ['hi', 'bn', 'ta']
-GOOGLE_LANGS = ['hi', 'bn', 'ta', 'mr', 'gu']
+MSTRANSLATE_LANGS = ['hi', 'bn', 'ta', 'mr', 'gu', 'te', 'kn', 'ml']
+GOOGLE_LANGS = ['hi', 'bn', 'ta', 'mr', 'gu', 'te', 'kn', 'ml']
 
 def translateGoogle(jobInfo, text, fromLang, toLang = 'en'):
   try:
@@ -54,32 +54,28 @@ def translateMicrosoft(jobInfo, text, fromLang, toLang = 'en'):
     # get the access token
     auth_token = _getMicrosoftAccessToken(jobInfo)
 
-    # make the translate api call
-    strText = text
-    if isinstance(text, unicode):
-      strText = text.encode('utf-8')
-
     translation_args = {
-      'text': strText,
+      'text': text.encode(),
       'to': toLang,
       'from': fromLang
     }
 
-    headers={'Authorization': 'Bearer '+ auth_token}
+    headers={'Authorization': 'Bearer ' + auth_token.decode()}
     translate_url = 'https://api.microsofttranslator.com/V2/Ajax.svc/Translate?'
     translation_result = requests.get(
-      translate_url + urllib.urlencode(translation_args),
+      translate_url + urllib.parse.urlencode(translation_args),
       headers=headers)
+    response = translation_result.content.decode()
 
     if translation_result.status_code == 200 and \
-      'Exception:' not in translation_result.content:
+      'Exception:' not in response:
       logger.info("Completed microsoft translation. %s", jobInfo)
-      return translation_result.content
+      return response
     else:
       logger.info(
         "Microsoft translation call failed. Status code %i. Response: %s",
         translation_result.status_code,
-        translation_result.content)
+        response)
       return ""
   except Exception:
     logging.exception("Microsoft translation failed. %s", jobInfo)

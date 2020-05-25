@@ -19,5 +19,8 @@ class HtmlProcessorTests(unittest.TestCase):
 
         # validate result
         self.assertEqual(len(result), 2)
-        self.assertGreater(len(result[0]), 100) #expect processor to have extracted some text
-        self.assertEqual(len(result[1]), 1); #expect processor to find 1 image
+        #expect processor to have extracted some text
+        self.assertTrue(isinstance(result[0], str))
+        self.assertGreater(len(result[0]), 100)
+        #expect processor to find 1 image
+        self.assertEqual(len(result[1]), 1)

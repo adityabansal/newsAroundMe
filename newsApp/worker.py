@@ -6,14 +6,14 @@ import time
 import threading
 from multiprocessing import Process
 
-from constants import *
-from loggingHelper import *
-from jobManager import JobManager
-from workerJob import WorkerJob
-from feedProcessor import *
-from linkProcessor import *
-import clusteringJobs as cj
-import dbJobs as dj
+from .constants import *
+from .loggingHelper import *
+from .jobManager import JobManager
+from .workerJob import WorkerJob
+from .feedProcessor import *
+from .linkProcessor import *
+from . import clusteringJobs as cj
+from . import dbJobs as dj
 
 def RunJob(job):
     "Run a job taking care of error handling."
@@ -21,43 +21,38 @@ def RunJob(job):
     try:
         if job.jobName == JOB_PROCESSFEED:
             processFeed(job.jobId, job.jobParams[JOBARG_PROCESSFEED_FEEDID])
-        if job.jobName == JOB_PROCESSLINK:
+        elif job.jobName == JOB_PROCESSLINK:
             processLink(job.jobId, job.jobParams[JOBARG_PROCESSLINK_LINKID])
-        if job.jobName == JOB_PARSEDOC:
+        elif job.jobName == JOB_PARSEDOC:
             cj.parseDoc(job.jobId, job.jobParams[JOBARG_PARSEDOC_DOCID])
-        if job.jobName == JOB_GETCANDIDATEDOCS:
+        elif job.jobName == JOB_GETCANDIDATEDOCS:
             cj.getCandidateDocs(
                 job.jobId,
                 job.jobParams[JOBARG_GETCANDIDATEDOCS_DOCID])
-        if job.jobName == JOB_COMPAREDOCS:
+        elif job.jobName == JOB_COMPAREDOCS:
             cj.compareDocs(
                 job.jobId,
                 job.jobParams[JOBARG_COMPAREDOCS_DOC1ID],
                 job.jobParams[JOBARG_COMPAREDOCS_DOC2ID])
-        if job.jobName == JOB_COMPAREDOCSBATCH:
+        elif job.jobName == JOB_COMPAREDOCSBATCH:
             cj.compareDocsBatch(
                 job.jobId,
                 job.jobParams[JOBARG_COMPAREDOCSBATCH_DOCID],
                 job.jobParams[JOBARG_COMPAREDOCSBATCH_OTHERDOCS])
-        if job.jobName == JOB_CLUSTERDOCS:
+        elif job.jobName == JOB_CLUSTERDOCS:
             cj.clusterDocs(job.jobId)
-        if job.jobName == JOB_UPDATEDBTHROUGHPUT:
-            dj.updateDbThroughput(
-                job.jobId,
-                job.jobParams[JOB_UPDATEDBTHROUGHPUT_CONNECTIONSTRING],
-                job.jobParams[JOB_UPDATEDBTHROUGHPUT_READTHOUGHPUT],
-                job.jobParams[JOB_UPDATEDBTHROUGHPUT_WRITETHOUGHPUT],
-                job.jobParams[JOB_UPDATEDBTHROUGHPUT_INDEXNAME])
-        if job.jobName == JOB_CLEANUPDOC:
+        elif job.jobName == JOB_CLEANUPDOC:
             cj.cleanUpDoc(job.jobId, job.jobParams[JOBARG_CLEANUPDOC_DOCID])
-        if job.jobName == JOB_CLEANUPDOCSHINGLES:
+        elif job.jobName == JOB_CLEANUPDOCSHINGLES:
             cj.cleanUpDocShingles(job.jobId, job.jobParams[JOBARG_CLEANUPDOCSHINGLES_DOCID])
-        if job.jobName == JOB_CLEANUPDOCENTITIES:
+        elif job.jobName == JOB_CLEANUPDOCENTITIES:
             cj.cleanUpDocEntities(job.jobId, job.jobParams[JOBARG_CLEANUPDOCENTITIES_DOCID])
-        if job.jobName == JOB_CLEANUPDOCDISTANCES:
+        elif job.jobName == JOB_CLEANUPDOCDISTANCES:
             cj.cleanUpDocDistances(job.jobId, job.jobParams[JOBARG_CLEANUPDOCDISTANCES_DOCID])
-        if job.jobName == JOB_PROCESSNEWCLUSTER:
+        elif job.jobName == JOB_PROCESSNEWCLUSTER:
             cj.processNewCluster(job.jobId, job.jobParams[JOBARG_PROCESSNEWCLUSTER_CLUSTER])
+        else:
+            logging.exception("Unknown job type %s", job.jobName)
     except:
         logging.exception('Failed to execute worker job')
 
@@ -66,7 +61,7 @@ def DequeueAndStartJob(connectionStringKey):
     Dequeue a job from the queue and start executing it.
     """
 
-    logging.info("Dequeing a job.");
+    logging.info("Dequeing a job.")
     jobManager = JobManager(connectionStringKey)
     job = jobManager.dequeueJob()
 
@@ -83,7 +78,7 @@ def DequeueAndStartJob(connectionStringKey):
 class JobThread(threading.Thread):
    def __init__ (self, connectionStringKey):
       threading.Thread.__init__(self)
-      self.connectionStringKey = connectionStringKey;
+      self.connectionStringKey = connectionStringKey
    def run(self):
       DequeueAndStartJob(self.connectionStringKey)
 
@@ -120,12 +115,12 @@ if __name__ == '__main__':
         try:
             opts, args = getopt.getopt(sys.argv[1:], "q:", ["queue"])
         except getopt.GetoptError as err:
-            print str(err)
+            print(str(err))
             sys.exit(2)
         for o, a in opts:
             if o in ("-q", "--queue"):
                 RunWorker(a)
                 sys.exit()
 
-    print("Specify the queue connection string key with -q option");
-    sys.exit(2);
+    print("Specify the queue connection string key with -q option")
+    sys.exit(2)

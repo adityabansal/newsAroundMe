@@ -68,7 +68,8 @@ def encryptSecret(value, encryptionKey):
     value = value + (16 - len(value) % 16) * '{'
     aesCipher = AES.new(encryptionKey, AES.MODE_ECB)
     cipherText = aesCipher.encrypt(value)
-    return base64.b64encode(cipherText)
+    encryptedBytes = base64.b64encode(cipherText)
+    return encryptedBytes.decode('ascii')
 
 def decryptSecret(value, encryptionKey):
     """
@@ -77,4 +78,5 @@ def decryptSecret(value, encryptionKey):
 
     cipherText = base64.b64decode(value)
     aesCipher = AES.new(encryptionKey, AES.MODE_ECB)
-    return aesCipher.decrypt(cipherText).rstrip('{')
+    decryptedBytes = aesCipher.decrypt(cipherText)
+    return decryptedBytes.decode('ascii').rstrip('{')

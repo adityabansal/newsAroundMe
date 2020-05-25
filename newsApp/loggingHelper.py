@@ -15,4 +15,8 @@ def InitLogging():
 
     logging.getLogger('bmemcached').setLevel(logging.ERROR)
 
+    logging.getLogger('urllib3.connectionpool').setLevel(logging.ERROR)
+
+    logging.getLogger('googleapiclient.discovery_cache').setLevel(logging.ERROR)
+
     logging.captureWarnings(True)

@@ -1,13 +1,13 @@
 import hashlib
 import json
 from operator import itemgetter
-import Queue
+import queue
 from threading import Thread
 
-from constants import *
-from docHelper import getDocComparisionScore,getDocEnglishContentSimilarity
-from docManager import DocManager
-import textHelper as th
+from .constants import *
+from .docHelper import getDocComparisionScore,getDocEnglishContentSimilarity
+from .docManager import DocManager
+from . import textHelper as th
 
 DOC_DUPLICATION_SCORE_THRESHOLD = 0.9
 DOC_DUPLICATION_CONTENT_THRESHOLD = 0.8
@@ -19,7 +19,7 @@ def _removeDuplicatesAndOutliers(items, articleCount):
     else:
       d[item] = 1
 
-  return [item for item in d.keys() if d[item] > 0.4 * articleCount]
+  return [item for item in list(d.keys()) if d[item] > 0.4 * articleCount]
 
 def _isDuplicateArticle(doc, docsAdded):
   for addedDoc in docsAdded:
@@ -38,7 +38,7 @@ def _isDuplicateArticle(doc, docsAdded):
   return False
 
 def _getDocsInParallel(docKeys):
-  que = Queue.Queue()
+  que = queue.Queue()
   threads_list = list()
   docManager = DocManager()
   for docKey in docKeys:
@@ -96,7 +96,7 @@ class Cluster(set):
     set.__init__(self, docList)
 
     docList.sort()
-    self.id = hashlib.md5("-".join(docList)).hexdigest().upper()
+    self.id = hashlib.md5("-".join(docList).encode("latin1")).hexdigest().upper()
     self.isCurrent = 'unknown'
     self.isProcessed = False
 

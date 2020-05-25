@@ -4,16 +4,17 @@ import time
 import logging
 
 import feedparser
+import requests
 
-from constants import *
-from feed import Feed
-from feedManager import FeedManager
-from webPageLoader import *
-import htmlProcessor as hp
-from minerJobManager import MinerJobManager
-from link import Link
-from linkManager import LinkManager
-from workerJob import WorkerJob
+from .constants import *
+from .feed import Feed
+from .feedManager import FeedManager
+from .webPageLoader import *
+from . import htmlProcessor as hp
+from .minerJobManager import MinerJobManager
+from .link import Link
+from .linkManager import LinkManager
+from .workerJob import WorkerJob
 
 UNECESSARY_FEED_TAGS = [
   FEEDTAG_TYPE,
@@ -213,7 +214,14 @@ def getLinksFromWebFeed(jobId, feed):
   # get page html
   pageHtml = ""
   if FEEDTAG_IS_FEEDPAGE_STATIC in feed.tags:
-    pageHtml = getHtmlStatic(feed.tags[FEEDTAG_URL])
+    try:
+      pageHtml = getHtmlStatic(feed.tags[FEEDTAG_URL])
+    except (requests.ReadTimeout, requests.ConnectTimeout, requests.ConnectionError):
+      logger.warning(
+        "Timed out or could not connect while getting web feed page %s. Returning zero links. %s",
+        feed.tags[FEEDTAG_URL],
+        feedAndJobId)
+      return []
   else:
     pageHtml = loadPageAndGetHtml(feed.tags[FEEDTAG_URL])
   logger.info("Got html for web page. %s.", feedAndJobId)

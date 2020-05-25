@@ -1,7 +1,7 @@
 import logging
 
-from constants import *
-from dbhelper import *
+from .constants import *
+from .dbhelper import *
 
 logger = logging.getLogger('dbJobs')
 

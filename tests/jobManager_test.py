@@ -1,4 +1,5 @@
 import unittest
+import time
 
 from newsApp.workerJob import WorkerJob
 from newsApp.jobManager import JobManager
@@ -6,9 +7,9 @@ from newsApp.jobManager import JobManager
 class JobManagerTests(unittest.TestCase):
 
     def __compareJobs(self, job1, job2):
-        self.failUnless(job1.jobId, job2.jobId)
-        self.failUnless(job1.jobName, job2.jobName)
-        self.failUnless(job1.jobParams, job2.jobParams)
+        self.assertTrue(job1.jobId, job2.jobId)
+        self.assertTrue(job1.jobName, job2.jobName)
+        self.assertTrue(job1.jobParams, job2.jobParams)
 
     def testEnqueueDequeueJobs(self):
         testJob1 = WorkerJob(
@@ -17,19 +18,31 @@ class JobManagerTests(unittest.TestCase):
         testJob2 = WorkerJob(
             'jobType2',
             { 'param1Name' : 'dummy3', 'param2Name' : 'dummy4', 'param3Name' : 'dummy5' })
+        testJob3 = WorkerJob(
+            'jobType3',
+            { 'param1Name' : 'dummy6' })
 
-        # enqueue jobs
+        # enqueue job1 and retrieve using dequeueJob
         testJobManager = JobManager('TEST_JOBSQUEUE_CONNECTIONSTRING')
         testJobManager.enqueueJob(testJob1)
-        testJobManager.enqueueJob(testJob2)
-
-        # dequeue jobs
+        time.sleep(1)
         retrievedJob1 = testJobManager.dequeueJob()
-        retrievedJob2 = testJobManager.dequeueJob()
-
-        # validate jobs retrieved are same as jobs put
         self.__compareJobs(testJob1, retrievedJob1)
+
+        # enqueue rest of jobs
+        testJobManager.enqueueJob(testJob2)
+        testJobManager.enqueueJob(testJob3)
+
+        # validate count()
+        time.sleep(15)
+        nJobs = testJobManager.count()
+        self.assertEqual(nJobs, 2)
+
+        retrievedJob2 = testJobManager.dequeueJob()
         self.__compareJobs(testJob2, retrievedJob2)
 
-        # validate there is no job in the queue
-        self.failUnless(testJobManager.dequeueJob() is None)
+        retrievedJob3 = testJobManager.dequeueJob()
+        self.__compareJobs(testJob3, retrievedJob3)
+
+        # validate there is no job left in the queue
+        self.assertTrue(testJobManager.dequeueJob() is None)

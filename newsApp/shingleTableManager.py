@@ -4,7 +4,7 @@ import time
 from boto.dynamodb2.table import Table
 from boto.dynamodb2.fields import HashKey, RangeKey, GlobalAllIndex
 
-from dbhelper import *
+from .dbhelper import *
 
 MAX_SHINGLES_PER_DOC = 300
 
@@ -37,41 +37,6 @@ class ShingleTableManager:
                 connection = getDbConnection(shingleTableConnectionParams));
 
         return self.__table;
-
-    def createFreshTable(self):
-        """
-        Create a fresh empty shingle table.
-        """
-
-        # delete existing table if it exists
-        try:
-            self.__getTable().delete();
-            time.sleep(10)
-        except:
-            pass;# do nothing. Maybe there was no existing table
-
-        # create new table
-        shingleTableConnectionParams = parseConnectionString(
-            self.tableConnString);
-        return Table.create(
-            shingleTableConnectionParams['name'],
-            schema = [
-                HashKey('shingle'),
-                RangeKey('docId')
-            ], throughput = {
-                'read': 14,
-                'write': 20,
-            }, global_indexes = [
-                GlobalAllIndex('docIdIndex', parts = [
-                    HashKey('docId'),
-                    RangeKey('shingle')
-                ],
-                throughput = {
-                    'read': 1,
-                    'write': 20,
-                })
-            ],
-            connection = getDbConnection(shingleTableConnectionParams))
 
     def addEntries(self, docId, shingles):
         """
