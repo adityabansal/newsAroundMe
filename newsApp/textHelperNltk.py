@@ -84,7 +84,7 @@ def compareUsingShingles(text1, text2):
     if shorterLen == 0:
         return 0
     else:
-        denominator = min(shorterLen, 250)
+        denominator = max(shorterLen, 250)
         comparisionScore = float(len(intersection))/denominator
         comparisionScore = min(comparisionScore, 1.0)
         return comparisionScore
