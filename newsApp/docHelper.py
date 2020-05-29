@@ -121,6 +121,8 @@ def computeDocSimScoreUsingEntities(jobInfo, doc1, doc2):
 
     if score > 0.5:
         score = min(score * 1.4, 1.0)
+    else:
+        score = score*0.9
 
     return score
 
@@ -159,7 +161,7 @@ def getDocComparisionScore(jobInfo, doc1, doc2):
                 "Adding penalty for same publisher %s. %s",
                 doc1Publisher,
                 jobInfo)
-            score = score*0.75
+            score = score*0.8
 
     if score > 1:
         score = 1

@@ -345,7 +345,7 @@ def getCandidateDocsThroughClusters(jobId):
                             jobInfo)
 
 ## Agglomerative clustering logic ##
-MIN_CLUSTER_SIMILARITY = 0.24
+MIN_CLUSTER_SIMILARITY = 0.23
 
 def _tryGetDocDistance(distances, docId1, docId2):
     first = min(docId1, docId2)
