@@ -1,6 +1,6 @@
 body {
   padding-top: 1em;
-  background-color: #e7e7e7
+  background-color: #d7d7d7
 }
 
 .navbar-header {
@@ -74,7 +74,7 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
 
 .baseCard .headline {
   color: #225599;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: bold;
 }
 
@@ -84,6 +84,7 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
 
 .baseCard p {
   color: #171717;
+  font-size: 12px;
 }
 
 .baseCard .card-actionRow {
@@ -122,10 +123,9 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
 
 .articleCard {
   border: 1px solid #777;
-  height: 270px;
+  height: 260px;
   overflow-y: hidden;
-  margin-bottom: 20px;
-  padding:4px;
+  margin-bottom: 10px;
   margin-left: 4px;
   margin-right: 4px;
 }
@@ -141,7 +141,7 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
 }
 
 .articleCard .article-desc-header {
-  font-size: 1em;
+  font-size: 10px;
   color: #444;
   padding-top: 2px;
   text-align: center;
@@ -155,6 +155,15 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
   margin-top:4px;
   margin-bottom:4px;
   text-align: center;
+}
+
+.articleCard .article-desc {
+  padding-left:2px;
+  padding-right:2px;
+}
+
+.articleCard .article-desc p {
+  font-size:12px;
 }
 
 .upper-nav-link {
@@ -172,9 +181,9 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
 
 .cs-item {
   margin-bottom:10px;
-  padding-top:10px;
-  padding-left:10px;
-  padding-right:10px;
+  padding-top: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
   border:2px solid #777;
   border-bottom-right-radius: 4px;
   border-bottom-left-radius: 4px;
@@ -182,7 +191,7 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
 }
 
 .cs-item .cs-content {
-  height:100px;
+  height: 85px;
   overflow-y:hidden;
 }
 
@@ -192,11 +201,13 @@ a.logo-text, a.logo-text:hover, a.logo-text:focus {
 
 .cs-title-container {
   margin-top:0px;
+  margin-bottom: 5px;
 }
 
 .cs-item .cs-title {
   color:black;
   font-weight: 600;
+  font-size: 13px;
 }
 
 .cs-item .cs-publisher {
