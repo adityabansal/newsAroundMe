@@ -41,7 +41,7 @@ def loadPageAndGetHtml(url):
       except:
         pass
   except:
-    logger.warning("Could not load page with url %s through selenium", url)
+    logger.info("Could not load page with url %s through selenium", url)
     pass
 
   if not pageHtml:
