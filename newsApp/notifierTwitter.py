@@ -65,8 +65,7 @@ class NotifierTwitter(NotifierBase):
     linkLength = 23 #t.co length
     tweetLength = linkLength
 
-    # don't include first article in tweet text as it would anyway show on the card
-    for article in cluster.articles[1:]:
+    for article in cluster.articles:
       # don't tweet old articles in cluster
       if article['publishedOn'] > (int(time.time()) - 18 * 60 * 60):
         articleTitle = article['title']
