@@ -45,7 +45,7 @@ def _getMicrosoftAccessToken(jobInfo):
   else:
     raise Exception(
       "Could not obtain microsoft access token. Response: " + \
-      get_auth_token_result.content)
+      get_auth_token_result.content.decode())
 
 def translateMicrosoft(jobInfo, text, fromLang, toLang = 'en'):
   try:
