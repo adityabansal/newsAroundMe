@@ -25,6 +25,7 @@ DOCTAG_TRANSLATED_TITLE = 'translatedTitle'
 DOCTAG_TRANSLATED_SUMMARYTEXT = 'translatedSummaryText'
 DOCTAG_TRANSLATED_CONTENT = 'translatedContent'
 DOCTAG_ENTITY_WEIGHTS = 'entityWeights'
+DOCTAG_HTML_STATIC = 'htmlStatic'
 
 FEEDTYPE_RSS = 'rss'
 FEEDTYPE_WEBPAGE = 'webPage'

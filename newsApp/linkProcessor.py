@@ -80,7 +80,7 @@ def _processHtmlForLink(jobId, link, publisher):
     images = ogData['images']
     logger.info("Using %i images from Open Graph metadata", len(images))
 
-  return (text, images, ogData['summary'])
+  return (text, images, ogData['summary'], pageStaticHtml)
 
 def _addTranslationTags(jobId, doc):
   docLang = doc.tags[FEEDTAG_LANG]
@@ -147,13 +147,15 @@ def processLink(jobId, linkId):
     link.tags[TAG_PUBLISHER],
     linkAndJobId)
 
-  # get html for the link
+  # process html for the link
   processingResult = _processHtmlForLink(jobId, link, publisher)
-  if not processingResult[0]:
-    logger.warning("No text extracted for the link. %s.", linkAndJobId)
 
   # generate corresponding doc
   doc = Doc(_getDocKey(link), processingResult[0], link.tags)
+  if not processingResult[0]:
+    logger.warning("No text extracted for the link. %s.", linkAndJobId)
+    doc.tags[DOCTAG_HTML_STATIC] = processingResult[3]
+
   doc.tags[TAG_IMAGES] = processingResult[1]
   doc = _addSummaryIfNotPresent(doc, processingResult[2])
   doc.tags[DOCTAG_URL] = linkId
