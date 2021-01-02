@@ -194,7 +194,7 @@ class ImageProcessor:
         image.convert('RGB').save(outImage, 'JPEG')
 
       logger.info("Saving the image in the bucket %s", jobIdLog)
-      imageKey = ''.join(random.choice('0123456789ABCDEF') for i in range(16)) + ".jpg"
+      imageKey = ''.join(random.choice('0123456789ABCDEF') for i in range(20)) + ".jpg"
       bucket = self.__getBucket()
       k = bucket.new_key(imageKey)
       k.set_contents_from_string(outImage.getvalue())
