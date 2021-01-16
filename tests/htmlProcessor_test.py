@@ -7,15 +7,15 @@ class HtmlProcessorTests(unittest.TestCase):
     def testHtmlProcessor(self):
         # get html
         link = Link(
-            "https://timesofindia.indiatimes.com/city/ahmedabad/iim-a-withdraws-eoi-to-raze-down-kahns-iconic-dorms/articleshow/80064663.cms")
+            "https://www.deccanherald.com/city/bengaluru-crime/bitcoins-worth-rs-9-cr-seized-from-hacker-arrested-in-drugs-case-939549.html")
         html = link.getHtmlStatic()
 
         # process it
         result = hp.processHtml(
             "testJobId",
             html,
-            ".contentwrapper .ga-headlines",
-            [".contentwrapper ._2suu5 img"])
+            ".content .field-name-body",
+            [".content img"])
 
         # validate result
         self.assertEqual(len(result), 2)
