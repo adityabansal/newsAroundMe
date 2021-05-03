@@ -19,6 +19,6 @@ numpy==1.18.2
 jellyfish==0.7.2
 Pillow==8.1.1
 selenium==3.141.0
-pycrypto==2.6.1
+pycryptodome==3.10.1
 tweepy==3.8.0
 pytz==2019.3
