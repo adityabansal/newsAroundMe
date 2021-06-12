@@ -13,4 +13,4 @@ class NotifierBase:
     # for now we only have cities in india
     india_tz = timezone('Asia/Kolkata')
     hour = datetime.now(india_tz).hour
-    return hour >= 2 and hour < 7
+    return hour >= 2 and hour < 9
