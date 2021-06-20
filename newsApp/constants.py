@@ -126,7 +126,8 @@ LOCATION_METADATA = [
   {'displayName': 'Hyderabad', 'icon': '', 'value': 'hyderabad', 'lat': 17.39, 'long': 78.49, 'languages': [LANG_ENGLISH_METADATA]},
   {'displayName': 'Ahmedabad', 'icon': '', 'value': 'ahmedabad', 'lat': 23.02, 'long': 72.57, 'languages': [LANG_ENGLISH_METADATA, LANG_GUJARATI_METADATA]},
   {'displayName': 'Pune', 'icon': '', 'value': 'pune', 'lat': 18.52, 'long': 73.86, 'languages': [LANG_ENGLISH_METADATA, LANG_MARATHI_METADATA]},
-  {'displayName': 'Jaipur', 'icon': '', 'value': 'jaipur', 'lat': 26.91, 'long': 75.79, 'languages': [LANG_ENGLISH_METADATA, LANG_HINDI_METADATA]}]
+  {'displayName': 'Jaipur', 'icon': '', 'value': 'jaipur', 'lat': 26.91, 'long': 75.79, 'languages': [LANG_ENGLISH_METADATA, LANG_HINDI_METADATA]},
+  {'displayName': 'Kanpur', 'icon': '', 'value': 'kanpur', 'lat': 26.45, 'long': 80.33, 'languages': [LANG_ENGLISH_METADATA, LANG_HINDI_METADATA]}]
 for location in LOCATION_METADATA:
   location['title'] = location['displayName'] + ' News | Newsaroundme'
   location['description'] = 'Local news from '+ location['displayName'] + '.'
