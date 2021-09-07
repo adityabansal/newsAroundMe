@@ -17,7 +17,7 @@ oauth2client==4.1.3
 requests==2.23.0
 numpy==1.18.2
 jellyfish==0.7.2
-Pillow==8.2.0
+Pillow==8.3.2
 selenium==3.141.0
 pycryptodome==3.10.1
 tweepy==3.8.0
